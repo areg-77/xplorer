@@ -43,6 +43,15 @@ const emit = defineEmits(['select']);
 <style scoped>
 ul {
   padding-left: 0.9em !important;
+  border-radius: calc(var(--border-radius) + 1px);
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+
+  transition: background-color 200ms;
+}
+.tree-node.selected + .children-container > ul {
+  transition-delay: 100ms;
+  background-color: var(--secondary-dark);
 }
 
 li {
@@ -124,7 +133,7 @@ li:hover > .children-container {
   font-size: 0.82em;
   opacity: 0;
 
-  transition: opacity 150ms;
+  transition: opacity 125ms;
 }
 .tree-node:hover .tree-parameter,
 .tree-node.selected .tree-parameter {

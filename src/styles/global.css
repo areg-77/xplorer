@@ -16,6 +16,7 @@
   --secondary-lighter: hsl(0, 0%, 23%);
   --secondary-light: hsl(0, 0%, 20%);
   --secondary: hsl(0, 0%, 16%);
+  --secondary-dark: hsl(0, 0%, 13%);
 
   --border-lighter: hsl(0, 0%, 57%);
   --border-light: hsl(0, 0%, 29%);
