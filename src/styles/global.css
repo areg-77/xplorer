@@ -8,6 +8,7 @@
 :root {
   --fg: hsl(0, 0%, 87%);
   --fg-dark: hsl(0, 0%, 70%);
+  --fg-darker: hsl(0, 0%, 57%);
 
   --region-light: hsl(0, 0%, 11%);
   --region: hsl(0, 0%, 8%);

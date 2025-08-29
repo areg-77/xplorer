@@ -28,6 +28,7 @@ const emit = defineEmits(['select']);
       <div class="label-container" @click="emit('select', props.node)">
         <span :class="`tree-icon icon ${node.type}`"></span>
         <span class="tree-label">{{ node.label }}</span>
+        <span class="tree-id" style="color: var(--fg-darker)">id: {{ node.id }}</span>
       </div>
     </div>
     <div class="children-container" :class="{ opened: expanded }">
@@ -106,14 +107,23 @@ li:hover > .children-container {
   gap: 0.3em;
 }
 
+.tree-icon {
+  flex: 0 0 auto;
+  height: calc(1em + 3px);
+}
+
 .tree-label {
   flex: 1 1 auto;
   white-space: nowrap;
 }
 
-.tree-icon {
-  flex: 0 0 auto;
-  height: calc(1em + 3px);
+.tree-id {
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.tree-node:hover .tree-id {
+  transition-delay: 75ms;
+  opacity: 1;
 }
 
 .children-container {
