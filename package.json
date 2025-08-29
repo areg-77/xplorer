@@ -1,0 +1,32 @@
+{
+  "name": "xplorer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Filesystem Managing tool",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/areg-77/xplorer.git"
+  },
+  "license": "MIT",
+  "author": "areg-77",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"wait-on http://localhost:3000 && electron .\"",
+    "server": "concurrently -k \"vite --host\" \"wait-on http://localhost:3000 && electron .\"",
+    "launch": "vite build && cross-env NODE_ENV=production electron ."
+  },
+  "dependencies": {
+    "vue": "^3.5.20"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.0.0",
+    "electron": "^37.4.0",
+    "electron-builder": "^26.0.12",
+    "electron-devtools-installer": "^4.0.0",
+    "vite": "^7.1.3",
+    "wait-on": "^8.0.4"
+  }
+}
