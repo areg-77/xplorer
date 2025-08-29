@@ -120,6 +120,7 @@ li:hover > .children-container {
 .tree-id {
   opacity: 0;
   transition: opacity 150ms;
+  font-size: 0.82em;
 }
 .tree-node:hover .tree-id {
   transition-delay: 75ms;
