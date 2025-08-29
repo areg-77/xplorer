@@ -33,10 +33,15 @@ function handleSelect(node) {
     selectedNodes.value.splice(idx, 1);
 }
 
+function clickAway(e) {
+  if (!e.target.closest('.tree-node'))
+    selectedNodes.value = [];
+}
+
 </script>
 
 <template>
-  <div class="treeview" @click.self="selectedNodes = []">
+  <div class="treeview" @click="clickAway">
     <ul>
       <TreeNode v-for="node in tree.children" :key="node.id" :node="node" @select="handleSelect" :selected-nodes="selectedNodes"/>
     </ul>
