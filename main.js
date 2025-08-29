@@ -10,7 +10,7 @@ const isMac = process.platform === 'darwin';
 function createWindow() {
   const win = new BrowserWindow({
     show: false,
-    width: 800,
+    width: 1080,
     height: 650,
     title: 'Xplorer',
     icon: 'public/icons/icon.png',

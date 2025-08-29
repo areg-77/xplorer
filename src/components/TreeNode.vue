@@ -104,6 +104,7 @@ li:hover > .children-container {
   flex: 1;
   display: flex;
   align-items: center;
+  white-space: nowrap; 
   padding: 2px 0.9em 2px 0px;
   gap: 0.3em;
 }
