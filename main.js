@@ -1,7 +1,8 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const { setupTitlebar, attachTitlebarToWindow } = require('custom-electron-titlebar/main');
 const path = require('path');
 const fs = require('fs');
+const mime = require('mime-types');
 
 const { installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
 
@@ -137,4 +138,8 @@ app.on('ready', async () => {
 app.on('window-all-closed', () => {
   if (!isMac)
     app.quit();
+});
+
+ipcMain.handle('get-mime-type', (_, filename) => {
+  return mime.lookup(filename);
 });

@@ -13,14 +13,29 @@ export class TNode {
     this._parent.children.push(this);
   }
 
+  get label() { return this._label; }
+  set label(value) {
+    this._label = value;
+    if (this.type === 'folder')
+      this.mimeType = false;
+    else
+      window.electronAPI.getMimeType(value).then(mime => this.mimeType = mime);
+  }
+
   constructor(label, type, children = []) {
     this.id = idCounter++;
     this._parent = null;
-    this.label = label;
+    this._label = null;
     this.type = type;
+    this.mimeType = false;
+    this.label = label;
     this.children = [];
 
     children.forEach(child => child.parent = this);
+  }
+
+  get extension() {
+    return this.label?.split('.').pop() || '';
   }
 
   equals(other) {

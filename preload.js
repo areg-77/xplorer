@@ -1,3 +1,4 @@
+const { contextBridge, ipcRenderer } = require('electron');
 const { Titlebar, TitlebarColor } = require('custom-electron-titlebar');
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -7,4 +8,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     backgroundColor: TitlebarColor.fromHex('#1c1c1c'),
   };
   const titleBar = new Titlebar(options);
+});
+
+contextBridge.exposeInMainWorld("electronAPI", {
+  getMimeType: (filename) => ipcRenderer.invoke('get-mime-type', filename)
 });

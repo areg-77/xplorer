@@ -26,9 +26,10 @@ const emit = defineEmits(['select']);
         <span class="expander" :class="{ opened: expanded }"></span>
       </div>
       <div class="label-container" @click="emit('select', props.node)">
-        <span :class="`tree-icon icon ${node.type}`"></span>
+        <span :class="['tree-icon', 'icon', node.type, node.mimeType ? node.mimeType.replace('/', ' ') : null, node.type !== 'folder' ? node.extension : null].filter(Boolean).join(' ')"></span>
         <span class="tree-label">{{ node.label }}</span>
         <span class="tree-parameter">id: {{ node.id }}</span>
+        <span v-if="node.type !== 'folder'" class="tree-parameter">mime: "{{ node.mimeType }}"</span>
         <span class="tree-parameter">parent: "{{ node.parent.label }}"</span>
       </div>
     </div>

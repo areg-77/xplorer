@@ -1,27 +1,29 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { TNode } from './model/TNode';
 import TreeNode from './TreeNode.vue';
 
-const tree = new TNode('Project', 'folder', [
-  new TNode('Assets', 'folder', [
-    new TNode('Characters', 'folder', [
-      new TNode('hero', 'folder', [
-        new TNode('hero.fbx', 'file')
+const tree = reactive(
+  new TNode('Project', 'folder', [
+    new TNode('Assets', 'folder', [
+      new TNode('Characters', 'folder', [
+        new TNode('hero', 'folder', [
+          new TNode('hero.asdasdasda', 'file')
+        ])
+      ]),
+      new TNode('Environment', 'folder', [
+        new TNode('building', 'folder', [
+          new TNode('building.fbx', 'file')
+        ])
       ])
     ]),
-    new TNode('Environment', 'folder', [
-      new TNode('building', 'folder', [
-        new TNode('building.fbx', 'file')
-      ])
-    ])
-  ]),
-  new TNode('Settings', 'folder', [
-    new TNode('graphics.dll', 'file'),
-    new TNode('sfx.dll', 'file')
-  ]),
-  new TNode('project.json', 'file')
-]);
+    new TNode('Settings', 'folder', [
+      new TNode('graphics.dll', 'file'),
+      new TNode('sfx.dll', 'file')
+    ]),
+    new TNode('project.json', 'file')
+  ])
+);
 
 const selectedNodes = ref([]);
 
