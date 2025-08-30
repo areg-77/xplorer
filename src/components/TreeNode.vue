@@ -12,7 +12,6 @@ const props = defineProps({
     required: false
   }
 });
-const expanded = ref(false);
 const selected = computed(() => props.selectedNodes.some(n => n.id === props.node.id));
 
 const emit = defineEmits(['select']);
@@ -22,8 +21,8 @@ const emit = defineEmits(['select']);
 <template>
   <li>
     <div class="tree-node" :class="{ selected: selected }">
-      <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="expanded = !expanded">
-        <span class="expander" :class="{ opened: expanded }"></span>
+      <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="node.expanded = !node.expanded">
+        <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
       <div class="label-container" @click="emit('select', props.node)">
         <span :class="['tree-icon', 'icon', node.type, node.mimeType ? node.mimeType.replace('/', ' ') : null, node.type !== 'folder' ? node.extension : null].filter(Boolean).join(' ')"></span>
@@ -33,7 +32,7 @@ const emit = defineEmits(['select']);
         <span class="tree-parameter">parent: "{{ node.parent.label }}"</span>
       </div>
     </div>
-    <div class="children-container" :class="{ opened: expanded }">
+    <div class="children-container" :class="{ opened: node.expanded }">
       <ul>
         <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)" :selected-nodes="selectedNodes"/>
       </ul>

@@ -30,6 +30,7 @@ export class TNode {
     this.mimeType = false;
     this.label = label;
     this.children = [];
+    this.expanded = false;
 
     children.forEach(child => child.parent = this);
   }

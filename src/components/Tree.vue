@@ -8,7 +8,7 @@ const tree = reactive(
     new TNode('Assets', 'folder', [
       new TNode('Characters', 'folder', [
         new TNode('hero', 'folder', [
-          new TNode('hero.asdasdasda', 'file')
+          new TNode('hero.fbx', 'file')
         ])
       ]),
       new TNode('Environment', 'folder', [
