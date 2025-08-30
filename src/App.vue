@@ -10,7 +10,12 @@ import Tree from './components/Tree.vue';
 
 <style>
 #app {
+  width: 100%;
   height: 100%;
+  margin: 0;
+  padding: 1rem;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .maingrid {

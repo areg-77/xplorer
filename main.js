@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu } = require('electron');
+const { setupTitlebar, attachTitlebarToWindow } = require('custom-electron-titlebar/main');
 const path = require('path');
 const fs = require('fs');
 
@@ -7,13 +8,18 @@ const { installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installe
 const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production';
 const isMac = process.platform === 'darwin';
 
+setupTitlebar();
+
 function createWindow() {
   const win = new BrowserWindow({
     show: false,
     width: 1080,
     height: 650,
+    useContentSize: true,
     title: 'Xplorer',
-    icon: 'public/icons/icon.png',
+    icon: path.join(__dirname, 'public', 'icons', 'icon.ico'),
+    titleBarStyle: 'hidden',
+    titleBarOverlay: true,
     webPreferences: {
       sandbox: false,
       nodeIntegration: false,
@@ -21,6 +27,8 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     }
   });
+  attachTitlebarToWindow(win);
+
   if (isDev)
     win.loadURL('http://localhost:3000');
   else
