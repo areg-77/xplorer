@@ -4,8 +4,6 @@ const path = require('path');
 const fs = require('fs');
 const mime = require('mime-types');
 
-const { installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
-
 const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production';
 const isMac = process.platform === 'darwin';
 
@@ -31,7 +29,7 @@ function createWindow() {
   attachTitlebarToWindow(win);
 
   if (isDev)
-    win.loadURL('http://localhost:3000');
+    win.loadURL('http://localhost:5705');
   else
     win.loadFile('dist/index.html');
 
@@ -119,6 +117,8 @@ function createWindow() {
 
 app.on('ready', async () => {
   if (isDev) {
+    const { installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
+
     try {
       await installExtension(VUEJS_DEVTOOLS);
       console.info(`[Vue DevTools] Installed`);
