@@ -43,7 +43,7 @@ function clickAway(e) {
 </script>
 
 <template>
-  <div class="treeview" @click="clickAway">
+  <div class="treeview scroll-buffer" @click="clickAway">
     <ul>
       <TreeNode v-for="node in tree.children" :key="node.id" :node="node" @select="handleSelect" :selected-nodes="selectedNodes"/>
     </ul>
@@ -59,6 +59,13 @@ function clickAway(e) {
   font-size: 13px;
 
   overflow: auto;
+}
+.treeview.scroll-buffer::after {
+  content: "";
+  display: block;
+  height: 100%;
+  pointer-events: none;
+  visibility: hidden;
 }
 </style>
 

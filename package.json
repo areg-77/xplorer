@@ -13,7 +13,7 @@
   "main": "main.js",
   "scripts": {
     "dev": "concurrently -k \"vite\" \"wait-on http://localhost:5705 && electron .\"",
-    "server": "concurrently -k \"vite --host\" \"wait-on http://localhost:5705 && electron .\"",
+    "host": "concurrently -k \"vite --host\" \"wait-on http://localhost:5705 && electron .\"",
     "launch": "vite build && cross-env NODE_ENV=production electron .",
     "build": "cross-env NODE_ENV=production rimraf bin && vite build && electron-builder"
   },
