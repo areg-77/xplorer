@@ -1,5 +1,6 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const { setupTitlebar, attachTitlebarToWindow } = require('custom-electron-titlebar/main');
+const pkg = require('./package.json');
 const path = require('path');
 const fs = require('fs');
 const mime = require('mime-types');
@@ -15,10 +16,11 @@ function createWindow() {
     width: 1080,
     height: 650,
     useContentSize: true,
-    title: 'Xplorer',
+    title: `Xplorer v${pkg.version}`,
     icon: path.join(__dirname, 'public', 'icons', 'icon.ico'),
     titleBarStyle: 'hidden',
     titleBarOverlay: true,
+    backgroundColor: 'hsl(0, 0%, 8%)',
     webPreferences: {
       sandbox: false,
       nodeIntegration: false,
