@@ -1,10 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { TNode } from './model/TNode';
+import { computed } from 'vue';
 
 const props = defineProps({
   node: {
-    type: TNode,
+    type: Object,
     required: true
   },
   selectedNodes: {
@@ -12,7 +11,7 @@ const props = defineProps({
     required: false
   }
 });
-const selected = computed(() => props.selectedNodes.some(n => n.id === props.node.id));
+const selected = computed(() => props.selectedNodes.some(n => n.equals(props.node)));
 
 const emit = defineEmits(['select']);
 
@@ -29,7 +28,7 @@ const emit = defineEmits(['select']);
         <span class="tree-label">{{ node.label }}</span>
         <span class="tree-parameter">id: {{ node.id }}</span>
         <span v-if="node.type !== 'folder'" class="tree-parameter">mime: "{{ node.mimeType }}"</span>
-        <span class="tree-parameter">parent: "{{ node.parent.label }}"</span>
+        <span class="tree-parameter">parent: "{{ node.parent?.label }}"</span>
       </div>
     </div>
     <div class="children-container" :class="{ opened: node.expanded }">

@@ -1,6 +1,8 @@
+import { ref, reactive } from "vue";
+
 let idCounter = 1;
 
-export class TNode {
+export class TNodeBase {
   get parent() { return this._parent; }
   set parent(value) {
     if (this._parent) {
@@ -17,9 +19,9 @@ export class TNode {
   set label(value) {
     this._label = value;
     if (this.type === 'folder')
-      this.mimeType = false;
+      this.mimeType.value = false;
     else
-      window.electronAPI.getMimeType(value).then(mime => this.mimeType = mime);
+      window.electronAPI.getMimeType(value).then(mime => this.mimeType.value = mime);
   }
 
   constructor(label, type, children = []) {
@@ -27,10 +29,10 @@ export class TNode {
     this._parent = null;
     this._label = null;
     this.type = type;
-    this.mimeType = false;
+    this.mimeType = ref(false);
     this.label = label;
     this.children = [];
-    this.expanded = false;
+    this.expanded = true;
 
     children.forEach(child => child.parent = this);
   }
@@ -40,6 +42,10 @@ export class TNode {
   }
 
   equals(other) {
-    return other instanceof TNode && this.id === other.id;
+    return other instanceof TNodeBase && this.id === other.id;
   }
+}
+
+export function TNode(label, type, children = []) {
+  return reactive(new TNodeBase(label, type, children));
 }
