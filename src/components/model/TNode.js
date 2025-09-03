@@ -1,44 +1,42 @@
-import { ref, reactive } from "vue";
+import { ref, reactive, watch } from "vue";
 
 let idCounter = 1;
 
 export class TNodeBase {
-  get parent() { return this._parent; }
-  set parent(value) {
-    if (this._parent) {
-      const idx = this._parent.children.indexOf(this);
-      if (idx !== -1)
-        this._parent.children.splice(idx, 1);
-    }
-
-    this._parent = value;
-    this._parent.children.push(this);
-  }
-
-  get label() { return this._label; }
-  set label(value) {
-    this._label = value;
-    if (this.type === 'folder')
-      this.mimeType.value = false;
-    else
-      window.electronAPI.getMimeType(value).then(mime => this.mimeType.value = mime);
-  }
-
   constructor(label, type, children = []) {
     this.id = idCounter++;
-    this._parent = null;
-    this._label = null;
-    this.type = type;
+    this.parent = ref(null);
+    this.type = ref(type);
     this.mimeType = ref(false);
-    this.label = label;
+    this.label = ref(label);
     this.children = [];
-    this.expanded = true;
+    this.expanded = ref(true);
+
+    watch([this.type, this.label], async ([newType, newLabel]) => {
+      if (newType === 'folder')
+        this.mimeType.value = false;
+      else
+        window.electronAPI.getMimeType(newLabel).then(mime => this.mimeType.value = mime);
+    }, { immediate: true });
+
+    watch(this.parent, (newParent, oldParent) => {
+      if (oldParent) {
+        const idx = oldParent.children.indexOf(this);
+        if (idx !== -1) oldParent.children.splice(idx, 1);
+      }
+      if (newParent && !newParent.children.includes(this)) {
+        newParent.children.push(this);
+      }
+    });
 
     children.forEach(child => child.parent = this);
   }
 
   get extension() {
-    return this.label?.split('.').pop() || '';
+    if (this.type.value === 'folder') return null;
+    const label = this.label?.value ?? this.label ?? '';
+    const idx = label.lastIndexOf('.');
+    return idx > 0 ? label.slice(idx + 1) : '';
   }
 
   equals(other) {

@@ -25,6 +25,10 @@ const tree = TNode('Project', 'folder', [
 
 const selectedNodes = ref([]);
 
+// for debug
+window.tree = tree;
+window.selectedNodes = selectedNodes;
+
 function handleSelect(node) {
   const idx = selectedNodes.value.findIndex(n => n.equals(node));
   if (idx === -1)
