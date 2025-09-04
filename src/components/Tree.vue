@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, provide } from 'vue';
 import { TNode } from './model/TNode';
 import TreeNode from './TreeNode.vue';
 
@@ -24,6 +24,7 @@ const tree = TNode('Project', 'folder', [
 ]);
 
 const selectedNodes = ref([]);
+provide('selectedNodes', selectedNodes);
 
 // for debug
 window.tree = tree;
@@ -47,7 +48,7 @@ function clickAway(e) {
 <template>
   <div class="treeview scroll-buffer" @click="clickAway">
     <ul>
-      <TreeNode v-for="node in tree.children" :key="node.id" :node="node" @select="handleSelect" :selected-nodes="selectedNodes"/>
+      <TreeNode v-for="node in tree.children" :key="node.id" :node="node" @select="handleSelect"/>
     </ul>
   </div>
 </template>

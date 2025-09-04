@@ -1,20 +1,21 @@
 <script setup>
-import { computed } from 'vue';
+import { ref, computed, inject, onUpdated } from 'vue';
 
 const props = defineProps({
   node: {
     type: Object,
     required: true
-  },
-  selectedNodes: {
-    type: Array,
-    required: false
   }
 });
-const selected = computed(() => props.selectedNodes.some(n => n.equals(props.node)));
+
+const selectedNodes = inject('selectedNodes', ref([]));
+const selected = computed(() => selectedNodes.value.some(n => n.equals(props.node)));
 
 const emit = defineEmits(['select']);
 
+onUpdated(() => {
+  console.log(`"${props.node.label}" updated`);
+});
 </script>
 
 <template>
@@ -26,6 +27,7 @@ const emit = defineEmits(['select']);
       <div class="label-container" @click="emit('select', props.node)">
         <span :class="['tree-icon', 'icon', node.type, node.mimeType ? node.mimeType.replace('/', ' ') : null, node.extension].filter(Boolean).join(' ')"></span>
         <span class="tree-label">{{ node.label }}</span>
+
         <span class="tree-parameter">id: {{ node.id }}</span>
         <span v-if="node.type !== 'folder'" class="tree-parameter">mime: "{{ node.mimeType }}"</span>
         <span class="tree-parameter">parent: "{{ node.parent?.label }}"</span>
@@ -33,7 +35,7 @@ const emit = defineEmits(['select']);
     </div>
     <div class="children-container" :class="{ opened: node.expanded }">
       <ul>
-        <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)" :selected-nodes="selectedNodes"/>
+        <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)"/>
       </ul>
     </div>
   </li>
