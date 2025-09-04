@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide } from 'vue';
+import { ref, provide, watch } from 'vue';
 import { TNode } from './model/TNode';
 import TreeNode from './TreeNode.vue';
 
@@ -43,13 +43,20 @@ function clickAway(e) {
     selectedNodes.value = [];
 }
 
+// for debug
+watch(selectedNodes, () => {
+  if (selectedNodes.value.length === 2) {
+    selectedNodes.value[0].parent = selectedNodes.value[1];
+    selectedNodes.value = [];
+  }
+}, { deep: true })
 </script>
 
 <template>
   <div class="treeview scroll-buffer" @click="clickAway">
-    <ul>
+    <transition-group tag="ul" name="list">
       <TreeNode v-for="node in tree.children" :key="node.id" :node="node" @select="handleSelect"/>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
@@ -78,5 +85,23 @@ function clickAway(e) {
   padding: 0;
   min-width: fit-content;
   overflow: hidden;
+}
+
+.treeview .list-move,
+.treeview .list-enter-active,
+.treeview .list-leave-active {
+  transform-origin: left;
+  transition: transform 250ms, opacity 150ms;
+}
+
+.treeview .list-enter-from,
+.treeview .list-leave-to {
+  opacity: 0;
+  transform: translateX(-1rem);
+  transform: scaleX(0.9);
+}
+
+.treeview .list-leave-active {
+  position: absolute;
 }
 </style>

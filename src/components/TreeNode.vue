@@ -34,9 +34,9 @@ onUpdated(() => {
       </div>
     </div>
     <div class="children-container" :class="{ opened: node.expanded }">
-      <ul>
+      <transition-group tag="ul" name="list">
         <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)"/>
-      </ul>
+      </transition-group>
     </div>
   </li>
 </template>
