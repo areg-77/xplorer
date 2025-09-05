@@ -47,9 +47,11 @@ function createWindow() {
     {
       label: 'View',
       submenu: [
-        { role: 'reload' },
-        { role: 'forceReload' },
-        { type: 'separator' },
+        ...(isDev ? [
+          { role: 'reload' },
+          { role: 'forceReload' },
+          { type: 'separator' },
+        ] : []),
         { role: 'resetZoom' },
         {
           role: 'zoomIn',

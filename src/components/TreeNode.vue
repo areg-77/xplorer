@@ -14,7 +14,7 @@ const selected = computed(() => selectedNodes.value.some(n => n.equals(props.nod
 const emit = defineEmits(['select']);
 
 onUpdated(() => {
-  console.log(`"${props.node.label}" updated`);
+  console.log(`%c"${props.node.label}" updated`, 'color: greenyellow;');
 });
 </script>
 
@@ -30,6 +30,7 @@ onUpdated(() => {
 
         <span class="tree-parameter">id: {{ node.id }}</span>
         <span v-if="node.type !== 'folder'" class="tree-parameter">mime: "{{ node.mimeType }}"</span>
+        <span v-if="node.type !== 'folder'" class="tree-parameter">ext: "{{ node.extension }}"</span>
         <span class="tree-parameter">parent: "{{ node.parent?.label }}"</span>
       </div>
     </div>

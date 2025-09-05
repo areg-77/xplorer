@@ -9,10 +9,10 @@ export class TNodeBase {
     this.type = ref(type);
     this.mimeType = ref(false);
     this.label = ref(label);
-    this.children = [];
+    this.children = reactive([]);
     this.expanded = ref(true);
 
-    watch([this.type, this.label], async ([newType, newLabel]) => {
+    watch([this.type, this.label], ([newType, newLabel]) => {
       if (newType === 'folder')
         this.mimeType.value = false;
       else
@@ -28,6 +28,25 @@ export class TNodeBase {
         newParent.children.push(this);
       }
     });
+
+    watch(() => this.children.map(child => [child.type.value, child.label.value]), () => {
+      console.log(`%csorted "${this.label.value}"`, 'color: yellow;');
+
+      this.children.sort((a, b) => {
+        if (!a || !b) return 0;
+
+        const aType = a.type?.value ?? a.type ?? "";
+        const bType = b.type?.value ?? b.type ?? "";
+        const aLabel = a.label?.value ?? a.label ?? "";
+        const bLabel = b.label?.value ?? b.label ?? "";
+
+        // folders first
+        if (aType === "folder" && bType !== "folder") return -1;
+        if (aType !== "folder" && bType === "folder") return 1;
+
+        return aLabel.localeCompare(bLabel);
+      });
+    }, { deep: true });
 
     children.forEach(child => child.parent = this);
   }
