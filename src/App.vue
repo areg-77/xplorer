@@ -4,7 +4,7 @@ import Tree from './components/Tree.vue';
 
 <template>
   <main class="maingrid">
-    <Tree/>
+    <Tree path="resources/Project"/>
   </main>
 </template>
 

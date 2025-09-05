@@ -10,5 +10,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 contextBridge.exposeInMainWorld("electronAPI", {
+  readFolder: (dirPath) => ipcRenderer.invoke('read-folder', dirPath),
   getMimeType: (filename) => ipcRenderer.invoke('get-mime-type', filename)
 });

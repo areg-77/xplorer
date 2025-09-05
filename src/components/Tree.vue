@@ -1,33 +1,30 @@
 <script setup>
-import { ref, provide, watch } from 'vue';
+import { ref, provide, watch, onMounted } from 'vue';
 import { TNode } from './model/TNode';
 import TreeNode from './TreeNode.vue';
 
-const tree = TNode('Project', 'folder', [
-  TNode('Assets', 'folder', [
-    TNode('Characters', 'folder', [
-      TNode('hero', 'folder', [
-        TNode('hero.fbx', 'file')
-      ])
-    ]),
-    TNode('Environment', 'folder', [
-      TNode('building', 'folder', [
-        TNode('building.fbx', 'file')
-      ])
-    ])
-  ]),
-  TNode('Settings', 'folder', [
-    TNode('graphics.dll', 'file'),
-    TNode('sfx.dll', 'file')
-  ]),
-  TNode('project.json', 'file')
-]);
+const props = defineProps({
+  path: {
+    type: String,
+    required: true
+  }
+});
+
+const tree = ref(null);
+onMounted(async () => {
+  const rawTree = await window.electronAPI.readFolder(props.path);
+  function toTNode(node) {
+    return TNode(node.label, node.type, node.children ? node.children.map(toTNode) : []);
+  }
+  tree.value = toTNode(rawTree);
+});
 
 const selectedNodes = ref([]);
 provide('selectedNodes', selectedNodes);
 
 // for debug
 window.tree = tree;
+window.TNode = TNode;
 window.selectedNodes = selectedNodes;
 
 function handleSelect(node) {
@@ -55,7 +52,7 @@ watch(selectedNodes, () => {
 <template>
   <div class="treeview scroll-buffer" @click="clickAway">
     <transition-group tag="ul" name="list">
-      <TreeNode v-for="node in tree.children" :key="node.id" :node="node" @select="handleSelect"/>
+      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect"/>
     </transition-group>
   </div>
 </template>

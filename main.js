@@ -144,6 +144,33 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
+function readFolder(dirPath) {
+  const items = fs.readdirSync(dirPath, { withFileTypes: true });
+
+  return items.map(item => {
+    const fullPath = path.join(dirPath, item.name);
+    if (item.isDirectory()) {
+      return {
+        label: item.name,
+        type: 'folder',
+        children: readFolder(fullPath)
+      };
+    }
+    return {
+      label: item.name,
+      type: 'file'
+    };
+  });
+}
+
+ipcMain.handle('read-folder', (_, dirPath) => {
+  return {
+    label: path.basename(dirPath),
+    type: 'folder',
+    children: readFolder(dirPath)
+  };
+});
+
 ipcMain.handle('get-mime-type', (_, filename) => {
   return mime.lookup(filename);
 });
