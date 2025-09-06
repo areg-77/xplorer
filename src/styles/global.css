@@ -22,7 +22,7 @@
   --border-light: hsl(0, 0%, 29%);
   --border: hsl(0, 0%, 23%);
   --border-dark: hsl(0, 0%, 18%);
-  --border-radius: 7px;
+  --border-radius: 8px;
 
   --scrollbar: hsl(0, 0%, 31%);
   --scrollbar-hover: hsl(0, 0%, 43%);
