@@ -43,14 +43,27 @@ function clickAway(e) {
 
 function handleDragDrop({ currentNodeId, targetNode }) {
   const currentNode = nodeById(currentNodeId, tree.value);
-  if (currentNode && targetNode && !currentNode.equals(targetNode) && !currentNode.parent?.equals(targetNode))
-    currentNode.parent = targetNode;
+  
+  if (currentNode && targetNode) {
+    if (targetNode.type !== 'folder') targetNode = targetNode.parent;
+    
+    if (!currentNode.equals(targetNode) && !currentNode.parent.equals(targetNode))
+      currentNode.parent = targetNode;
+  }
+}
+
+function handleTreeDrop(e) {
+  e.preventDefault();
+  if (e.target === e.currentTarget) {
+    const currentNodeId = e.dataTransfer.getData('node-Id');
+    handleDragDrop({ currentNodeId, targetNode: tree.value });
+  }
 }
 </script>
 
 <template>
-  <div class="treeview scroll-buffer" @click="clickAway">
-    <transition-group tag="ul" name="list">
+  <div class="treeview scroll-buffer" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent>
+    <transition-group tag="ul" name="list" @dragenter.prevent @dragover.prevent>
       <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @drag-drop="handleDragDrop"/>
     </transition-group>
   </div>
@@ -92,9 +105,9 @@ function handleDragDrop({ currentNodeId, targetNode }) {
 
 .treeview .list-enter-from,
 .treeview .list-leave-to {
-  opacity: 0;
   transform: translateX(-1rem);
   transform: scaleX(0.9);
+  opacity: 0;
 }
 
 .treeview .list-leave-active {

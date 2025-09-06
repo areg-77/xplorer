@@ -36,7 +36,7 @@ onUpdated(() => {
 </script>
 
 <template>
-  <li> 
+  <li @dragenter.prevent @dragover.prevent>
     <div class="tree-node" :class="{ selected: selected }" draggable="true" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="node.expanded = !node.expanded">
         <span class="expander" :class="{ opened: node.expanded }"></span>
