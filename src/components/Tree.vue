@@ -40,19 +40,26 @@ function clickAway(e) {
     selectedNodes.value = [];
 }
 
-// for debug
-watch(selectedNodes, () => {
-  if (selectedNodes.value.length === 2) {
-    selectedNodes.value[0].parent = selectedNodes.value[1];
-    selectedNodes.value = [];
+function handleNodeDrop({ currentNodeId, targetNode }) {
+  function findNodeById(node, id) {
+    if (node.id == currentNodeId) return node;
+    for (const child of node.children) {
+      const found = findNodeById(child, id);
+      if (found) return found;
+    }
+    return null;
   }
-}, { deep: true })
+  const currentNode = findNodeById(tree.value, currentNodeId);
+  if (currentNode && targetNode && currentNode !== targetNode) {
+    currentNode.parent = targetNode;
+  }
+}
 </script>
 
 <template>
   <div class="treeview scroll-buffer" @click="clickAway">
     <transition-group tag="ul" name="list">
-      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect"/>
+      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @drag-drop="handleNodeDrop"/>
     </transition-group>
   </div>
 </template>

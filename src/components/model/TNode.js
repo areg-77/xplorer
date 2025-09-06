@@ -30,6 +30,7 @@ export class TNodeBase {
     });
 
     watch(() => this.children.map(child => [child.type.value, child.label.value]), () => {
+      if (this.children.length <= 1) return;
       console.log(`%csorted "${this.label.value}"`, 'color: yellow;');
 
       this.children.sort((a, b) => {

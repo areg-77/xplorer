@@ -11,7 +11,25 @@ const props = defineProps({
 const selectedNodes = inject('selectedNodes', ref([]));
 const selected = computed(() => selectedNodes.value.some(n => n.equals(props.node)));
 
-const emit = defineEmits(['select']);
+const emit = defineEmits(['select', 'drag-drop']);
+
+function onDragStart(e) {
+  e.dataTransfer.dropEffect = 'move';
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('node-id', props.node.id);
+
+  e.dataTransfer.setData('text/plain', props.node.label);
+
+  const img = document.createElement('img');
+  img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>';
+  e.dataTransfer.setDragImage(img, 0, 0);
+}
+
+function onDrop(e) {
+  e.preventDefault();
+  const draggedId = e.dataTransfer.getData('node-id');
+  emit('drag-drop', { currentNodeId: draggedId, targetNode: props.node });
+}
 
 onUpdated(() => {
   console.log(`%c"${props.node.label}" updated`, 'color: greenyellow;');
@@ -19,8 +37,8 @@ onUpdated(() => {
 </script>
 
 <template>
-  <li>
-    <div class="tree-node" :class="{ selected: selected }">
+  <li> 
+    <div class="tree-node" :class="{ selected: selected }" draggable="true" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="node.expanded = !node.expanded">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
@@ -36,7 +54,7 @@ onUpdated(() => {
     </div>
     <div class="children-container" :class="{ opened: node.expanded }">
       <transition-group tag="ul" name="list">
-        <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)"/>
+        <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)" @drag-drop="$emit('drag-drop', $event)"/>
       </transition-group>
     </div>
   </li>
