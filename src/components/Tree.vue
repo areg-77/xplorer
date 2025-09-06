@@ -1,6 +1,6 @@
 <script setup>
 import { ref, provide, onMounted } from 'vue';
-import { TNode } from './model/TNode';
+import { TNode, nodeById } from './model/TNode';
 import TreeNode from './TreeNode.vue';
 
 const props = defineProps({
@@ -25,6 +25,7 @@ provide('selectedNodes', selectedNodes);
 // for debug
 window.tree = tree;
 window.TNode = TNode;
+window.nodeById = nodeById;
 window.selectedNodes = selectedNodes;
 
 function handleSelect(node) {
@@ -40,26 +41,17 @@ function clickAway(e) {
     selectedNodes.value = [];
 }
 
-function handleNodeDrop({ currentNodeId, targetNode }) {
-  function findNodeById(node, id) {
-    if (node.id == currentNodeId) return node;
-    for (const child of node.children) {
-      const found = findNodeById(child, id);
-      if (found) return found;
-    }
-    return null;
-  }
-  const currentNode = findNodeById(tree.value, currentNodeId);
-  if (currentNode && targetNode && currentNode !== targetNode) {
+function handleDragDrop({ currentNodeId, targetNode }) {
+  const currentNode = nodeById(currentNodeId, tree.value);
+  if (currentNode && targetNode && !currentNode.equals(targetNode) && !currentNode.parent?.equals(targetNode))
     currentNode.parent = targetNode;
-  }
 }
 </script>
 
 <template>
   <div class="treeview scroll-buffer" @click="clickAway">
     <transition-group tag="ul" name="list">
-      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @drag-drop="handleNodeDrop"/>
+      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @drag-drop="handleDragDrop"/>
     </transition-group>
   </div>
 </template>

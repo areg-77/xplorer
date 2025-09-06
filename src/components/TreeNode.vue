@@ -8,10 +8,10 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits(['select', 'drag-drop']);
+
 const selectedNodes = inject('selectedNodes', ref([]));
 const selected = computed(() => selectedNodes.value.some(n => n.equals(props.node)));
-
-const emit = defineEmits(['select', 'drag-drop']);
 
 function onDragStart(e) {
   e.dataTransfer.dropEffect = 'move';
@@ -27,8 +27,7 @@ function onDragStart(e) {
 
 function onDrop(e) {
   e.preventDefault();
-  const draggedId = e.dataTransfer.getData('node-id');
-  emit('drag-drop', { currentNodeId: draggedId, targetNode: props.node });
+  emit('drag-drop', { currentNodeId: e.dataTransfer.getData('node-id'), targetNode: props.node });
 }
 
 onUpdated(() => {
