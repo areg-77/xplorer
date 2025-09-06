@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide, watch, onMounted } from 'vue';
+import { ref, provide, onMounted } from 'vue';
 import { TNode } from './model/TNode';
 import TreeNode from './TreeNode.vue';
 
