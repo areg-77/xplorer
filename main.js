@@ -144,30 +144,34 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
-function readFolder(dirPath) {
-  const items = fs.readdirSync(dirPath, { withFileTypes: true });
+async function readFolder(dirPath) {
+  const items = await fs.promises.readdir(dirPath, { withFileTypes: true });
 
-  return items.map(item => {
+  const children = await Promise.all(items.map(async item => {
     const fullPath = path.join(dirPath, item.name);
+
     if (item.isDirectory()) {
       return {
         label: item.name,
         type: 'folder',
-        children: readFolder(fullPath)
+        children: await readFolder(fullPath)
       };
     }
+
     return {
       label: item.name,
       type: 'file'
     };
-  });
+  }));
+
+  return children;
 }
 
-ipcMain.handle('read-folder', (_, dirPath) => {
+ipcMain.handle('read-folder', async (_, dirPath) => {
   return {
     label: path.basename(dirPath),
     type: 'folder',
-    children: readFolder(dirPath)
+    children: await readFolder(dirPath)
   };
 });
 
