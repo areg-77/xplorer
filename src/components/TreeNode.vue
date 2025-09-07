@@ -8,18 +8,10 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['drag-drop']);
+const emit = defineEmits(['select', 'drag-drop']);
 
 const selectedNodes = inject('selectedNodes', ref([]));
 const selected = computed(() => selectedNodes.value.some(n => n.equals(props.node)));
-
-function handleSelect(node) {
-  const idx = selectedNodes.value.findIndex(n => n.equals(node));
-  if (idx === -1)
-    selectedNodes.value.push(node);
-  else
-    selectedNodes.value.splice(idx, 1);
-}
 
 function onDragStart(e) {
   e.dataTransfer.dropEffect = 'move';
@@ -49,7 +41,7 @@ onUpdated(() => {
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="node.expanded = !node.expanded">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
-      <div class="label-container" @click="handleSelect(props.node)">
+      <div class="label-container" @click="emit('select', props.node)">
         <span :class="['tree-icon', 'icon', node.type, node.mimeType ? node.mimeType.replace('/', ' ') : null, node.extension].filter(Boolean).join(' ')"></span>
         <span class="tree-label">{{ node.label }}</span>
 

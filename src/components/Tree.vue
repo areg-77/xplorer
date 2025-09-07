@@ -11,12 +11,26 @@ const props = defineProps({
 });
 
 const tree = ref(null);
+
+const ctrlCmdPressed = ref(false);
+const shiftPressed = ref(false);
+
 onMounted(async () => {
   const rawTree = await window.electronAPI.readFolder(props.path);
   function toTNode(node) {
     return TNode(node.label, node.type, node.children ? node.children.map(toTNode) : []);
   }
   tree.value = toTNode(rawTree);
+
+  // ctrl/cmd and shift tracking
+  window.addEventListener('keydown', (e) => {
+    ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
+    shiftPressed.value = e.shiftKey;
+  });
+  window.addEventListener('keyup', (e) => {
+    ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
+    shiftPressed.value = e.shiftKey;
+  });
 });
 
 const selectedNodes = inject('selectedNodes', ref([]));
@@ -26,6 +40,18 @@ window.tree = tree;
 window.TNode = TNode;
 window.nodeById = nodeById;
 window.selectedNodes = selectedNodes;
+
+function handleSelect(node) {
+  const idx = selectedNodes.value.findIndex(n => n.equals(node));
+  if (idx === -1) {
+    if (!ctrlCmdPressed.value && !shiftPressed.value)
+      selectedNodes.value = [node];
+    else
+      selectedNodes.value.push(node);
+  }
+  else
+    selectedNodes.value.splice(idx, 1);
+}
 
 function clickAway(e) {
   if (!e.target.closest('.tree-node'))
@@ -55,7 +81,7 @@ function handleTreeDrop(e) {
 <template>
   <div class="treeview scroll-buffer" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent>
     <transition-group tag="ul" name="list">
-      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @drag-drop="handleDragDrop"/>
+      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @drag-drop="handleDragDrop"/>
     </transition-group>
   </div>
 </template>
