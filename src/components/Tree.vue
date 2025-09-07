@@ -69,6 +69,7 @@ function handleTreeDrop(e) {
   font-size: 13px;
 
   overflow: auto;
+  position: relative;
 }
 .treeview.scroll-buffer::after {
   content: "";
