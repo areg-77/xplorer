@@ -1,5 +1,9 @@
 <script setup>
+import { ref, provide } from 'vue';
 import Tree from './components/Tree.vue';
+
+const selectedNodes = ref([]);
+provide('selectedNodes', selectedNodes);
 </script>
 
 <template>

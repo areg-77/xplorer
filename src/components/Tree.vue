@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide, onMounted } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import { TNode, nodeById } from './model/TNode';
 import TreeNode from './TreeNode.vue';
 
@@ -19,22 +19,13 @@ onMounted(async () => {
   tree.value = toTNode(rawTree);
 });
 
-const selectedNodes = ref([]);
-provide('selectedNodes', selectedNodes);
+const selectedNodes = inject('selectedNodes', ref([]));
 
 // for debug
 window.tree = tree;
 window.TNode = TNode;
 window.nodeById = nodeById;
 window.selectedNodes = selectedNodes;
-
-function handleSelect(node) {
-  const idx = selectedNodes.value.findIndex(n => n.equals(node));
-  if (idx === -1)
-    selectedNodes.value.push(node);
-  else
-    selectedNodes.value.splice(idx, 1);
-}
 
 function clickAway(e) {
   if (!e.target.closest('.tree-node'))
@@ -64,7 +55,7 @@ function handleTreeDrop(e) {
 <template>
   <div class="treeview scroll-buffer" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent>
     <transition-group tag="ul" name="list">
-      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @drag-drop="handleDragDrop"/>
+      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @drag-drop="handleDragDrop"/>
     </transition-group>
   </div>
 </template>
