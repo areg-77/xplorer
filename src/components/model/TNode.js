@@ -46,9 +46,23 @@ export class TNodeBase {
     children.forEach(child => child.parent = this);
   }
 
+  parents() {
+    const allParents = [];
+    let currentNode = this.parent;
+    while (currentNode) {
+      allParents.push(currentNode);
+      currentNode = currentNode.parent;
+    }
+    return allParents;
+  }
+
   get extension() {
     if (this.type.value === 'folder') return null;
     return this.label.includes('.') ? this.label.split('.').pop() : null;
+  }
+
+  get path() {
+    return [...this.parents().reverse().map(p => p.label), this.label].join('/');
   }
 
   equals(other) {
