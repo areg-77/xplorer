@@ -1,4 +1,4 @@
-import { ref, reactive, watch } from "vue";
+import { ref, reactive, watch } from 'vue';
 
 let idCounter = 0;
 
@@ -35,7 +35,7 @@ export class TNodeBase {
       if (this.children.length <= 1) return;
       console.log(`%csorted "${this.label.value}"`, 'color: yellow;');
 
-      this.children.sort((a, b) => (b.type === "folder") - (a.type === "folder") || a.label.localeCompare(b.label));
+      this.children.sort((a, b) => (b.type === 'folder') - (a.type === 'folder') || a.label.localeCompare(b.label));
     }, { deep: true });
 
     // auto expand/collapse
@@ -48,7 +48,7 @@ export class TNodeBase {
 
   get extension() {
     if (this.type.value === 'folder') return null;
-    return this.label.split(".").pop();
+    return this.label.includes('.') ? this.label.split('.').pop() : null;
   }
 
   equals(other) {
