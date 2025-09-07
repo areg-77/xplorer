@@ -10,7 +10,7 @@ export class TNodeBase {
     this.label = ref(label);
     this.mimeType = ref(false);
     this.children = reactive([]);
-    this.expanded = ref(true);
+    this.expanded = ref(children.length > 0);
 
     // dynamic mimeType
     watch([this.type, this.label], ([newType, newLabel]) => {
@@ -37,6 +37,11 @@ export class TNodeBase {
 
       this.children.sort((a, b) => (b.type === "folder") - (a.type === "folder") || a.label.localeCompare(b.label));
     }, { deep: true });
+
+    // auto expand/collapse
+    watch(() => this.children.length, len => {
+      this.expanded.value = !(len === 0);
+    });
 
     children.forEach(child => child.parent = this);
   }
