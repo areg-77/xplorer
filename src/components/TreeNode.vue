@@ -26,7 +26,7 @@ function onDragStart(e) {
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('node-id', props.node.id);
 
-  e.dataTransfer.setData('text/plain', props.node.label);
+  e.dataTransfer.setData('text/plain', props.node.path);
 
   const img = document.createElement('img');
   img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>';
@@ -53,10 +53,10 @@ onUpdated(() => {
         <span :class="['tree-icon', 'icon', node.type, node.mimeType ? node.mimeType.replace('/', ' ') : null, node.extension].filter(Boolean).join(' ')"></span>
         <span class="tree-label">{{ node.label }}</span>
 
-        <span class="tree-parameter">id: "{{ node.id }}"</span>
+        <!-- <span class="tree-parameter">id: "{{ node.id }}"</span>
         <span v-if="node.type !== 'folder'" class="tree-parameter">mime: "{{ node.mimeType }}"</span>
         <span v-if="node.type !== 'folder'" class="tree-parameter">ext: "{{ node.extension }}"</span>
-        <span class="tree-parameter">path: "{{ node.path }}"</span>
+        <span class="tree-parameter">path: "{{ node.path }}"</span> -->
       </div>
     </div>
     <div class="children-container" :class="{ opened: node.expanded }">

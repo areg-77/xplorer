@@ -1,6 +1,7 @@
 <script setup>
 import { ref, provide } from 'vue';
 import Tree from './components/Tree.vue';
+import TreeData from './components/TreeData.vue';
 
 const selectedNodes = ref([]);
 provide('selectedNodes', selectedNodes);
@@ -9,6 +10,7 @@ provide('selectedNodes', selectedNodes);
 <template>
   <main class="maingrid">
     <Tree path="resources/Project"/>
+    <TreeData/>
   </main>
 </template>
 
