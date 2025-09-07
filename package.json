@@ -1,6 +1,6 @@
 {
   "name": "xplorer",
-  "version": "6.2.0",
+  "version": "6.2.1",
   "private": true,
   "description": "Files Managing tool",
   "repository": {
@@ -20,6 +20,7 @@
   "build": {
     "appId": "com.areg77.xplorer",
     "productName": "Xplorer",
+    "executableName": "xplorer",
     "files": [
       "dist/**/*",
       "main.js",

@@ -95,6 +95,9 @@ function handleTreeDrop(e) {
   min-width: fit-content;
   overflow: hidden;
 }
+.treeview .children-container:not(.opened) > ul {
+  min-width: 0;
+}
 
 .treeview .list-move,
 .treeview .list-enter-active,
