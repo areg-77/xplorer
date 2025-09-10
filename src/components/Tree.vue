@@ -31,16 +31,35 @@ window.TNode = TNode;
 window.nodeById = nodeById;
 window.selectedNodes = selectedNodes;
 
+function findSelected(node) {
+  return selectedNodes.value.findIndex(n => n.equals(node));
+}
+
+function removeSelected(node) {
+  const idx = findSelected(node);
+  if (idx !== -1) selectedNodes.value.splice(idx, 1);
+}
+
 function handleSelect(node) {
-  const idx = selectedNodes.value.findIndex(n => n.equals(node));
+  const idx = findSelected(node);
   if (idx === -1) {
     if (!ctrlCmdPressed.value && !shiftPressed.value)
       selectedNodes.value = [node];
     else
       selectedNodes.value.push(node);
+
+    // parents/childrens deselecting
+    node.parents().forEach(p => removeSelected(p));
+    node.childrens().forEach(c => removeSelected(c));
   }
-  else
-    selectedNodes.value.splice(idx, 1);
+  else {
+    if (selectedNodes.value.length > 1)
+      selectedNodes.value = [node];
+    else
+      removeSelected(node);
+
+    // todo: fix when ctrl/shift mode cant deselect specific node. it deselects all
+  }
 }
 
 function clickAway(e) {
@@ -63,10 +82,8 @@ function handleDragDrop({ currentNodeId, targetNode }) {
 
 function handleTreeDrop(e) {
   e.preventDefault();
-  if (e.target === e.currentTarget) {
-    const currentNodeId = e.dataTransfer.getData('node-id');
-    handleDragDrop({ currentNodeId, targetNode: tree.value });
-  }
+  if (e.target === e.currentTarget)
+    handleDragDrop({ currentNodeId: e.dataTransfer.getData('node-id'), targetNode: tree.value });
 }
 </script>
 
