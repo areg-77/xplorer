@@ -1,10 +1,28 @@
 <script setup>
-import { ref, provide } from 'vue';
+import { ref, provide, onMounted } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeData from './components/TreeData.vue';
 
 const selectedNodes = ref([]);
 provide('selectedNodes', selectedNodes);
+
+const ctrlCmdPressed = ref(false);
+const shiftPressed = ref(false);
+
+provide('ctrlCmdPressed', ctrlCmdPressed);
+provide('shiftPressed', shiftPressed);
+
+onMounted(() => {
+  // ctrl/cmd and shift tracking
+  window.addEventListener('keydown', (e) => {
+    ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
+    shiftPressed.value = e.shiftKey;
+  });
+  window.addEventListener('keyup', (e) => {
+    ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
+    shiftPressed.value = e.shiftKey;
+  });
+});
 </script>
 
 <template>

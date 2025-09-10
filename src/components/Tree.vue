@@ -11,29 +11,19 @@ const props = defineProps({
 });
 
 const tree = ref(null);
-
-const ctrlCmdPressed = ref(false);
-const shiftPressed = ref(false);
-
 onMounted(async () => {
   const rawTree = await window.electronAPI.readFolder(props.path);
   function toTNode(node) {
     return TNode(node.label, node.type, node.children ? node.children.map(toTNode) : []);
   }
   tree.value = toTNode(rawTree);
-
-  // ctrl/cmd and shift tracking
-  window.addEventListener('keydown', (e) => {
-    ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
-    shiftPressed.value = e.shiftKey;
-  });
-  window.addEventListener('keyup', (e) => {
-    ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
-    shiftPressed.value = e.shiftKey;
-  });
 });
 
-const selectedNodes = inject('selectedNodes', ref([]));
+const [selectedNodes, ctrlCmdPressed, shiftPressed] = [
+  inject('selectedNodes', ref([])),
+  inject('ctrlCmdPressed', ref(false)),
+  inject('shiftPressed', ref(false))
+];
 
 // for debug
 window.tree = tree;
