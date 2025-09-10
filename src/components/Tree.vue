@@ -54,15 +54,17 @@ function handleDragDrop({ currentNodeId, targetNode }) {
   if (currentNode && targetNode) {
     if (targetNode.type !== 'folder') targetNode = targetNode.parent;
     
-    if (!currentNode.equals(targetNode) && !currentNode.parent.equals(targetNode))
+    if (!currentNode.equals(targetNode) && !currentNode.parent.equals(targetNode) && !currentNode.childrens().some(c => c.equals(targetNode))) {
       currentNode.parent = targetNode;
+      console.log(`-> "${currentNode.label}".parent = "${targetNode.label}"`);
+    }
   }
 }
 
 function handleTreeDrop(e) {
   e.preventDefault();
   if (e.target === e.currentTarget) {
-    const currentNodeId = e.dataTransfer.getData('node-Id');
+    const currentNodeId = e.dataTransfer.getData('node-id');
     handleDragDrop({ currentNodeId, targetNode: tree.value });
   }
 }

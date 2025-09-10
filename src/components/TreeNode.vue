@@ -49,6 +49,7 @@ onUpdated(() => {
         <span v-if="node.type !== 'folder'" class="tree-parameter">mime: "{{ node.mimeType }}"</span>
         <span v-if="node.type !== 'folder'" class="tree-parameter">ext: "{{ node.extension }}"</span>
         <span class="tree-parameter">path: "{{ node.path }}"</span> -->
+        <!-- <span class="tree-parameter">childrens: "{{ node.childrens().map(c => c.label) }}"</span> -->
       </div>
     </div>
     <div class="children-container" :class="{ opened: node.expanded }">

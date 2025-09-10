@@ -100,7 +100,7 @@ function createWindow() {
             const nextNumber = (screenshotNumbers.length ? Math.max(...screenshotNumbers) : 0) + 1;
             const screenshotPath = path.join(screenshotsFolder, `screenshot_${nextNumber}.png`);
 
-            // ave screenshot
+            // save screenshot
             win.webContents.capturePage().then((image) => {
               fs.writeFile(screenshotPath, image.toPNG(), (err) => {
                 if (err) {

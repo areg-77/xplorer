@@ -22,7 +22,7 @@ export class TNodeBase {
 
     // dynamic parent
     watch(this.parent, (newParent, oldParent) => {
-      if (newParent.equals(oldParent)) return;
+      if (newParent?.equals(oldParent)) return;
       if (oldParent)
         oldParent.children.splice(oldParent.children.indexOf(this), 1);
 
@@ -54,6 +54,18 @@ export class TNodeBase {
       currentNode = currentNode.parent;
     }
     return allParents;
+  }
+
+  childrens() {
+    const allChildren = [];
+    const collect = (node) => {
+      for (const child of node.children) {
+        allChildren.push(child);
+        collect(child);
+      }
+    };
+    collect(this);
+    return allChildren;
   }
 
   get extension() {
