@@ -41,29 +41,28 @@ function removeSelected(node) {
 }
 
 function handleSelect(node) {
-  const idx = findSelected(node);
-  if (idx === -1) {
+  const select = !selectedNodes.value.some(n => n.equals(node));
+  if (select) {
+    // parents/childrens deselecting
+    node.parents().forEach(p => removeSelected(p));
+    node.childrens().forEach(c => removeSelected(c));
+
     if (!ctrlCmdPressed.value && !shiftPressed.value)
       selectedNodes.value = [node];
     else
       selectedNodes.value.push(node);
-
-    // parents/childrens deselecting
-    node.parents().forEach(p => removeSelected(p));
-    node.childrens().forEach(c => removeSelected(c));
   }
   else {
-    if (selectedNodes.value.length > 1)
+    // selects single node out of multiple selected ones
+    if (!ctrlCmdPressed.value && !shiftPressed.value && selectedNodes.value.length > 1)
       selectedNodes.value = [node];
     else
       removeSelected(node);
-
-    // todo: fix when ctrl/shift mode cant deselect specific node. it deselects all
   }
 }
 
 function clickAway(e) {
-  if (!e.target.closest('.tree-node'))
+  if (!e.target.closest('.tree-node') && !ctrlCmdPressed.value && !shiftPressed.value)
     selectedNodes.value = [];
 }
 
