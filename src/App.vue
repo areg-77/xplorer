@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide, onMounted } from 'vue';
+import { ref, provide, onMounted, watch } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
@@ -7,6 +7,20 @@ import BottomPanel from './components/BottomPanel.vue';
 const selectedNodes = ref([]);
 const lastNode = ref(null);
 provide('selection', { selectedNodes, lastNode });
+
+let lastParentWatcher = null;
+watch(lastNode, (newLastNode) => {
+  if (lastParentWatcher) {
+    lastParentWatcher();
+    lastParentWatcher = null;
+  }
+  
+  if (newLastNode) {
+    lastParentWatcher = watch(newLastNode.parent, () => {
+      lastNode.value = null;
+    }, { immediate: false });
+  }
+}, { immediate: true });
 
 const ctrlCmdPressed = ref(false);
 const shiftPressed = ref(false);

@@ -8,7 +8,7 @@ const { selectedNodes, lastNode } = inject('selection');
   <div class="bottom-panel">
     selectedNodes: {{ selectedNodes.map(s => s.label) }}
     <br/>
-    last: "{{ lastNode?.label }}
+    last: "{{ lastNode?.label }}"
   </div>
 </template>
 
