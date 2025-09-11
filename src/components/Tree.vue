@@ -88,7 +88,7 @@ function handleTreeDrop(e) {
 </script>
 
 <template>
-  <div class="treeview scroll-buffer" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent>
+  <div class="tree-view scroll-buffer" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent>
     <transition-group tag="ul" name="list">
       <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @drag-drop="handleDragDrop"/>
     </transition-group>
@@ -96,7 +96,7 @@ function handleTreeDrop(e) {
 </template>
 
 <style scoped>
-.treeview {
+.tree-view {
   background-color: var(--region-light);
   padding: 1px;
   border: 1px solid var(--border-dark);
@@ -106,7 +106,7 @@ function handleTreeDrop(e) {
   overflow: auto;
   position: relative;
 }
-.treeview.scroll-buffer::after {
+.tree-view.scroll-buffer::after {
   content: "";
   display: block;
   height: 100%;
@@ -116,31 +116,31 @@ function handleTreeDrop(e) {
 </style>
 
 <style>
-.treeview ul {
+.tree-view ul {
   margin: 0;
   padding: 0;
   min-width: fit-content;
   overflow: hidden;
 }
-.treeview .children-container:not(.opened) > ul {
+.tree-view .children-container:not(.opened) > ul {
   min-width: 0;
 }
 
-.treeview .list-move,
-.treeview .list-enter-active,
-.treeview .list-leave-active {
+.tree-view .list-move,
+.tree-view .list-enter-active,
+.tree-view .list-leave-active {
   transform-origin: left;
   transition: transform 250ms, opacity 150ms;
 }
 
-.treeview .list-enter-from,
-.treeview .list-leave-to {
+.tree-view .list-enter-from,
+.tree-view .list-leave-to {
   transform: translateX(-1rem);
   transform: scaleX(0.9);
   opacity: 0;
 }
 
-.treeview .list-leave-active {
+.tree-view .list-leave-active {
   position: absolute;
 }
 </style>

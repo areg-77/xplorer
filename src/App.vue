@@ -2,6 +2,7 @@
 import { ref, provide, onMounted } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeData from './components/TreeData.vue';
+import BottomPanel from './components/BottomPanel.vue';
 
 const selectedNodes = ref([]);
 provide('selectedNodes', selectedNodes);
@@ -30,23 +31,27 @@ onMounted(() => {
     <Tree path="resources/Project"/>
     <TreeData/>
   </main>
+  <BottomPanel/>
 </template>
 
 <style>
-#app {
+#app, .maingrid {
   width: 100%;
   height: 100%;
   margin: 0;
-  padding: 1rem;
   overflow: hidden;
   box-sizing: border-box;
 }
 
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
 .maingrid {
   display: grid;
-  overflow: hidden;
+  padding: 1rem;
   grid-template-columns: 55fr 45fr;
   gap: 0.5rem;
-  height: 100%;
 }
 </style>

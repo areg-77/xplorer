@@ -5,16 +5,16 @@ const selectedNodes = inject('selectedNodes', ref([]));
 </script>
 
 <template>
-  <div class="tree-data">
-    
+  <div class="bottom-panel">
+    selectedNodes: {{ selectedNodes.map(s => s.label) }}
   </div>
 </template>
 
 <style>
-.tree-data {
+.bottom-panel {
+  font-size: 13px;
   background-color: var(--region-light);
   padding: 1px;
-  border: 1px solid var(--border-dark);
-  border-radius: calc(var(--border-radius) + 2px);
+  border-top: 1px solid var(--border-dark);
 }
 </style>
