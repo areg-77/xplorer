@@ -5,7 +5,8 @@ import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
 
 const selectedNodes = ref([]);
-provide('selectedNodes', selectedNodes);
+const lastNode = ref(null);
+provide('selection', { selectedNodes, lastNode });
 
 const ctrlCmdPressed = ref(false);
 const shiftPressed = ref(false);

@@ -1,12 +1,14 @@
 <script setup>
 import { ref, inject } from 'vue';
 
-const selectedNodes = inject('selectedNodes', ref([]));
+const { selectedNodes, lastNode } = inject('selection');
 </script>
 
 <template>
   <div class="bottom-panel">
     selectedNodes: {{ selectedNodes.map(s => s.label) }}
+    <br/>
+    last: "{{ lastNode?.label }}
   </div>
 </template>
 

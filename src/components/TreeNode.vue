@@ -10,7 +10,7 @@ const props = defineProps({
 
 const emit = defineEmits(['select', 'drag-drop']);
 
-const selectedNodes = inject('selectedNodes', ref([]));
+const { selectedNodes } = inject('selection');
 const selected = computed(() => selectedNodes.value.some(n => n.equals(props.node)));
 
 function onDragStart(e) {

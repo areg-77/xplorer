@@ -19,11 +19,8 @@ onMounted(async () => {
   tree.value = toTNode(rawTree);
 });
 
-const [selectedNodes, ctrlCmdPressed, shiftPressed] = [
-  inject('selectedNodes', ref([])),
-  inject('ctrlCmdPressed', ref(false)),
-  inject('shiftPressed', ref(false))
-];
+const { selectedNodes, lastNode } = inject('selection');
+const [ctrlCmdPressed, shiftPressed] = [inject('ctrlCmdPressed'), inject('shiftPressed')];
 
 // for debug
 window.tree = tree;
@@ -31,34 +28,44 @@ window.TNode = TNode;
 window.nodeById = nodeById;
 window.selectedNodes = selectedNodes;
 
-function findSelected(node) {
-  return selectedNodes.value.findIndex(n => n.equals(node));
+function addSelect(node) {
+  if (!selectedNodes.value.some(n => n.equals(node)))
+    selectedNodes.value.push(node);
 }
 
 function removeSelected(node) {
-  const idx = findSelected(node);
+  const idx = selectedNodes.value.findIndex(n => n.equals(node))
   if (idx !== -1) selectedNodes.value.splice(idx, 1);
 }
 
 function handleSelect(node) {
   const select = !selectedNodes.value.some(n => n.equals(node));
-  if (select) {
-    // parents/childrens deselecting
-    node.parents().forEach(p => removeSelected(p));
-    node.childrens().forEach(c => removeSelected(c));
 
-    if (!ctrlCmdPressed.value && !shiftPressed.value)
-      selectedNodes.value = [node];
-    else
-      selectedNodes.value.push(node);
+  // parents/childrens deselecting
+  if (select) {
+    if (ctrlCmdPressed.value || shiftPressed.value) {
+      node.parents().forEach(p => removeSelected(p));
+      node.childrens().forEach(c => removeSelected(c));
+    }
   }
-  else {
-    // selects single node out of multiple selected ones
-    if (!ctrlCmdPressed.value && !shiftPressed.value && selectedNodes.value.length > 1)
-      selectedNodes.value = [node];
-    else
-      removeSelected(node);
+
+  if (ctrlCmdPressed.value)
+    (select ? addSelect(node) : removeSelected(node));
+  else if (shiftPressed.value) {
+    const beginIndex = node.parent.children.findIndex(n => n.equals(lastNode.value));
+    const endIndex = node.parent.children.findIndex(n => n.equals(node));
+
+    if (beginIndex !== -1 && endIndex !== -1) {
+      const [start, stop] = beginIndex < endIndex ? [beginIndex, endIndex] : [endIndex, beginIndex];
+      for (let i = start; i <= stop; i++)
+        (select ? addSelect(node.parent.children[i]) : removeSelected(node.parent.children[i]));
+    }
   }
+  else
+    (select || selectedNodes.value.length > 1 ? selectedNodes.value = [node] : removeSelected(node));
+
+  // assign if selected state actually changed
+  lastNode.value = (select === selectedNodes.value.some(n => n.equals(node)) ? node : null);
 }
 
 function clickAway(e) {
