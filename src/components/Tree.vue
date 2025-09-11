@@ -49,8 +49,10 @@ function handleSelect(node) {
     }
   }
 
-  if (ctrlCmdPressed.value)
+  if (ctrlCmdPressed.value) {
     (select ? addSelect(node) : removeSelected(node));
+    lastNode.value = node;
+  }
   else if (shiftPressed.value) {
     const beginIndex = node.parent.children.findIndex(n => n.equals(lastNode.value));
     const endIndex = node.parent.children.findIndex(n => n.equals(node));
@@ -59,13 +61,18 @@ function handleSelect(node) {
       const [start, stop] = beginIndex < endIndex ? [beginIndex, endIndex] : [endIndex, beginIndex];
       for (let i = start; i <= stop; i++)
         (select ? addSelect(node.parent.children[i]) : removeSelected(node.parent.children[i]));
+      
+      lastNode.value = node;
+    }
+    else if (endIndex !== -1) {
+      (select ? selectedNodes.value = [node] : removeSelected(node));
+      lastNode.value = node;
     }
   }
-  else
+  else {
     (select || selectedNodes.value.length > 1 ? selectedNodes.value = [node] : removeSelected(node));
-
-  // assign if selected state actually changed
-  lastNode.value = (select === selectedNodes.value.some(n => n.equals(node)) ? node : null);
+    lastNode.value = node;
+  }
 }
 
 function clickAway(e) {
