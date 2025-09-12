@@ -73,11 +73,16 @@ function handleSelect(node) {
     (select || selectedNodes.value.length > 1 ? selectedNodes.value = [node] : removeSelected(node));
     lastNode.value = node;
   }
+
+  if (selectedNodes.value.length === 0)
+    lastNode.value = null;
 }
 
 function clickAway(e) {
-  if (!e.target.closest('.tree-node') && !ctrlCmdPressed.value && !shiftPressed.value)
+  if (!e.target.closest('.tree-node') && !ctrlCmdPressed.value && !shiftPressed.value) {
     selectedNodes.value = [];
+    lastNode.value = null;
+  }
 }
 
 function handleDragDrop({ currentNodeId, targetNode }) {
@@ -85,11 +90,16 @@ function handleDragDrop({ currentNodeId, targetNode }) {
   
   if (currentNode && targetNode) {
     if (targetNode.type !== 'folder') targetNode = targetNode.parent;
+    const moveNodes = selectedNodes.value.some(n => n.equals(currentNode)) ? selectedNodes.value : [currentNode];
+    if (selectedNodes.value.some(n => n.equals(currentNode)))
+      lastNode.value = null;
     
-    if (!currentNode.equals(targetNode) && !currentNode.parent.equals(targetNode) && !currentNode.childrens().some(c => c.equals(targetNode))) {
-      currentNode.parent = targetNode;
-      console.log(`-> "${currentNode.label}".parent = "${targetNode.label}"`);
-    }
+    moveNodes.forEach(node => {
+      if (!node.equals(targetNode) && !node.parent.equals(targetNode) && !node.childrens().some(c => c.equals(targetNode))) {
+        node.parent = targetNode;
+        console.log(`-> "${node.label}".parent = "${targetNode.label}"`);
+      }
+    });
   }
 }
 
