@@ -90,7 +90,9 @@ function handleDragDrop({ currentNodeId, targetNode }) {
   
   if (currentNode && targetNode) {
     if (targetNode.type !== 'folder') targetNode = targetNode.parent;
+
     const moveNodes = selectedNodes.value.some(n => n.equals(currentNode)) ? selectedNodes.value : [currentNode];
+    
     if (selectedNodes.value.some(n => n.equals(currentNode)))
       lastNode.value = null;
     
