@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, inject, onUpdated } from 'vue';
+import { computed, inject, onUpdated } from 'vue';
 
 const props = defineProps({
   node: {
@@ -12,6 +12,22 @@ const emit = defineEmits(['select', 'drag-drop']);
 
 const { selectedNodes } = inject('selection');
 const selected = computed(() => selectedNodes.value.some(n => n.equals(props.node)));
+
+const styles = computed(() => {
+  const siblings = props.node.parent?.children || [];
+  const index = siblings.findIndex(n => n.equals(props.node));
+  const prev = selected.value && index > 0 && selectedNodes.value.some(n => n.equals(siblings[index - 1]));
+  const next = selected.value && index < siblings.length - 1 && selectedNodes.value.some(n => n.equals(siblings[index + 1]));
+
+  const nodeStyle = {
+    ...(prev && { borderTopLeftRadius: "0", borderTopRightRadius: "0" }),
+    ...(next && { borderBottomLeftRadius: "0", borderBottomRightRadius: "0" })
+  };
+  
+  return selected.value && props.node.expanded && props.node.children?.length
+    ? { node: { ...nodeStyle, borderBottomRightRadius: "0" }, ul: { borderTopRightRadius: "0" } }
+    : { node: nodeStyle, ul: {} };
+});
 
 function onDragStart(e) {
   e.dataTransfer.dropEffect = 'move';
@@ -37,7 +53,7 @@ onUpdated(() => {
 
 <template>
   <li>
-    <div class="tree-node" :class="{ selected: selected }" draggable="true" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
+    <div class="tree-node" :class="{ selected: selected }" :style="styles.node" draggable="true" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="node.expanded = !node.expanded">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
@@ -53,7 +69,7 @@ onUpdated(() => {
       </div>
     </div>
     <div class="children-container" :class="{ opened: node.expanded }">
-      <transition-group tag="ul" name="list">
+      <transition-group tag="ul" name="list" :style="styles.ul">
         <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)" @drag-drop="$emit('drag-drop', $event)"/>
       </transition-group>
     </div>
@@ -67,11 +83,12 @@ ul {
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
 
-  transition: background-color 200ms;
+  transition: background-color 200ms, border-radius 150ms;
 }
 .tree-node.selected + .children-container > ul {
-  transition-delay: 100ms;
+  transition-delay: 100ms 0ms;
   background-color: var(--secondary-dark);
+  margin-right: 1px; /* might cause a bug */
 }
 
 li {
@@ -89,7 +106,7 @@ li:hover > .children-container {
   border: 1px solid transparent;
   border-radius: var(--border-radius);
 
-  transition: background-color 150ms;
+  transition: background-color 150ms, border-radius 150ms;
 }
 .tree-node:hover {
   background-color: var(--secondary);
