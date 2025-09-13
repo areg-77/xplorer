@@ -1,16 +1,19 @@
 {
   "name": "xplorer",
-  "version": "8.1.0",
-  "private": true,
+  "version": "8.1.1",
   "description": "Files Managing tool",
+  "author": {
+    "name": "areg-77",
+    "email": "aregak10@gmail.com"
+  },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/areg-77/xplorer.git"
   },
-  "license": "MIT",
-  "author": "areg-77",
-  "type": "commonjs",
   "main": "main.js",
+  "type": "commonjs",
+  "private": true,
   "scripts": {
     "dev": "concurrently -k \"vite\" \"wait-on http://localhost:5705 && electron .\"",
     "host": "concurrently -k \"vite --host\" \"wait-on http://localhost:5705 && electron .\"",
@@ -21,6 +24,7 @@
     "appId": "com.areg77.xplorer",
     "productName": "Xplorer",
     "executableName": "xplorer",
+    "artifactName": "${name}-${os}-${arch}-v${version}.${ext}",
     "files": [
       "dist/**/*",
       "main.js",
@@ -29,7 +33,7 @@
     "extraResources": [
       {
         "from": "LICENSE",
-        "to": "../LICENSE.xplorer.txt"
+        "to": "../LICENSE.${name}.txt"
       },
       {
         "from": "resources/Project/",
@@ -44,7 +48,7 @@
     },
     "compression": "normal",
     "win": {
-      "target": "dir",
+      "target": "zip",
       "icon": "dist/icons/icon.ico"
     },
     "linux": {
@@ -70,6 +74,6 @@
     "electron-devtools-installer": "^4.0.0",
     "rimraf": "^6.0.1",
     "vite": "^7.1.5",
-    "wait-on": "^8.0.4"
+    "wait-on": "^8.0.5"
   }
 }
