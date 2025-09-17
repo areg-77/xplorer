@@ -1,10 +1,10 @@
 <script setup>
-import { ref, provide, onMounted, watch } from 'vue';
+import { ref, reactive, provide, onMounted } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
 
-const selectedNodes = ref([]);
+const selectedNodes = reactive([]);
 const lastNode = ref(null);
 provide('selection', { selectedNodes, lastNode });
 

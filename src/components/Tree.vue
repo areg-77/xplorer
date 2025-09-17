@@ -29,17 +29,17 @@ window.nodeById = nodeById;
 window.selectedNodes = selectedNodes;
 
 function addSelect(node) {
-  if (!selectedNodes.value.some(n => n.equals(node)))
-    selectedNodes.value.push(node);
+  if (!selectedNodes.some(n => n.equals(node)))
+    selectedNodes.push(node);
 }
 
 function removeSelected(node) {
-  const idx = selectedNodes.value.findIndex(n => n.equals(node))
-  if (idx !== -1) selectedNodes.value.splice(idx, 1);
+  const idx = selectedNodes.findIndex(n => n.equals(node))
+  if (idx !== -1) selectedNodes.splice(idx, 1);
 }
 
 function handleSelect(node) {
-  const select = !selectedNodes.value.some(n => n.equals(node));
+  const select = !selectedNodes.some(n => n.equals(node));
 
   // parents/childrens deselecting
   if (select) {
@@ -65,22 +65,22 @@ function handleSelect(node) {
       lastNode.value = node;
     }
     else if (endIndex !== -1) {
-      (select ? selectedNodes.value = [node] : removeSelected(node));
+      (select ? selectedNodes.splice(0, selectedNodes.length, node) : removeSelected(node));
       lastNode.value = node;
     }
   }
   else {
-    (select || selectedNodes.value.length > 1 ? selectedNodes.value = [node] : removeSelected(node));
+    (select || selectedNodes.length > 1 ? selectedNodes.splice(0, selectedNodes.length, node) : removeSelected(node));
     lastNode.value = node;
   }
 
-  if (selectedNodes.value.length === 0)
+  if (selectedNodes.length === 0)
     lastNode.value = null;
 }
 
 function clickAway(e) {
   if (!e.target.closest('.tree-node') && !ctrlCmdPressed.value && !shiftPressed.value) {
-    selectedNodes.value = [];
+    selectedNodes.splice(0, selectedNodes.length);
     lastNode.value = null;
   }
 }
@@ -91,9 +91,9 @@ function handleDragDrop({ currentNodeId, targetNode }) {
   if (currentNode && targetNode) {
     if (targetNode.type !== 'folder') targetNode = targetNode.parent;
 
-    const moveNodes = selectedNodes.value.some(n => n.equals(currentNode)) ? selectedNodes.value : [currentNode];
+    const moveNodes = selectedNodes.some(n => n.equals(currentNode)) ? selectedNodes : [currentNode];
     
-    if (selectedNodes.value.some(n => n.equals(currentNode)))
+    if (selectedNodes.some(n => n.equals(currentNode)))
       lastNode.value = null;
     
     moveNodes.forEach(node => {

@@ -11,13 +11,13 @@ const props = defineProps({
 const emit = defineEmits(['select', 'drag-drop']);
 
 const { selectedNodes } = inject('selection');
-const selected = computed(() => selectedNodes.value.some(n => n.equals(props.node)));
+const selected = computed(() => selectedNodes.some(n => n.equals(props.node)));
 
 const styles = computed(() => {
   const siblings = props.node.parent?.children || [];
   const index = siblings.findIndex(n => n.equals(props.node));
-  const prev = selected.value && index > 0 && selectedNodes.value.some(n => n.equals(siblings[index - 1])) && (!siblings[index - 1].expanded || siblings[index - 1].children.count === 0);
-  const next = selected.value && index < siblings.length - 1 && selectedNodes.value.some(n => n.equals(siblings[index + 1])) && (!props.node.expanded || props.node.children.count === 0);
+  const prev = selected.value && index > 0 && selectedNodes.some(n => n.equals(siblings[index - 1])) && (!siblings[index - 1].expanded || siblings[index - 1].children.count === 0);
+  const next = selected.value && index < siblings.length - 1 && selectedNodes.some(n => n.equals(siblings[index + 1])) && (!props.node.expanded || props.node.children.count === 0);
 
   const nodeStyle = {
     ...(prev && { borderTopLeftRadius: "0", borderTopRightRadius: "0" }),
