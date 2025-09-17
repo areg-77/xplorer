@@ -17,6 +17,7 @@ onMounted(async () => {
     return TNode(node.label, node.type, node.children ? node.children.map(toTNode) : []);
   }
   tree.value = toTNode(rawTree);
+  tree.value.path = props.path;
 });
 
 const { selectedNodes, lastNode } = inject('selection');

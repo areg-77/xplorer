@@ -93,7 +93,12 @@ export class TNodeBase {
   }
 
   get path() {
-    return [...this.parents().reverse().map(p => p.label), this.label].join('/');
+    return [(this.parent?.path ?? this._path), this.label].join('/');
+  }
+  set path(customPath) {
+    const parts = customPath.split('/');
+    this.label = parts.pop();
+    this._path = parts.join('/');
   }
 
   equals(other) {
