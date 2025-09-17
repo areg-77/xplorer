@@ -4,7 +4,7 @@ import Tree from './components/Tree.vue';
 import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
 
-const dirPath = [window.electronAPI.dirname, 'resources/Project'].join('/');
+const dirPath = 'D:/_ELECTRON/_XPLORER/Project';
 
 const selectedNodes = reactive([]);
 const lastNode = ref(null);

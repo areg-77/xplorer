@@ -10,7 +10,6 @@ lerna-debug.log*
 bin/
 node_modules/
 screenshots/
-resources/
 dist/
 dist-ssr/
 *.local

@@ -1,6 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const { Titlebar, TitlebarColor } = require('custom-electron-titlebar');
-const path = require('path');
 
 window.addEventListener('DOMContentLoaded', async () => {
   new Titlebar({
@@ -11,7 +10,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 contextBridge.exposeInMainWorld("electronAPI", {
-  dirname: __dirname.replace(/\\/g, '/'),
   readFolder: (dirPath) => ipcRenderer.invoke('read-folder', dirPath),
   getMimeType: (filename) => ipcRenderer.invoke('get-mime-type', filename)
 });
