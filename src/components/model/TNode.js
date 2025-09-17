@@ -1,15 +1,34 @@
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 
 let idCounter = 0;
+
+class VNode {
+  constructor(label) {
+    this.label = ref(label);
+    this.children = reactive([]);
+  }
+}
 
 export class TNodeBase {
   constructor(label, type, children = []) {
     this.id = idCounter++;
     this.parent = ref(null);
+    this.vIndex = ref(0);
+
+    this.node = reactive([new VNode(label)]);
+
+    this.label = computed({
+      get: () => this.node[this.vIndex.value].label,
+      set: (value) => this.node[this.vIndex.value].label = value
+    });
+
+    this.children = computed({
+      get: () => this.node[this.vIndex.value].children,
+      set: (value) => this.node[this.vIndex.value].children.splice(0, arr.length, ...value)
+    });
+
     this.type = ref(type);
-    this.label = ref(label);
     this.mimeType = ref(false);
-    this.children = reactive([]);
     this.expanded = ref(children.length > 0);
 
     // dynamic mimeType
@@ -31,15 +50,15 @@ export class TNodeBase {
     });
 
     // auto sort
-    watch(() => this.children.map(child => [child.type, child.label]), () => {
-      if (this.children.length <= 1) return;
+    watch(() => this.children.value.map(child => [child.type, child.label]), () => {
+      if (this.children.value.length <= 1) return;
       console.log(`%csorted "${this.label.value}"`, 'color: yellow;');
 
-      this.children.sort((a, b) => (b.type === 'folder') - (a.type === 'folder') || a.label.localeCompare(b.label));
+      this.children.value.sort((a, b) => (b.type === 'folder') - (a.type === 'folder') || a.label.localeCompare(b.label));
     }, { deep: true });
 
     // auto expand/collapse
-    watch(() => this.children.length, len => {
+    watch(() => this.children.value.length, len => {
       this.expanded.value = !(len === 0);
     });
 

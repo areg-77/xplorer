@@ -61,10 +61,10 @@ onUpdated(() => {
         <span :class="['tree-icon', 'icon', node.type, node.mimeType ? node.mimeType.replace('/', ' ') : null, node.extension].filter(Boolean).join(' ')"></span>
         <span class="tree-label">{{ node.label }}</span>
 
-        <!-- <span class="tree-parameter">id: "{{ node.id }}"</span>
+        <span class="tree-parameter">id: "{{ node.id }}"</span>
         <span v-if="node.type !== 'folder'" class="tree-parameter">mime: "{{ node.mimeType }}"</span>
-        <span v-if="node.type !== 'folder'" class="tree-parameter">ext: "{{ node.extension }}"</span>
-        <span class="tree-parameter">path: "{{ node.path }}"</span> -->
+        <!-- <span v-if="node.type !== 'folder'" class="tree-parameter">ext: "{{ node.extension }}"</span> -->
+        <span class="tree-parameter">path: "{{ node.path }}"</span>
         <!-- <span class="tree-parameter">childrens: "{{ node.childrens().map(c => c.label) }}"</span> -->
       </div>
     </div>
