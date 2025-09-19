@@ -15,7 +15,7 @@ export class TNodeBase {
     this.parent = ref(null);
     this.vIndex = ref(0);
 
-    this.node = reactive([new VNode(label)]);
+    this.node = reactive([new VNode(label), new VNode('_versiontest')]);
 
     this.label = computed({
       get: () => this.node[this.vIndex.value].label,

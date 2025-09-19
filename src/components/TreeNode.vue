@@ -85,7 +85,7 @@ ul {
 
   transition: background-color 200ms, border-radius 150ms;
 }
-.tree-node.selected + .children-container > ul {
+.tree-node.selected + .children-container.opened > ul {
   transition-delay: 100ms 0ms;
   background-color: var(--secondary-dark);
   margin-right: 1px; /* might cause a bug */
@@ -94,7 +94,7 @@ ul {
 li {
   list-style: none;
 }
-li:hover > .children-container {
+li:hover > .children-container.opened {
   border-color: var(--border-light);
 }
 
