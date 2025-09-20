@@ -152,21 +152,22 @@ function handleTreeDrop(e) {
   min-width: 0;
 }
 
-.tree-view .list-move,
-.tree-view .list-enter-active,
-.tree-view .list-leave-active {
+/* nodes transitions */
+.list-move,
+.list-enter-active,
+.list-leave-active {
   transform-origin: left;
   transition: transform 250ms, opacity 150ms;
 }
 
-.tree-view .list-enter-from,
-.tree-view .list-leave-to {
+.list-enter-from,
+.list-leave-to {
   transform: translateX(-1rem);
   transform: scaleX(0.9);
   opacity: 0;
 }
 
-.tree-view .list-leave-active {
+.list-leave-active {
   position: absolute;
 }
 </style>
