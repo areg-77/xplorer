@@ -79,10 +79,23 @@ function handleSelect(node) {
     lastNode.value = null;
 }
 
+let mousePos = { x: 0, y: 0 };
+function handleMouseDown(e) {
+  if (!e.target.closest('.tree-node'))
+    mousePos = { x: e.clientX, y: e.clientY };
+}
+
 function clickAway(e) {
   if (!e.target.closest('.tree-node') && !ctrlCmdPressed.value && !shiftPressed.value) {
-    selectedNodes.splice(0, selectedNodes.length);
-    lastNode.value = null;
+    const dx = Math.abs(e.clientX - mousePos.x);
+    const dy = Math.abs(e.clientY - mousePos.y);
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // filter accidentally clicking away
+    if (distance < 5) {
+      selectedNodes.splice(0, selectedNodes.length);
+      lastNode.value = null;
+    }
   }
 }
 
@@ -114,7 +127,7 @@ function handleTreeDrop(e) {
 </script>
 
 <template>
-  <div class="tree-view scroll-buffer" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent>
+  <div class="tree-view scroll-buffer" @mousedown="handleMouseDown" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent>
     <transition-group tag="ul" name="list">
       <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @drag-drop="handleDragDrop"/>
     </transition-group>
