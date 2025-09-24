@@ -1,6 +1,6 @@
 import { ref, reactive, computed, watch } from 'vue';
 
-let idCounter = 0;
+let idCounter = 1;
 
 class VNode {
   constructor(label) {
@@ -106,14 +106,29 @@ export class TNodeBase {
   }
 }
 
+function normalizePath(path) {
+  return path.replace(/\\/g, '/');
+}
+
 export function TNode(label, type, children = []) {
   return reactive(new TNodeBase(label, type, children));
 }
 
 export function nodeById(id, tree) {
-  if (tree.id == id) return tree;
+  id = Number(id);
+  if (tree.id === id) return tree;
   for (const child of tree.children) {
     const found = nodeById(id, child);
+    if (found) return found;
+  }
+  return null;
+}
+
+export function nodeByPath(path, tree) {
+  path = normalizePath(path);
+  if (tree.path === path) return tree;
+  for (const child of tree.children) {
+    const found = nodeByPath(path, child);
     if (found) return found;
   }
   return null;
