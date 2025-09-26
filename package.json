@@ -1,6 +1,6 @@
 {
   "name": "xplorer",
-  "version": "10.1.0",
+  "version": "10.1.1",
   "description": "Files Managing tool",
   "author": {
     "name": "areg-77",
@@ -24,7 +24,7 @@
     "appId": "com.areg77.xplorer",
     "productName": "Xplorer",
     "executableName": "xplorer",
-    "artifactName": "${executableName}-${os}-${arch}-v${version}.${ext}",
+    "artifactName": "${name}-${os}-${arch}-v${version}.${ext}",
     "files": [
       "dist/**/*",
       "main.js",
