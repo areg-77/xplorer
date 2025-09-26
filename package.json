@@ -1,6 +1,6 @@
 {
   "name": "xplorer",
-  "version": "10.0.1",
+  "version": "10.1.0",
   "description": "Files Managing tool",
   "author": {
     "name": "areg-77",
@@ -57,7 +57,7 @@
     "chokidar": "^4.0.3",
     "custom-electron-titlebar": "^4.2.8",
     "mime-types": "^3.0.1",
-    "vue": "^3.5.21"
+    "vue": "^3.5.22"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
