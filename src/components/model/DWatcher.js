@@ -21,12 +21,12 @@ class DWatcher {
     this.flushTimer = null;
 
     this.callbacks = {
-      add: options.add || ((e) => this.logEvent('added', e)),
-      delete: options.delete || ((e) => this.logEvent('deleted', e)),
-      rename: options.rename || ((from, to) => this.logEvent('renamed', from, ` ${color.gray}->${color.reset} ${color.bold}${color.white}"${to.path}"${color.reset}`)),
-      move: options.move || ((from, to) => this.logEvent('moved', from, ` ${color.gray}->${color.reset} ${color.bold}${color.white}"${to.path}"${color.reset}`)),
+      initialize: options.initialize || (() => console.log(`${color.gray}${color.bold}${color.blue}directory scan complete${color.reset}`)),
       error: options.error || ((err) => console.log(`${color.red}watcher error: ${color.gray}"${err}"${color.reset}`)),
-      initialize: options.initialize || (() => console.log(`${color.gray}${color.bold}${color.blue}directory scan complete${color.reset}`))
+      add: options.add,
+      delete: options.delete,
+      rename: options.rename,
+      move: options.move
     };
 
     this.watcher = chokidar.watch(this.dirPath, {
@@ -36,21 +36,23 @@ class DWatcher {
       usePolling: true
     });
 
-    this.init();
+    this.watcher
+      .on('all', (event, filePath) => {
+        if (this.isAdd(event) || this.isUnlink(event))
+          this.buffer.push({
+            event,
+            path: filePath,
+            basename: path.basename(filePath),
+            dirname: path.dirname(filePath)
+          });
+        this.scheduleFlush();
+      })
+      .on('error', (error) => this.callbacks.error(error))
+      .on('ready', () => this.callbacks.initialize());
   }
 
   isAdd(event) { return event === 'add' || event === 'addDir'; }
   isUnlink(event) { return event === 'unlink' || event === 'unlinkDir'; }
-
-  logEvent(eventLabel, event, extra = '') {
-    const colors = {
-      added: color.green,
-      deleted: color.red,
-      renamed: color.yellow,
-      moved: color.magenta
-    };
-    console.log(`${colors[eventLabel]}> ${eventLabel}: ${color.bold}${color.white}"${event.path}"${color.reset}${extra}`);
-  }
 
   scheduleFlush() {
     if (this.flushTimer) clearTimeout(this.flushTimer);
@@ -96,22 +98,6 @@ class DWatcher {
 
     this.buffer = [];
     this.flushTimer = null;
-  }
-
-  init() {
-    this.watcher
-      .on('all', (event, filePath) => {
-        if (this.isAdd(event) || this.isUnlink(event))
-          this.buffer.push({
-            event,
-            path: filePath,
-            basename: path.basename(filePath),
-            dirname: path.dirname(filePath)
-          });
-        this.scheduleFlush();
-      })
-      .on('error', (error) => this.callbacks.error(error))
-      .on('ready', () => this.callbacks.initialize());
   }
 }
 
