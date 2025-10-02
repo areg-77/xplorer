@@ -2,9 +2,11 @@ const { contextBridge, ipcRenderer } = require('electron');
 const { Titlebar, TitlebarColor } = require('custom-electron-titlebar');
 const path = require('path');
 
-const isDev = process.env.NODE_ENV !== 'production';
+(async () => {
+  const isDev = await ipcRenderer.invoke('get-is-dev');
 
-const watcher = require(path.join(__dirname, 'native', ...(isDev ? ['build', 'Release'] : []), 'watcher.node'));
+  watcher = require(path.join(__dirname, 'native', ...(isDev ? ['build', 'Release'] : []), 'watcher.node'));
+})();
 
 window.addEventListener('DOMContentLoaded', async () => {
   new Titlebar({
@@ -21,6 +23,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
 contextBridge.exposeInMainWorld('watcher', {
   start: (dir, callback) => {
+    if (!watcher) return;
+    
     watcher.start(dir, (event, _path) => {
       _path = _path.replace(/\\/g, '/');
       const [p1, p2] = _path.split('|');

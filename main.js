@@ -165,6 +165,8 @@ async function readFolder(dirPath) {
   return children;
 }
 
+ipcMain.handle('get-is-dev', () => isDev);
+
 ipcMain.handle('read-folder', async (_, dirPath) => {
   return {
     label: path.basename(dirPath),
