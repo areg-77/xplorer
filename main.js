@@ -8,6 +8,12 @@ const mime = require('mime-types');
 const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production';
 const isMac = process.platform === 'darwin';
 
+const watcher = require(path.join(__dirname, 'native', ...(isDev ? ['build', 'Release'] : []), 'watcher.node'));
+
+watcher.start('D:\\_ELECTRON\\_XPLORER\\ProjectPLAYGROUND', (event, filepath) => {
+  console.log(event, filepath);
+});
+
 setupTitlebar();
 
 function createWindow() {

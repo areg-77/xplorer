@@ -18,31 +18,6 @@ onMounted(async () => {
   }
   tree.value = toTNode(rawTree);
   tree.value.path = props.path;
-
-  window.DWatcher.create(props.path, {
-    add: (e) => {
-      console.log('add:', e.path);
-      const node = new TNode(e.basename, e.event === 'add' ? 'file' : 'folder');
-      const parent = nodeByPath(e.dirname, tree.value);
-      if (node && parent) node.parent = parent;
-    },
-    delete: (e) => {
-      console.log('delete:', e.path);
-      const node = nodeByPath(e.path, tree.value);
-      if (node) node.parent = null;
-    },
-    rename: (from, to) => {
-      console.log('rename:', from.path, '->', to.path);
-      const node = nodeByPath(from.path, tree.value);
-      if (node) node.label = to.basename;
-    },
-    move: (from, to) => {
-      console.log('move:', from.path, '->', to.path);
-      const node = nodeByPath(from.path, tree.value);
-      const newParent = nodeByPath(to.dirname, tree.value);
-      if (node && newParent) node.parent = newParent;
-    }
-  });
 });
 
 const { selectedNodes, lastNode } = inject('selection');
