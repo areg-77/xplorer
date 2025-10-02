@@ -4,7 +4,7 @@ import Tree from './components/Tree.vue';
 import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
 
-const dirPath = 'D:/_ELECTRON/_XPLORER/Project';
+const dir = 'D:/_ELECTRON/_XPLORER/Project';
 
 const selectedNodes = reactive([]);
 const lastNode = ref(null);
@@ -31,7 +31,7 @@ onMounted(() => {
 
 <template>
   <main class="maingrid">
-    <Tree :path="dirPath"/>
+    <Tree :path="dir"/>
     <TreeData/>
   </main>
   <BottomPanel/>

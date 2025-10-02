@@ -18,6 +18,39 @@ onMounted(async () => {
   }
   tree.value = toTNode(rawTree);
   tree.value.path = props.path;
+
+  // dir watcher
+  const eventHandlers = {
+    add: (data) => {
+      console.log(`add: ${data.path}`);
+      const node = new TNode(data.basename, 'file');
+      const parent = nodeByPath(data.dirname, tree.value);
+      if (node && parent) node.parent = parent;
+    },
+    delete: (data) => {
+      console.log(`delete: ${data.path}`);
+      const node = nodeByPath(data.path, tree.value);
+      if (node) node.parent = null;
+    },
+    rename: (data) => { 
+      console.log(`rename: ${data.oldpath} -> ${data.path}`);
+      const node = nodeByPath(data.oldpath, tree.value);
+      if (node) node.label = data.basename;
+    },
+    move: (data) => {
+      console.log(`move: ${data.oldpath} -> ${data.path}`);
+      const node = nodeByPath(data.oldpath, tree.value);
+      const newParent = nodeByPath(data.dirname, tree.value);
+      if (node && newParent) node.parent = newParent;
+    }
+  };
+
+  window.watcher.start(props.path, (event, data) => {
+    const handler = eventHandlers[event] || ((d) => {
+      console.warn(`unhandled event (${event})`, d);
+    });
+    handler(data);
+  });
 });
 
 const { selectedNodes, lastNode } = inject('selection');
