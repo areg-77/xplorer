@@ -15,7 +15,7 @@ struct Event {
 };
 
 std::mutex eventsMutex;
-std::wstring renameOld;
+std::pair<std::wstring, bool> renameOld;
 
 bool SafeIsDir(const std::wstring& path) {
     DWORD attrs = GetFileAttributesW(path.c_str());
@@ -104,13 +104,13 @@ void WatchDirectory(const std::wstring& directory, std::function<void(const std:
         }
         else if (info->Action == FILE_ACTION_RENAMED_OLD_NAME) {
           std::lock_guard<std::mutex> lock(eventsMutex);
-          renameOld = fullPath;
+          renameOld = { fullPath, isDir };
         }
         else if (info->Action == FILE_ACTION_RENAMED_NEW_NAME) {
           std::lock_guard<std::mutex> lock(eventsMutex);
-          if (!renameOld.empty()) {
-            emit(L"rename", renameOld + L"|" + fullPath, isDir);
-            renameOld.clear();
+          if (!renameOld.first.empty()) {
+            emit(L"rename", renameOld.first + L"|" + fullPath, renameOld.second);
+            renameOld = { L"", false };
           }
           else
             emit(L"rename", L"?" + std::wstring(L"|") + fullPath, isDir);
