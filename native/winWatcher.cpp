@@ -10,13 +10,23 @@
 struct Event {
   std::wstring type;
   std::wstring path;
+  bool isDir;
   std::chrono::steady_clock::time_point timestamp;
 };
 
 std::mutex eventsMutex;
 std::wstring renameOld;
 
-void FlushOldEvents(std::vector<Event>& recentEvents, std::function<void(const std::wstring&, const std::wstring&)> emit) {
+bool SafeIsDir(const std::wstring& path) {
+    DWORD attrs = GetFileAttributesW(path.c_str());
+    if (attrs == INVALID_FILE_ATTRIBUTES) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        attrs = GetFileAttributesW(path.c_str());
+    }
+    return (attrs != INVALID_FILE_ATTRIBUTES) && (attrs & FILE_ATTRIBUTE_DIRECTORY);
+}
+
+void FlushOldEvents(std::vector<Event>& recentEvents, std::function<void(const std::wstring&, const std::wstring&, bool)> emit) {
   while (true) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     auto cutoff = std::chrono::steady_clock::now() - std::chrono::milliseconds(500);
@@ -24,7 +34,7 @@ void FlushOldEvents(std::vector<Event>& recentEvents, std::function<void(const s
     std::lock_guard<std::mutex> lock(eventsMutex);
     for (auto it = recentEvents.begin(); it != recentEvents.end();) {
       if (it->timestamp < cutoff) {
-        emit(it->type, it->path);
+        emit(it->type, it->path, it->isDir);
         it = recentEvents.erase(it);
       }
       else
@@ -33,7 +43,7 @@ void FlushOldEvents(std::vector<Event>& recentEvents, std::function<void(const s
   }
 }
 
-void WatchDirectory(const std::wstring& directory, std::function<void(const std::wstring&, const std::wstring&)> emit) {
+void WatchDirectory(const std::wstring& directory, std::function<void(const std::wstring&, const std::wstring&, bool)> emit) {
   HANDLE hDir = CreateFileW(
     directory.c_str(),
     FILE_LIST_DIRECTORY,
@@ -70,6 +80,8 @@ void WatchDirectory(const std::wstring& directory, std::function<void(const std:
         std::wstring fullPath = directory + L"\\" + fileName;
         auto now = std::chrono::steady_clock::now();
 
+        bool isDir = SafeIsDir(fullPath);
+
         if (info->Action == FILE_ACTION_ADDED || info->Action == FILE_ACTION_REMOVED) {
           std::wstring eventType = (info->Action == FILE_ACTION_ADDED) ? L"add" : L"delete";
           bool handled = false;
@@ -79,7 +91,7 @@ void WatchDirectory(const std::wstring& directory, std::function<void(const std:
             auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - it->timestamp).count();
             if (ms < 500) {
               if (eventType == L"add" && it->type == L"delete") {
-                emit(L"move", it->path + L"|" + fullPath);
+                emit(L"move", it->path + L"|" + fullPath, isDir);
                 recentEvents.erase(it);
                 handled = true;
                 break;
@@ -88,7 +100,7 @@ void WatchDirectory(const std::wstring& directory, std::function<void(const std:
           }
 
           if (!handled)
-            recentEvents.push_back({eventType, fullPath, now});
+            recentEvents.push_back({eventType, fullPath, isDir, now});
         }
         else if (info->Action == FILE_ACTION_RENAMED_OLD_NAME) {
           std::lock_guard<std::mutex> lock(eventsMutex);
@@ -97,11 +109,11 @@ void WatchDirectory(const std::wstring& directory, std::function<void(const std:
         else if (info->Action == FILE_ACTION_RENAMED_NEW_NAME) {
           std::lock_guard<std::mutex> lock(eventsMutex);
           if (!renameOld.empty()) {
-            emit(L"rename", renameOld + L"|" + fullPath);
+            emit(L"rename", renameOld + L"|" + fullPath, isDir);
             renameOld.clear();
           }
           else
-            emit(L"rename", L"?" + std::wstring(L"|") + fullPath);
+            emit(L"rename", L"?" + std::wstring(L"|") + fullPath, isDir);
         }
 
         if (info->NextEntryOffset == 0) break;

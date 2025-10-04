@@ -23,7 +23,7 @@ onMounted(async () => {
   const eventHandlers = {
     add: (data) => {
       console.log(`add: ${data.path}`);
-      const node = new TNode(data.basename, 'file');
+      const node = new TNode(data.basename, data.isDir ? 'folder' : 'file');
       const parent = nodeByPath(data.dirname, tree.value);
       if (node && parent) node.parent = parent;
     },

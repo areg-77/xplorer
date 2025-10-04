@@ -4,12 +4,13 @@
 
 Napi::ThreadSafeFunction tsfn;
 
-void EmitEvent(const std::wstring& type, const std::wstring& path) {
+void EmitEvent(const std::wstring& type, const std::wstring& path, bool isDir) {
   if (tsfn) {
-    tsfn.BlockingCall([type, path](Napi::Env env, Napi::Function jsCallback) {
+    tsfn.BlockingCall([type, path, isDir](Napi::Env env, Napi::Function jsCallback) {
       jsCallback.Call({ 
         Napi::String::New(env, std::string(type.begin(), type.end())),
-        Napi::String::New(env, std::string(path.begin(), path.end()))
+        Napi::String::New(env, std::string(path.begin(), path.end())),
+        Napi::Boolean::New(env, isDir)
       });
     });
   }

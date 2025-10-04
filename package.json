@@ -1,6 +1,6 @@
 {
   "name": "xplorer",
-  "version": "12.1.1",
+  "version": "12.1.2",
   "description": "Files Managing tool",
   "author": {
     "name": "areg-77",
@@ -18,7 +18,8 @@
     "dev": "concurrently -k \"vite\" \"wait-on http://localhost:5705 && electron .\"",
     "host": "concurrently -k \"vite --host\" \"wait-on http://localhost:5705 && electron .\"",
     "launch": "vite build && cross-env NODE_ENV=production electron .",
-    "build": "cross-env NODE_ENV=production rimraf bin && vite build && electron-builder"
+    "build": "cross-env NODE_ENV=production rimraf bin && vite build && electron-builder",
+    "build:native": "cd native && npx node-gyp configure build && cd .."
   },
   "build": {
     "appId": "com.areg77.xplorer",
@@ -70,11 +71,11 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
-    "electron": "^38.2.0",
+    "electron": "^38.2.1",
     "electron-builder": "^26.0.12",
     "electron-devtools-installer": "^4.0.0",
     "rimraf": "^6.0.1",
-    "vite": "^7.1.8",
+    "vite": "^7.1.9",
     "wait-on": "^9.0.1"
   }
 }

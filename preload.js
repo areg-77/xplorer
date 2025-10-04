@@ -25,7 +25,7 @@ contextBridge.exposeInMainWorld('watcher', {
   start: (dir, callback) => {
     if (!watcher) return;
     
-    watcher.start(dir, (event, _path) => {
+    watcher.start(dir, (event, _path, isDir) => {
       _path = _path.replace(/\\/g, '/');
       const [p1, p2] = _path.split('|');
       const oldpath = p2 ? p1 : null;
@@ -35,7 +35,8 @@ contextBridge.exposeInMainWorld('watcher', {
         oldpath,
         path: newpath,
         basename: path.basename(newpath),
-        dirname: path.dirname(newpath)
+        dirname: path.dirname(newpath),
+        isDir
       }
       callback(event, data);
     });
