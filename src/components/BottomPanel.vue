@@ -12,7 +12,7 @@ const { selectedNodes, lastNode } = inject('selection');
   </div>
 </template>
 
-<style>
+<style scoped>
 .bottom-panel {
   font-size: 13px;
   background-color: var(--region-light);

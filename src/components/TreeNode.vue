@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject, onUpdated } from 'vue';
 
-const props = defineProps({
+const { node } = defineProps({
   node: {
     type: Object,
     required: true
@@ -11,20 +11,20 @@ const props = defineProps({
 const emit = defineEmits(['select', 'drag-drop']);
 
 const { selectedNodes } = inject('selection');
-const selected = computed(() => selectedNodes.some(n => n.equals(props.node)));
+const selected = computed(() => selectedNodes.some(n => n.equals(node)));
 
 const styles = computed(() => {
-  const siblings = props.node.parent?.children || [];
-  const index = siblings.findIndex(n => n.equals(props.node));
+  const siblings = node.parent?.children || [];
+  const index = siblings.findIndex(n => n.equals(node));
   const prev = selected.value && index > 0 && selectedNodes.some(n => n.equals(siblings[index - 1])) && (!siblings[index - 1].expanded || siblings[index - 1].children.count === 0);
-  const next = selected.value && index < siblings.length - 1 && selectedNodes.some(n => n.equals(siblings[index + 1])) && (!props.node.expanded || props.node.children.count === 0);
+  const next = selected.value && index < siblings.length - 1 && selectedNodes.some(n => n.equals(siblings[index + 1])) && (!node.expanded || node.children.count === 0);
 
   const nodeStyle = {
     ...(prev && { borderTopLeftRadius: "0", borderTopRightRadius: "0" }),
     ...(next && { borderBottomLeftRadius: "0", borderBottomRightRadius: "0" })
   };
   
-  return selected.value && props.node.expanded && props.node.children?.length
+  return selected.value && node.expanded && node.children?.length
     ? { node: { ...nodeStyle, borderBottomRightRadius: "0" }, ul: { borderTopRightRadius: "0" } }
     : { node: nodeStyle, ul: {} };
 });
@@ -32,9 +32,9 @@ const styles = computed(() => {
 function onDragStart(e) {
   e.dataTransfer.dropEffect = 'move';
   e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('node-id', props.node.id);
+  e.dataTransfer.setData('node-id', node.id);
 
-  e.dataTransfer.setData('text/plain', props.node.path);
+  e.dataTransfer.setData('text/plain', node.path);
 
   const img = document.createElement('img');
   img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>';
@@ -43,11 +43,11 @@ function onDragStart(e) {
 
 function onDrop(e) {
   e.preventDefault();
-  emit('drag-drop', { currentNodeId: e.dataTransfer.getData('node-id'), targetNode: props.node });
+  emit('drag-drop', { currentNodeId: e.dataTransfer.getData('node-id'), targetNode: node });
 }
 
 onUpdated(() => {
-  console.log(`%c"${props.node.label}" updated`, 'color: greenyellow;');
+  console.log(`%c"${node.label}" updated`, 'color: greenyellow;');
 });
 </script>
 
@@ -57,7 +57,7 @@ onUpdated(() => {
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="node.expanded = !node.expanded">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
-      <div class="label-container" @click="emit('select', props.node)">
+      <div class="label-container" @click="emit('select', node)">
         <span :class="['tree-icon', 'icon', node.type, node.mimeType ? node.mimeType.replace('/', ' ') : null, node.extension].filter(Boolean).join(' ')"></span>
         <span class="tree-label">{{ node.label }}</span>
 
