@@ -1,8 +1,11 @@
 <script setup>
-import { ref, reactive, provide, onMounted } from 'vue';
+import { ref, reactive, provide, onMounted, onBeforeUnmount } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
+import DataField from './components/DataField.vue';
+import DataGroup from './components/DataGroup.vue';
+import DataText from './components/DataText.vue';
 
 const dir = 'D:/_ELECTRON/_XPLORER/Project';
 
@@ -18,13 +21,17 @@ provide('shiftPressed', shiftPressed);
 
 onMounted(() => {
   // ctrl/cmd and shift tracking
-  window.addEventListener('keydown', (e) => {
+  const handleKeyHold = (e) => {
     ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
     shiftPressed.value = e.shiftKey;
-  });
-  window.addEventListener('keyup', (e) => {
-    ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
-    shiftPressed.value = e.shiftKey;
+  }
+  
+  window.addEventListener('keydown', handleKeyHold);
+  window.addEventListener('keyup', handleKeyHold);
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleKeyHold);
+    window.removeEventListener('keyup', handleKeyHold);
   });
 });
 </script>
@@ -32,7 +39,28 @@ onMounted(() => {
 <template>
   <main class="maingrid">
     <Tree :path="dir"/>
-    <TreeData/>
+    <TreeData>
+      <DataGroup label="Properties" icon="ui properties">
+        <DataField label="Name">
+          <DataText :value="selectedNodes[0]?.label"/>
+        </DataField>
+        <DataField label="Type">
+          <DataText :value="selectedNodes[0]?.type"/>
+        </DataField>
+      </DataGroup>
+
+      <DataGroup label="Developer" icon="ui code">
+        <DataField label="Parent">
+          <DataText :value="selectedNodes[0]?.parent?.label"/>
+        </DataField>
+        <DataField label="Id">
+          <DataText :value="selectedNodes[0]?.id"/>
+        </DataField>
+        <DataField label="VersionIndex">
+          <DataText :value="selectedNodes[0]?.vIndex"/>
+        </DataField>
+      </DataGroup>
+    </TreeData>
   </main>
   <BottomPanel/>
 </template>

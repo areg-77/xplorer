@@ -22,10 +22,14 @@
   --border-light: hsl(0, 0%, 29%);
   --border: hsl(0, 0%, 23%);
   --border-dark: hsl(0, 0%, 18%);
+  --border-darker: hsl(0, 0%, 15%);
   --border-radius: 8px;
 
   --scrollbar: hsl(0, 0%, 31%);
   --scrollbar-hover: hsl(0, 0%, 43%);
+
+  --control-padding-1: 2px 5px;
+  --control-padding-2: 3px 5px;
 
   font-family: 'Funnel Sans', sans-serif;
   font-weight: normal;
