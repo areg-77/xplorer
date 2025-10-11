@@ -11,6 +11,7 @@
 <style>
 .tree-data {
   display: flex;
+  overflow-y: auto;
   flex-direction: column;
   gap: 0.5rem;
   background-color: var(--region-light);

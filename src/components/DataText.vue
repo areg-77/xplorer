@@ -16,13 +16,14 @@ const { value } = defineProps({
 .data-text {
   flex: 1;
   font-size: 13px;
-  background-color: var(--region);;
+  background-color: var(--region);
+  color: var(--fg-dark);
   border: 1px solid var(--border-darker);
   display: flex;
   overflow: hidden;
   align-items: center;
   height: 100%;
-  border-radius: calc(var(--border-radius) - 2px);
+  border-radius: calc(var(--border-radius) - 2px) !important;
   padding: 0 0.4em;
 }
 </style>

@@ -59,6 +59,9 @@ onMounted(() => {
         <DataField label="VersionIndex">
           <DataText :value="selectedNodes[0]?.vIndex"/>
         </DataField>
+        <DataField label="Tree" direction="vertical">
+          <Tree :path="dir"/>
+        </DataField>
       </DataGroup>
     </TreeData>
   </main>

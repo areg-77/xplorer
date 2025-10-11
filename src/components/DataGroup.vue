@@ -14,11 +14,11 @@ const expanded = ref(true);
 
 <template>
   <div class="data-group" :class="{ expanded }">
-    <div class="group-label" @click="expanded = !expanded" :class="{ expanded }">
+    <div class="group-label" @click="expanded = !expanded">
       <span v-if="icon" class="icon" :class="icon"></span>
       {{ label }}
     </div>
-    <div class="children-container" :class="{ expanded }">
+    <div class="children-container">
       <div class="group-children">
         <slot></slot>
       </div>
@@ -42,23 +42,24 @@ const expanded = ref(true);
 }
 
 .group-label {
+  cursor: pointer;
   display: flex;
   gap: 0.3em;
   align-items: center;
-  background-color: var(--secondary);
+  background-color: var(--secondary-light);
   border: 1px solid var(--border);
   padding: var(--control-padding-2);
   border-radius: calc(var(--border-radius));
 
   transition: background-color 150ms, border-radius 200ms;
 }
-.group-label.expanded {
+.data-group.expanded .group-label {
   border-radius: calc(var(--border-radius) + 3px + 3px);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 .group-label:hover {
-  background-color: var(--secondary-light);
+  background-color: var(--secondary-lighter);
   border-color: var(--border-light);
 }
 .group-label:active {
@@ -73,7 +74,7 @@ const expanded = ref(true);
 
   transition: grid-template-rows 200ms;
 }
-.children-container.expanded {
+.data-group.expanded .children-container {
   grid-template-rows: 1fr;
 }
 
@@ -83,8 +84,7 @@ const expanded = ref(true);
   overflow: hidden;
   flex-direction: column;
   gap: 3px;
-  background-color: var(--region-light);
-  border: 1px solid var(--border-dark);
+  background-color: var(--region);
   padding: 3px;
   border-radius: calc(var(--border-radius) + 3px + 3px);
   border-top-left-radius: 0;
@@ -92,7 +92,7 @@ const expanded = ref(true);
 
   transition: margin-top 200ms;
 }
-.children-container:not(.expanded) > .group-children {
+.data-group:not(.expanded) .group-children {
   margin-top: -10px;
 }
 </style>

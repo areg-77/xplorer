@@ -169,6 +169,7 @@ function handleTreeDrop(e) {
 
 <style scoped>
 .tree-view {
+  width: 100%;
   background-color: var(--region-light);
   padding: 1px;
   border: 1px solid var(--border-dark);
@@ -177,6 +178,7 @@ function handleTreeDrop(e) {
 
   overflow: auto;
   position: relative;
+  box-sizing: border-box;
 }
 .tree-view.scroll-buffer::after {
   content: "";
