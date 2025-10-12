@@ -30,7 +30,7 @@ const expanded = ref(true);
 .data-group {
   display: flex;
   flex-direction: column;
-  background-color: var(--region);
+  background-color: var(--region-light);
   border: 1px solid var(--border-darker);
   padding: 3px;
   border-radius: calc(var(--border-radius) + 3px);
@@ -38,7 +38,7 @@ const expanded = ref(true);
   transition: border-radius 200ms;
 }
 .data-group.expanded {
-  border-radius: calc(var(--border-radius) + 3px + 3px + 3px);
+  border-radius: calc(var(--border-radius) + 6px + 3px);
 }
 
 .group-label {
@@ -54,7 +54,7 @@ const expanded = ref(true);
   transition: background-color 150ms, border-radius 200ms;
 }
 .data-group.expanded .group-label {
-  border-radius: calc(var(--border-radius) + 3px + 3px);
+  border-radius: calc(var(--border-radius) + 6px);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -83,16 +83,17 @@ const expanded = ref(true);
   display: flex;
   overflow: hidden;
   flex-direction: column;
-  gap: 3px;
-  background-color: var(--region);
-  padding: 3px;
-  border-radius: calc(var(--border-radius) + 3px + 3px);
+  gap: 0.5rem;
+  background-color: var(--region-light);
+  border: 1px solid var(--border-dark);
+  padding: 6px;
+  border-radius: calc(var(--border-radius) + 6px);
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 
   transition: margin-top 200ms;
 }
 .data-group:not(.expanded) .group-children {
-  margin-top: -10px;
+  margin-top: -1em;
 }
 </style>

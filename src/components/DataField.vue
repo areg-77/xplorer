@@ -27,9 +27,7 @@ const { label, direction } = defineProps({
   display: flex;
   flex-shrink: 0;
   overflow: hidden;
-  background-color: var(--region);
-  padding: 3px;
-  border-radius: calc(var(--border-radius) + 3px);
+  border-radius: calc(var(--border-radius));
 }
 .data-field.horizontal {
   flex-direction: row;
