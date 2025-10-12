@@ -41,30 +41,30 @@ onMounted(() => {
     <Tree :path="dir"/>
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
-        <DataField label="Name" slot-border-radius-offset="-2px">
+        <DataField label="Name">
           <DataText :value="selectedNodes[0]?.label" border-radius-mask="0110"/>
         </DataField>
-        <DataField label="Type" slot-border-radius-offset="-2px">
+        <DataField label="Type">
           <DataText :value="selectedNodes[0]?.type" border-radius-mask="0110"/>
         </DataField>
       </DataGroup>
 
       <DataGroup label="Developer" icon="ui code">
-        <DataField label="Id" slot-border-radius-offset="-2px">
+        <DataField label="Id">
           <DataText :value="selectedNodes[0]?.id" border-radius-mask="0110"/>
         </DataField>
-        <DataField label="Node" slot-border-radius-offset="-2px">
+        <DataField label="Node">
           <DataText :value="selectedNodes[0]?.node.map(n => n.label)" border-radius-mask="0110"/>
         </DataField>
-        <DataField label="VersionIndex" slot-border-radius-offset="-2px">
+        <DataField label="VersionIndex">
           <DataText :value="selectedNodes[0]?.vIndex" border-radius-mask="0110"/>
         </DataField>
-        <DataField label="Parent" slot-border-radius-offset="-2px">
+        <DataField label="Parent">
           <DataText :value="selectedNodes[0]?.parent?.label" border-radius-mask="0110"/>
         </DataField>
-        <DataField label="Tree" direction="vertical" border-radius-offset="2px">
+        <!-- <DataField label="Tree" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
           <Tree :path="dir"/>
-        </DataField>
+        </DataField> -->
       </DataGroup>
     </TreeData>
   </main>

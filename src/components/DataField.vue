@@ -9,7 +9,10 @@ const { label, direction } = defineProps({
     default: 'horizontal'
   },
   borderRadiusOffset: String,
-  slotBorderRadiusOffset: String,
+  slotBorderRadiusOffset: {
+    type: String,
+    default: '-2px'
+  }
 });
 </script>
 
@@ -70,12 +73,10 @@ const { label, direction } = defineProps({
 .data-field.horizontal .data-value {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  /* border-left: none; */
 }
 .data-field.vertical .data-value {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  /* border-top: none; */
 }
 
 .data-value.slot-br > * {
