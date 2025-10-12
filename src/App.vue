@@ -41,25 +41,28 @@ onMounted(() => {
     <Tree :path="dir"/>
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
-        <DataField label="Name">
+        <DataField label="Name" slot-border-radius-offset="-2px">
           <DataText :value="selectedNodes[0]?.label"/>
         </DataField>
-        <DataField label="Type">
+        <DataField label="Type" slot-border-radius-offset="-2px">
           <DataText :value="selectedNodes[0]?.type"/>
         </DataField>
       </DataGroup>
 
       <DataGroup label="Developer" icon="ui code">
-        <DataField label="Parent">
-          <DataText :value="selectedNodes[0]?.parent?.label"/>
-        </DataField>
-        <DataField label="Id">
+        <DataField label="Id" slot-border-radius-offset="-2px">
           <DataText :value="selectedNodes[0]?.id"/>
         </DataField>
-        <DataField label="VersionIndex">
+        <DataField label="Node" slot-border-radius-offset="-2px">
+          <DataText :value="selectedNodes[0]?.node.map(n => n.label)"/>
+        </DataField>
+        <DataField label="VersionIndex" slot-border-radius-offset="-2px">
           <DataText :value="selectedNodes[0]?.vIndex"/>
         </DataField>
-        <DataField label="Tree" direction="vertical">
+        <DataField label="Parent" slot-border-radius-offset="-2px">
+          <DataText :value="selectedNodes[0]?.parent?.label"/>
+        </DataField>
+        <DataField label="Tree" direction="vertical" border-radius-offset="2px">
           <Tree :path="dir"/>
         </DataField>
       </DataGroup>

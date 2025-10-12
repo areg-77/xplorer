@@ -23,7 +23,7 @@ const { value } = defineProps({
   overflow: hidden;
   align-items: center;
   height: 100%;
-  border-radius: calc(var(--border-radius) - 2px) !important;
+  border-radius: var(--border-radius);
   padding: 0 0.4em;
 }
 </style>
