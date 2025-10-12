@@ -94,6 +94,6 @@ const expanded = ref(true);
   transition: margin-top 200ms;
 }
 .data-group:not(.expanded) .group-children {
-  margin-top: -1em;
+  margin-top: -1rem;
 }
 </style>

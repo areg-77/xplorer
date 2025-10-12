@@ -57,9 +57,13 @@ onUpdated(() => {
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="node.expanded = !node.expanded">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
-      <div class="label-container" @click="emit('select', node)">
+      <div class="content-container" @click="emit('select', node)">
         <span :class="['tree-icon', 'icon', node.type, node.mimeType ? node.mimeType.replace('/', ' ') : null, node.extension].filter(Boolean).join(' ')"></span>
-        <span class="tree-label">{{ node.label }}</span>
+        <div class="label-container">
+          <transition name="label-scroll">
+            <span class="tree-label" :key="node.label">{{ node.label }}</span>
+          </transition>
+        </div>
 
         <!-- <span class="tree-parameter">id: "{{ node.id }}"</span> -->
         <!-- <span v-if="node.type !== 'folder'" class="tree-parameter">mime: "{{ node.mimeType }}"</span> -->
@@ -146,7 +150,7 @@ li:hover > .children-container.opened {
   transform: rotate(45deg);
 }
 
-.label-container {
+.content-container {
   flex: 1;
   display: flex;
   align-items: center;
@@ -190,5 +194,35 @@ li:hover > .children-container.opened {
 .children-container.opened {
   grid-template-rows: 1fr;
   opacity: 1;
+}
+
+.label-container {
+  position: relative;
+  overflow: hidden;
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+.label-scroll-enter-active,
+.label-scroll-leave-active {
+  transition: transform 250ms;
+}
+
+.label-scroll-enter-from {
+  transform: translateY(-100%);
+}
+
+.label-scroll-enter-to,
+.label-scroll-leave-from {
+  transform: translateY(0);
+}
+
+.label-scroll-leave-to {
+  transform: translateY(100%);
+}
+
+.label-scroll-leave-active {
+  position: absolute;
 }
 </style>
