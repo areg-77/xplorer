@@ -29,6 +29,7 @@ const { label, direction } = defineProps({
   display: flex;
   flex-shrink: 0;
   overflow: hidden;
+  gap: 3px;
   border-radius: calc(var(--border-radius) + var(--border-radius-offset));
 }
 .data-field.horizontal {
@@ -69,12 +70,12 @@ const { label, direction } = defineProps({
 .data-field.horizontal .data-value {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  border-left: none;
+  /* border-left: none; */
 }
 .data-field.vertical .data-value {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  border-top: none;
+  /* border-top: none; */
 }
 
 .data-value.slot-br > * {

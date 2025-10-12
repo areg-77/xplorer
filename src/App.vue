@@ -42,25 +42,25 @@ onMounted(() => {
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
         <DataField label="Name" slot-border-radius-offset="-2px">
-          <DataText :value="selectedNodes[0]?.label"/>
+          <DataText :value="selectedNodes[0]?.label" border-radius-mask="0110"/>
         </DataField>
         <DataField label="Type" slot-border-radius-offset="-2px">
-          <DataText :value="selectedNodes[0]?.type"/>
+          <DataText :value="selectedNodes[0]?.type" border-radius-mask="0110"/>
         </DataField>
       </DataGroup>
 
       <DataGroup label="Developer" icon="ui code">
         <DataField label="Id" slot-border-radius-offset="-2px">
-          <DataText :value="selectedNodes[0]?.id"/>
+          <DataText :value="selectedNodes[0]?.id" border-radius-mask="0110"/>
         </DataField>
         <DataField label="Node" slot-border-radius-offset="-2px">
-          <DataText :value="selectedNodes[0]?.node.map(n => n.label)"/>
+          <DataText :value="selectedNodes[0]?.node.map(n => n.label)" border-radius-mask="0110"/>
         </DataField>
         <DataField label="VersionIndex" slot-border-radius-offset="-2px">
-          <DataText :value="selectedNodes[0]?.vIndex"/>
+          <DataText :value="selectedNodes[0]?.vIndex" border-radius-mask="0110"/>
         </DataField>
         <DataField label="Parent" slot-border-radius-offset="-2px">
-          <DataText :value="selectedNodes[0]?.parent?.label"/>
+          <DataText :value="selectedNodes[0]?.parent?.label" border-radius-mask="0110"/>
         </DataField>
         <DataField label="Tree" direction="vertical" border-radius-offset="2px">
           <Tree :path="dir"/>
