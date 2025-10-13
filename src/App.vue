@@ -42,10 +42,13 @@ onMounted(() => {
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
         <DataField label="Name">
-          <DataText :value="selectedNodes[0]?.label" border-radius-mask="0110"/>
+          <DataText :value="selectedNodes[0]?.label" @set:value="val => selectedNodes[0] && (selectedNodes[0].label = val)" border-radius-mask="0110" editable/>
         </DataField>
         <DataField label="Type">
           <DataText :value="selectedNodes[0]?.type" border-radius-mask="0110"/>
+        </DataField>
+        <DataField label="Mime">
+          <DataText :value="selectedNodes[0]?.mimeType" border-radius-mask="0110"/>
         </DataField>
       </DataGroup>
 
