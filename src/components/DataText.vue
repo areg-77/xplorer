@@ -1,9 +1,14 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 
-const { value, borderRadiusMask, editable } = defineProps({
+const { value, setMode, borderRadiusMask, editable } = defineProps({
   value: {
     required: true
+  },
+  setMode: {
+    type: String,
+    default: 'enter',
+    validator: v => ['live', 'enter'].includes(v)
   },
   borderRadiusMask: {
     type: String,
@@ -19,23 +24,44 @@ const borderRadiusStyle = computed(() => {
   return Object.fromEntries(corners.map((corner, i) => mask[i] === '0' ? [`border${corner}Radius`, '0 !important'] : null).filter(Boolean));
 });
 
-const emit = defineEmits(['set:value']);
-const contentRef = ref(null);
+const emit = defineEmits(['setvalue']);
+const valueRef = ref(null);
 
 // if value was changed outside
 watch(() => value, (newVal) => {
   const text = newVal ?? '';
-  if (contentRef.value && contentRef.value.innerText !== text)
-    contentRef.value.innerText = text;
+  if (valueRef.value && valueRef.value.innerText !== text)
+    valueRef.value.innerText = text;
 });
 
 function onInput() {
-  emit('set:value', contentRef.value?.innerText ?? '');
+  if (setMode === 'live') {
+    emit('setvalue', valueRef.value?.innerText ?? '');
+  }
+}
+
+function onKeyDown(e) {
+  if (setMode === 'enter' && e.key === 'Enter') {
+    e.preventDefault();
+    emit('setvalue', valueRef.value?.innerText ?? '');
+    valueRef.value?.blur();
+  }
+  else if (e.key === 'Escape') {
+    e.preventDefault();
+    cancelEdit();
+    valueRef.value?.blur();
+  }
+}
+
+function cancelEdit() {
+  if (setMode === 'enter' && valueRef.value && value) valueRef.value.innerText = value;
 }
 </script>
 
 <template>
-  <span ref="contentRef" class="data-text" :style="borderRadiusStyle" :contenteditable="editable" spellcheck="false" @input="onInput"></span>
+  <div class="data-text" :style="borderRadiusStyle">
+    <span ref="valueRef" :contenteditable="editable" spellcheck="false" @input="onInput" @keydown="onKeyDown" @blur="cancelEdit"></span>
+  </div>
 </template>
 
 <style scoped>
@@ -43,19 +69,34 @@ function onInput() {
   flex: 1;
   font-size: 13px;
   background-color: var(--region);
-  color: var(--fg-dark);
   border: 1px solid var(--border-darker);
   display: flex;
   overflow: hidden;
-  overflow-x: auto;
-  scroll-behavior: smooth;
   align-items: center;
-  white-space: nowrap;
   height: 100%;
   border-radius: var(--border-radius);
   padding: 0 0.3em;
+
+  transition: border-color 200ms;
 }
-.data-text::-webkit-scrollbar {
+.data-text:has(> span:focus) {
+  border-color: var(--border);
+}
+
+.data-text > span {
+  flex: 1;
+  color: var(--fg-dark);
+  overflow: hidden;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  white-space: nowrap;
+
+  transition: color 200ms;
+}
+.data-text > span::-webkit-scrollbar {
   display: none;
+}
+.data-text > span:focus {
+  color: var(--fg);
 }
 </style>

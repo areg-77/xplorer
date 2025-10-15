@@ -42,7 +42,7 @@ onMounted(() => {
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
         <DataField label="Name">
-          <DataText :value="selectedNodes[0]?.label" @set:value="val => selectedNodes[0] && (selectedNodes[0].label = val)" border-radius-mask="0110" editable/>
+          <DataText :value="selectedNodes[0]?.label" @setvalue="val => selectedNodes[0] && (selectedNodes[0].label = val)" border-radius-mask="0110" :editable="!!selectedNodes[0]"/>
         </DataField>
         <DataField label="Type">
           <DataText :value="selectedNodes[0]?.type" border-radius-mask="0110"/>
@@ -57,7 +57,7 @@ onMounted(() => {
           <DataText :value="selectedNodes[0]?.id" border-radius-mask="0110"/>
         </DataField>
         <DataField label="Node">
-          <DataText :value="selectedNodes[0]?.node.map(n => n.label)" border-radius-mask="0110"/>
+          <DataText :value="selectedNodes[0] ? `[${selectedNodes[0].node.map(n => n.label).join(', ')}]` : ''" border-radius-mask="0110"/>
         </DataField>
         <DataField label="VersionIndex">
           <DataText :value="selectedNodes[0]?.vIndex" border-radius-mask="0110"/>

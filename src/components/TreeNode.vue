@@ -8,7 +8,7 @@ const { node } = defineProps({
   }
 });
 
-const emit = defineEmits(['select', 'drag-drop']);
+const emit = defineEmits(['select', 'dragdrop']);
 
 const { selectedNodes } = inject('selection');
 const selected = computed(() => selectedNodes.some(n => n.equals(node)));
@@ -43,7 +43,7 @@ function onDragStart(e) {
 
 function onDrop(e) {
   e.preventDefault();
-  emit('drag-drop', { currentNodeId: e.dataTransfer.getData('node-id'), targetNode: node });
+  emit('dragdrop', { currentNodeId: e.dataTransfer.getData('node-id'), targetNode: node });
 }
 
 onUpdated(() => {
@@ -74,7 +74,7 @@ onUpdated(() => {
     </div>
     <div class="children-container" :class="{ opened: node.expanded }">
       <transition-group tag="ul" name="list" :style="styles.ul">
-        <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)" @drag-drop="$emit('drag-drop', $event)"/>
+        <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)" @dragdrop="$emit('dragdrop', $event)"/>
       </transition-group>
     </div>
   </li>

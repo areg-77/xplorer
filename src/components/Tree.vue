@@ -162,7 +162,7 @@ function handleTreeDrop(e) {
 <template>
   <div class="tree-view scroll-buffer" @mousedown="handleMouseDown" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent>
     <transition-group tag="ul" name="list">
-      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @drag-drop="handleDragDrop"/>
+      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @dragdrop="handleDragDrop"/>
     </transition-group>
   </div>
 </template>
