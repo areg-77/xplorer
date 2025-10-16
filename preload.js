@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 contextBridge.exposeInMainWorld("electronAPI", {
   readFolder: (dir) => ipcRenderer.invoke('read-folder', dir),
-  getMimeType: (filename) => ipcRenderer.invoke('get-mime-type', filename)
+  getMimeType: (filename) => ipcRenderer.invoke('get-mime-type', filename),
 });
 
 contextBridge.exposeInMainWorld('watcher', {
@@ -41,4 +41,8 @@ contextBridge.exposeInMainWorld('watcher', {
       callback(event, data);
     });
   }
+});
+
+contextBridge.exposeInMainWorld("explorer", {
+  rename: (oldPath, newPath) => ipcRenderer.invoke('explorer-rename', oldPath, newPath)
 });

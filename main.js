@@ -178,3 +178,7 @@ ipcMain.handle('read-folder', async (_, dirPath) => {
 ipcMain.handle('get-mime-type', (_, filename) => {
   return mime.lookup(filename);
 });
+
+ipcMain.handle('explorer-rename', (_, oldPath, newPath) => {
+  return fs.promises.rename(oldPath, newPath);
+});

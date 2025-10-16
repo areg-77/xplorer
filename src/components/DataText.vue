@@ -40,9 +40,12 @@ function onInput() {
   }
 }
 
+let committed = false;
+
 function onKeyDown(e) {
   if (setMode === 'enter' && e.key === 'Enter') {
     e.preventDefault();
+    committed = true;
     emit('setvalue', valueRef.value?.innerText ?? '');
     valueRef.value?.blur();
   }
@@ -54,7 +57,9 @@ function onKeyDown(e) {
 }
 
 function cancelEdit() {
-  if (setMode === 'enter' && valueRef.value && value) valueRef.value.innerText = value;
+  if (!committed && setMode === 'enter' && valueRef.value && value)
+    valueRef.value.innerText = value;
+  committed = false;
 }
 </script>
 

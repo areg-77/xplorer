@@ -34,6 +34,14 @@ onMounted(() => {
     window.removeEventListener('keyup', handleKeyHold);
   });
 });
+
+function pathDir(path) {
+  return path.substring(0, path.lastIndexOf('/'));
+}
+
+function renameNode(path, value) {
+  window.explorer.rename(path, pathDir(path) + '/' + value);
+}
 </script>
 
 <template>
@@ -42,7 +50,11 @@ onMounted(() => {
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
         <DataField label="Name">
-          <DataText :value="selectedNodes[0]?.label" @setvalue="val => selectedNodes[0] && (selectedNodes[0].label = val)" border-radius-mask="0110" :editable="!!selectedNodes[0]"/>
+          <DataText :value="selectedNodes[0]?.label" @setvalue="val => {
+            if (selectedNodes[0])
+              renameNode(selectedNodes[0].path, val);
+          }"
+          border-radius-mask="0110" :editable="!!selectedNodes[0]"/>
         </DataField>
         <DataField label="Type">
           <DataText :value="selectedNodes[0]?.type" border-radius-mask="0110"/>
