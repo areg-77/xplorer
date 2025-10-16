@@ -112,8 +112,8 @@ void WatchDirectory(const std::wstring& directory, std::function<void(const std:
             emit(L"rename", renameOld.first + L"|" + fullPath, renameOld.second);
             renameOld = { L"", false };
           }
-          else
-            emit(L"rename", L"?" + std::wstring(L"|") + fullPath, isDir);
+          // else
+          //   emit(L"rename", L"?" + std::wstring(L"|") + fullPath, isDir);
         }
 
         if (info->NextEntryOffset == 0) break;
