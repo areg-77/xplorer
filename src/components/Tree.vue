@@ -144,10 +144,8 @@ function handleDragDrop({ currentNodeId, targetNode }) {
       lastNode.value = null;
     
     moveNodes.forEach(node => {
-      if (!node.equals(targetNode) && !node.parent.equals(targetNode) && !node.childrens().some(c => c.equals(targetNode))) {
-        node.parent = targetNode;
-        console.log(`-> "${node.label}".parent = "${targetNode.label}"`);
-      }
+      if (!node.equals(targetNode) && !node.parent.equals(targetNode) && !node.childrens().some(c => c.equals(targetNode)))
+        window.explorer.rename(node.path, targetNode.path + '/' + node.label);
     });
   }
 }
