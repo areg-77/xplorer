@@ -50,11 +50,13 @@ function renameNode(path, value) {
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
         <DataField label="Name">
-          <DataText :value="selectedNodes[0]?.label" @setvalue="val => {
-            if (selectedNodes[0])
-              renameNode(selectedNodes[0].path, val);
-          }"
-          border-radius-mask="0110" :editable="!!selectedNodes[0]"/>
+          <div v-if="selectedNodes[0] && tempNode" class="icon" :class="[tempNode.type, tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension].filter(Boolean).join(' ')"></div>
+          <DataText :value="selectedNodes[0]?.label"
+            @setvalue="val => {
+              if (selectedNodes[0])
+                renameNode(selectedNodes[0].path, val);
+            }"
+            border-radius-mask="0110" :editable="!!selectedNodes[0]"/>
         </DataField>
         <DataField label="Type">
           <DataText :value="selectedNodes[0]?.type" border-radius-mask="0110"/>

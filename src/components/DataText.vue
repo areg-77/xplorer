@@ -24,7 +24,7 @@ const borderRadiusStyle = computed(() => {
   return Object.fromEntries(corners.map((corner, i) => mask[i] === '0' ? [`border${corner}Radius`, '0 !important'] : null).filter(Boolean));
 });
 
-const emit = defineEmits(['setvalue']);
+const emit = defineEmits(['setvalue', 'livevalue']);
 const valueRef = ref(null);
 
 // if value was changed outside
@@ -35,9 +35,11 @@ watch(() => value, (newVal) => {
 });
 
 function onInput() {
-  if (setMode === 'live') {
-    emit('setvalue', valueRef.value?.innerText ?? '');
-  }
+  const text = valueRef.value?.innerText ?? '';
+  
+  emit('livevalue', text);
+  if (setMode === 'live')
+    emit('setvalue', text);
 }
 
 let committed = false;
