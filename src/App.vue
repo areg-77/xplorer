@@ -36,7 +36,7 @@ onMounted(() => {
 });
 
 function pathDir(path) {
-  return path.substring(0, path.lastIndexOf('/'));
+  return path.substring(0, Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\')));
 }
 
 function renameNode(path, value) {
@@ -72,7 +72,7 @@ function renameNode(path, value) {
           <DataText :value="selectedNodes[0] ? `[${selectedNodes[0].node.map(n => n.label).join(', ')}]` : ''" border-radius-mask="0110"/>
         </DataField>
         <DataField label="VersionIndex">
-          <DataText :value="selectedNodes[0]?.vIndex" border-radius-mask="0110"/>
+          <DataText :value="selectedNodes[0]?.vIndex" @setvalue="val => selectedNodes[0] && (selectedNodes[0].vIndex = val)" border-radius-mask="0110" :editable="!!selectedNodes[0]"/>
         </DataField>
         <DataField label="Parent">
           <DataText :value="selectedNodes[0]?.parent?.label" border-radius-mask="0110"/>

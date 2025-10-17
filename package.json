@@ -1,6 +1,6 @@
 {
   "name": "xplorer",
-  "version": "12.9.0",
+  "version": "12.9.1",
   "description": "Files Managing tool",
   "author": {
     "name": "areg-77",
@@ -19,7 +19,7 @@
     "host": "concurrently -k \"vite --host\" \"wait-on http://localhost:5705 && electron .\"",
     "launch": "vite build && cross-env NODE_ENV=production electron .",
     "build": "cross-env NODE_ENV=production rimraf bin && vite build && electron-builder",
-    "build:native": "cd native && npx node-gyp configure build && cd .."
+    "build:native": "cd native && rimraf build node_modules && npx node-gyp configure build && cd .."
   },
   "build": {
     "appId": "com.areg77.xplorer",
