@@ -43,7 +43,24 @@ function createWindow() {
   const menu = Menu.buildFromTemplate([
     ...(isMac ? [{ role: 'appMenu' }] : []),
     { role: 'fileMenu' },
-    { role: 'editMenu' },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'delete' },
+        { type: 'separator' },
+        {
+          label: 'Select All',
+          accelerator: 'CmdOrCtrl+A',
+          click: () => win.webContents.send('menu-select-all')
+        }
+      ]
+    },
     {
       label: 'View',
       submenu: [
@@ -173,6 +190,11 @@ ipcMain.handle('read-folder', async (_, dirPath) => {
     type: 'folder',
     children: await readFolder(dirPath)
   };
+});
+
+ipcMain.on('menu-select-all', (event) => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (win) win.webContents.send('menu-select-all');
 });
 
 ipcMain.handle('get-mime-type', (_, filename) => {

@@ -19,6 +19,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 contextBridge.exposeInMainWorld("electronAPI", {
   readFolder: (dir) => ipcRenderer.invoke('read-folder', dir),
   getMimeType: (filename) => ipcRenderer.invoke('get-mime-type', filename),
+  onSelectAll: (callback) => ipcRenderer.on('menu-select-all', callback),
+  sendToMain: (channel, data) => ipcRenderer.send(channel, data)
 });
 
 contextBridge.exposeInMainWorld('watcher', {

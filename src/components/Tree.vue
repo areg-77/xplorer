@@ -51,6 +51,12 @@ onMounted(async () => {
     });
     handler(data);
   });
+
+  // select sibilings when pressing ctrl+a
+  window.electronAPI.onSelectAll(() => {
+    if (document.activeElement === treeRef.value && selectedNodes.at(-1))
+      selectedNodes.at(-1).parent.children.forEach(c => addSelect(c));
+  });
 });
 
 const { selectedNodes, lastNode } = inject('selection');
@@ -115,6 +121,14 @@ function handleSelect(node) {
     lastNode.value = null;
 }
 
+const treeRef = ref(null);
+function handleKeyDown(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+    e.preventDefault();
+    window.electronAPI.sendToMain('menu-select-all');
+  }
+}
+
 let mousePos = { x: 0, y: 0 };
 function handleMouseDown(e) {
   if (!e.target.closest('.tree-node'))
@@ -159,7 +173,7 @@ function handleTreeDrop(e) {
 </script>
 
 <template>
-  <div class="tree-view scroll-buffer" @mousedown="handleMouseDown" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent>
+  <div class="tree-view scroll-buffer" @mousedown="handleMouseDown" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent @keydown="handleKeyDown" ref="treeRef" tabindex="0">
     <transition-group tag="ul" name="list">
       <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @deselect="removeSelected" @dragdrop="handleDragDrop"/>
     </transition-group>
