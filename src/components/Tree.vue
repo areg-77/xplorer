@@ -143,10 +143,8 @@ function handleDragDrop({ currentNodeId, targetNode }) {
     if (selectedNodes.some(n => n.equals(currentNode)))
       lastNode.value = null;
     
-    moveNodes.forEach(node => {
-      if (!node.equals(targetNode) && !node.parent.equals(targetNode) && !node.childrens().some(c => c.equals(targetNode)))
-        window.explorer.rename(node.path, targetNode.path + '/' + node.label);
-    });
+    if (moveNodes.every(node => !node.equals(targetNode) && !node.parent.equals(targetNode) && !node.childrens().some(c => c.equals(targetNode))))
+      moveNodes.forEach(node => window.explorer.rename(node.path, targetNode.path + '/' + node.label));
   }
 }
 
