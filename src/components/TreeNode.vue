@@ -8,7 +8,7 @@ const { node } = defineProps({
   }
 });
 
-const emit = defineEmits(['select', 'dragdrop']);
+const emit = defineEmits(['select', 'deselect', 'dragdrop']);
 
 const { selectedNodes } = inject('selection');
 const selected = computed(() => selectedNodes.some(n => n.equals(node)));
@@ -28,6 +28,11 @@ const styles = computed(() => {
     ? { node: { ...nodeStyle, borderBottomRightRadius: "0" }, ul: { borderTopRightRadius: "0" } }
     : { node: nodeStyle, ul: {} };
 });
+
+function toggleExpand() {
+  node.expanded = !node.expanded;
+  node.childrens().forEach(c => emit('deselect', c));
+}
 
 function onDragStart(e) {
   e.dataTransfer.dropEffect = 'move';
@@ -54,7 +59,7 @@ onUpdated(() => {
 <template>
   <li :key="node.vIndex">
     <div class="tree-node" :class="{ selected: selected }" :style="styles.node" draggable="true" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
-      <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="node.expanded = !node.expanded">
+      <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="toggleExpand">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
       <div class="content-container" @click="emit('select', node)">
@@ -74,7 +79,7 @@ onUpdated(() => {
     </div>
     <div class="children-container" :class="{ opened: node.expanded }">
       <transition-group tag="ul" name="list" :style="styles.ul">
-        <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)" @dragdrop="$emit('dragdrop', $event)"/>
+        <TreeNode v-for="child in node.children" :key="child.id" :node="child" @select="$emit('select', $event)" @deselect="$emit('deselect', $event)" @dragdrop="$emit('dragdrop', $event)"/>
       </transition-group>
     </div>
   </li>

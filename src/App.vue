@@ -45,9 +45,11 @@ function renameNode(path, value) {
 }
 
 const tempNode = ref(null);
-watch(() => selectedNodes[0], s => {
-  tempNode.value = selectedNodes[0];
-});
+watch(() => selectedNodes.slice(), s => {
+  tempNode.value = s[0] || null;
+  s.forEach(node => node.parents().forEach(p => p.expanded = true));
+},
+{ deep: true });
 
 const invalidChars = `\\/:?"<>|\n`;
 </script>
