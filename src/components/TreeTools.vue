@@ -3,6 +3,10 @@ import { ref, inject } from 'vue';
 import DataText from './DataText.vue';
 
 const { selectedNodes } = inject('selection');
+
+function deleteSelected() {
+  Promise.all(selectedNodes.map(s => window.explorer.delete(s.path)));
+}
 </script>
 
 <template>
@@ -21,7 +25,7 @@ const { selectedNodes } = inject('selection');
 
     <div class="divider"></div>
 
-    <button class="icon danger">
+    <button class="icon danger" @click="deleteSelected">
       <span class="icon ui delete"></span>
     </button>
 

@@ -201,6 +201,14 @@ ipcMain.handle('get-mime-type', (_, filename) => {
   return mime.lookup(filename);
 });
 
+ipcMain.handle('explorer-delete', async (_, targetPath) => {
+  const stats = await fs.promises.stat(targetPath);
+
+  return stats.isDirectory() ? 
+    await fs.promises.rm(targetPath, { recursive: true, force: true }) :
+    await fs.promises.unlink(targetPath)
+});
+
 ipcMain.handle('explorer-rename', (_, oldPath, newPath) => {
   return fs.promises.rename(oldPath, newPath);
 });

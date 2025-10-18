@@ -46,5 +46,6 @@ contextBridge.exposeInMainWorld('watcher', {
 });
 
 contextBridge.exposeInMainWorld("explorer", {
+  delete: (targetPath) => ipcRenderer.invoke('explorer-delete', targetPath),
   rename: (oldPath, newPath) => ipcRenderer.invoke('explorer-rename', oldPath, newPath)
 });
