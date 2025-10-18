@@ -11,7 +11,7 @@ const { label, direction } = defineProps({
   borderRadiusOffset: String,
   slotBorderRadiusOffset: {
     type: String,
-    default: '-2px'
+    default: '-1px'
   }
 });
 </script>
@@ -68,7 +68,7 @@ const { label, direction } = defineProps({
   background-color: var(--region-light);
   border: 1px solid var(--border-dark);
   border-radius: calc(var(--border-radius) + var(--border-radius-offset));
-  padding: 2px;
+  padding: 1px;
 }
 .data-field.horizontal .data-value {
   border-top-left-radius: 0;

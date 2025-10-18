@@ -47,6 +47,10 @@ body {
   overflow: hidden;
 }
 
+::selection {
+  background-color: color-mix(in srgb, var(--fg) 27%, transparent);
+}
+
 :focus {
   outline: none;
 }

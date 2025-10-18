@@ -99,7 +99,7 @@ function cancelEdit() {
   <div class="data-text" :style="borderRadiusStyle">
     <div class="value-container">
       <slot></slot>
-      <div class="text-value" ref="valueRef" :contenteditable="editable" spellcheck="false" @input="onInput" @keydown="onKeyDown" @blur="cancelEdit"></div>
+      <div class="value" ref="valueRef" :contenteditable="editable" spellcheck="false" @input="onInput" @keydown="onKeyDown" @blur="cancelEdit"></div>
     </div>
   </div>
 </template>
@@ -111,11 +111,12 @@ function cancelEdit() {
   background-color: var(--region);
   border: 1px solid var(--border-darker);
   height: 100%;
+  box-sizing: border-box;
   border-radius: var(--border-radius);
 
   transition: border-color 200ms;
 }
-.data-text:has(.value-container > .text-value:focus) {
+.data-text:has(.value-container > .value:focus) {
   border-color: var(--border);
 }
 
@@ -131,22 +132,22 @@ function cancelEdit() {
 
   transition: opacity 200ms;
 }
-.value-container:has(> .text-value:focus) {
+.value-container:has(> .value:focus) {
   border-color: var(--border);
   opacity: 1;
 }
 
-.value-container > .text-value {
+.value-container > .value {
   flex: 1;
   overflow: hidden;
   overflow-x: auto;
   scroll-behavior: smooth;
   white-space: nowrap;
 }
-.value-container > .text-value::-webkit-scrollbar {
+.value-container > .value::-webkit-scrollbar {
   display: none;
 }
-.value-container > .text-value:focus {
+.value-container > .value:focus {
   opacity: 1;
 }
 </style>
