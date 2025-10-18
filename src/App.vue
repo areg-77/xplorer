@@ -81,7 +81,7 @@ const invalidChars = `\\/:?"<>|\n`;
           <DataText :value="selectedNodes[0]?.type" border-radius-mask="0110"/>
         </DataField>
         <DataField label="Mime">
-          <DataText :value="selectedNodes[0]?.mimeType" border-radius-mask="0110"/>
+          <DataText :value="tempNode?.mimeType" border-radius-mask="0110"/>
         </DataField>
       </DataGroup>
 

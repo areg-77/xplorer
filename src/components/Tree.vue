@@ -70,6 +70,9 @@ function addSelect(node) {
 function removeSelected(node) {
   const idx = selectedNodes.findIndex(n => n.equals(node))
   if (idx !== -1) selectedNodes.splice(idx, 1);
+  
+  if (selectedNodes.length === 0)
+    lastNode.value = null;
 }
 
 function handleSelect(node) {
