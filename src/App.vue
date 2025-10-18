@@ -48,6 +48,8 @@ const tempNode = ref(null);
 watch(() => selectedNodes[0], s => {
   tempNode.value = selectedNodes[0];
 });
+
+const invalidChars = `\\/:?"<>|\n`;
 </script>
 
 <template>
@@ -56,7 +58,7 @@ watch(() => selectedNodes[0], s => {
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
         <DataField label="Name">
-          <DataText :value="selectedNodes[0]?.label"
+          <DataText :value="selectedNodes[0]?.label" :invalid-chars="invalidChars"
             @setvalue="val => {
               if (selectedNodes[0])
                 renameNode(selectedNodes[0].path, val);

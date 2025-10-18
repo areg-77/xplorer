@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 
-const { value, setMode, borderRadiusMask, editable } = defineProps({
+const { value, setMode, invalidChars, borderRadiusMask, editable } = defineProps({
   value: {
     required: true
   },
@@ -9,6 +9,10 @@ const { value, setMode, borderRadiusMask, editable } = defineProps({
     type: String,
     default: 'enter',
     validator: v => ['live', 'enter'].includes(v)
+  },
+  invalidChars: {
+    type: String,
+    default: ''
   },
   borderRadiusMask: {
     type: String,
@@ -34,9 +38,26 @@ watch(() => value, (newVal) => {
     valueRef.value.innerText = text;
 });
 
-function onInput() {
-  const text = valueRef.value?.innerText ?? '';
+function sanitizeText(text) {
+  if (!invalidChars) return text;
+  const regex = new RegExp(`[${invalidChars.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&')}]`, 'g');
+  return text.replace(regex, '');
+}
 
+function onInput() {
+  if (!valueRef.value) return;
+  let text = valueRef.value.innerText ?? '';
+  const sanitized = sanitizeText(text);
+  if (sanitized !== text) {
+    valueRef.value.innerText = sanitized;
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.selectNodeContents(valueRef.value);
+    range.collapse(false);
+    sel?.removeAllRanges();
+    sel?.addRange(range);
+    text = sanitized;
+  }
   emit('livevalue', text);
   if (setMode === 'live')
     emit('setvalue', text);
@@ -45,6 +66,11 @@ function onInput() {
 let committed = false;
 
 function onKeyDown(e) {
+  if (invalidChars && invalidChars.includes(e.key)) {
+    e.preventDefault();
+    return;
+  }
+
   if (setMode === 'enter' && e.key === 'Enter') {
     e.preventDefault();
     committed = true;
@@ -94,6 +120,7 @@ function cancelEdit() {
 }
 
 .value-container {
+  color: var(--fg);
   opacity: 0.7;
   font-size: 13px;
   display: flex;
@@ -111,7 +138,6 @@ function cancelEdit() {
 
 .value-container > .text-value {
   flex: 1;
-  color: var(--fg);
   overflow: hidden;
   overflow-x: auto;
   scroll-behavior: smooth;
