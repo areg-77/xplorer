@@ -59,9 +59,13 @@ function onKeyDown(e) {
 }
 
 function cancelEdit() {
-  if (!committed && setMode === 'enter' && valueRef.value && value)
+  if (!committed && setMode === 'enter' && valueRef.value && value && valueRef.value.innerText !== value) {
     valueRef.value.innerText = value;
+    emit('livevalue', value);
+  }
   committed = false;
+  const selection = window.getSelection();
+  if (selection) selection.removeAllRanges();
 }
 </script>
 

@@ -58,7 +58,7 @@ onUpdated(() => {
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
       <div class="content-container" @click="emit('select', node)">
-        <span class="tree-icon icon" :class="[node.type, node.mimeType ? node.mimeType.replace('/', ' ') : null, node.extension].filter(Boolean).join(' ')"></span>
+        <span class="tree-icon icon" :class="[node.type, ...(node.type !== 'folder' ? [node.mimeType ? node.mimeType.replace('/', ' ') : null, node.extension] : [])].filter(Boolean).join(' ')"></span>
         <div class="label-container">
           <transition name="label-scroll">
             <span class="tree-label" :key="node.label">{{ node.label }}</span>

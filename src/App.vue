@@ -45,12 +45,9 @@ function renameNode(path, value) {
 }
 
 const tempNode = ref(null);
-watch(() => selectedNodes.length, len => {
-  if (len > 0)
-    tempNode.value = selectedNodes[0];
-  else
-  tempNode.value = null;
-})
+watch(() => selectedNodes[0], s => {
+  tempNode.value = selectedNodes[0];
+});
 </script>
 
 <template>
@@ -69,7 +66,7 @@ watch(() => selectedNodes.length, len => {
                 tempNode = new TNode(val, selectedNodes[0].type);
             }"
             border-radius-mask="0110" :editable="!!selectedNodes[0]">
-            <div v-if="selectedNodes[0] && tempNode" class="icon" :class="[tempNode.type, tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension].filter(Boolean).join(' ')"></div>
+            <div v-if="selectedNodes[0] && tempNode" class="icon" :class="[tempNode.type, ...(tempNode.type !== 'folder' ? [tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension] : [])].filter(Boolean).join(' ')"></div>
           </DataText>
         </DataField>
         <DataField label="Type">
