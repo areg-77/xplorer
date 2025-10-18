@@ -1,0 +1,76 @@
+button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--secondary);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius);
+  padding: var(--control-padding-1);
+  cursor: pointer;
+
+  transition: background-color 250ms, opacity 200ms;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+button:not(:disabled):hover {
+  background-color: var(--secondary-light);
+  border-color: var(--border-light);
+}
+button:not(:disabled):active {
+  transition-duration: 100ms;
+  background-color: var(--secondary);
+  border-color: var(--border);
+}
+
+button.icon {
+  border-color: transparent;
+  background-color: var(--secondary-dark);
+  padding-inline: 3px;
+}
+button:not(:disabled).icon:hover {
+  border-color: var(--border-light);
+  background-color: var(--secondary-light);
+}
+button:not(:disabled).icon:active {
+  transition-duration: 100ms;
+  background-color: var(--secondary);
+  border-color: var(--border);
+}
+
+button.danger {
+  color: var(--danger-fg);
+  background-color: var(--danger-region-dark);
+}
+button.danger:not(.icon) {
+  border-color: var(--danger-region);
+}
+button:not(:disabled).danger:hover {
+  border-color: var(--danger-region-light);
+  background-color: var(--danger-region);
+}
+button:not(:disabled).danger:active {
+  transition-duration: 100ms;
+  border-color: var(--danger-region);
+  background-color: var(--danger-region-dark);
+}
+
+button.version {
+  color: var(--version-fg);
+  background-color: var(--version-region-dark);
+}
+button.version:not(.icon) {
+  border-color: var(--version-region);
+}
+button:not(:disabled).version:hover {
+  border-color: var(--version-region-light);
+  background-color: var(--version-region);
+}
+button:not(:disabled).version:active {
+  transition-duration: 100ms;
+  border-color: var(--version-region);
+  background-color: var(--version-region-dark);
+}

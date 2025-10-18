@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 
-const { value, setMode, invalidChars, borderRadiusMask, editable } = defineProps({
+const { value, setMode, invalidChars, borderRadiusMask, fontSize, editable } = defineProps({
   value: {
     required: true
   },
@@ -18,14 +18,26 @@ const { value, setMode, invalidChars, borderRadiusMask, editable } = defineProps
     type: String,
     default: '1111'
   },
+  fontSize: {
+    type: String,
+    default: '13px'
+  },
   editable: Boolean
 });
 
-const borderRadiusStyle = computed(() => {
+const dataTextStyle = computed(() => {
   const corners = ['TopLeft', 'TopRight', 'BottomRight', 'BottomLeft'];
   const mask = borderRadiusMask.padEnd(4, '1');
 
-  return Object.fromEntries(corners.map((corner, i) => mask[i] === '0' ? [`border${corner}Radius`, '0 !important'] : null).filter(Boolean));
+  const borderStyles = Object.fromEntries(
+    corners.map((corner, i) => mask[i] === '0' ? [`border${corner}Radius`, '0 !important'] : null)
+      .filter(Boolean)
+  );
+
+  return {
+    fontSize,
+    ...borderStyles
+  };
 });
 
 const emit = defineEmits(['setvalue', 'livevalue']);
@@ -96,7 +108,7 @@ function cancelEdit() {
 </script>
 
 <template>
-  <div class="data-text" :style="borderRadiusStyle">
+  <div class="data-text" :style="dataTextStyle">
     <div class="value-container">
       <slot></slot>
       <div class="value" ref="valueRef" :contenteditable="editable" spellcheck="false" @input="onInput" @keydown="onKeyDown" @blur="cancelEdit"></div>
@@ -111,19 +123,18 @@ function cancelEdit() {
   background-color: var(--region);
   border: 1px solid var(--border-darker);
   height: 100%;
+  /* height: 1.5em; */
   box-sizing: border-box;
   border-radius: var(--border-radius);
 
   transition: border-color 200ms;
 }
-.data-text:has(.value-container > .value:focus) {
+.data-text:has(.value:focus) {
   border-color: var(--border);
 }
 
 .value-container {
-  color: var(--fg);
   opacity: 0.7;
-  font-size: 13px;
   display: flex;
   gap: 0.3em;
   align-items: center;
@@ -137,17 +148,17 @@ function cancelEdit() {
   opacity: 1;
 }
 
-.value-container > .value {
+.value {
   flex: 1;
   overflow: hidden;
   overflow-x: auto;
   scroll-behavior: smooth;
   white-space: nowrap;
 }
-.value-container > .value::-webkit-scrollbar {
+.value::-webkit-scrollbar {
   display: none;
 }
-.value-container > .value:focus {
+.value:focus {
   opacity: 1;
 }
 </style>

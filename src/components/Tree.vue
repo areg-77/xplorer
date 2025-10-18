@@ -165,6 +165,7 @@ function handleTreeDrop(e) {
 
 <style scoped>
 .tree-view {
+  flex: 1;
   width: 100%;
   background-color: var(--region-light);
   padding: 1px;

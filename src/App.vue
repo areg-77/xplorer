@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, provide, onMounted, onBeforeUnmount, watch } from 'vue';
 import Tree from './components/Tree.vue';
+import TreeTools from './components/TreeTools.vue';
 import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
 import DataField from './components/DataField.vue';
@@ -56,7 +57,10 @@ const invalidChars = `\\/:?"<>|\n`;
 
 <template>
   <main class="maingrid">
-    <Tree :path="dir"/>
+    <div class="tree-container">
+      <TreeTools/>
+      <Tree :path="dir"/>
+    </div>
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
         <DataField label="Name">
@@ -70,7 +74,7 @@ const invalidChars = `\\/:?"<>|\n`;
                 tempNode = new TNode(val, selectedNodes[0].type);
             }"
             border-radius-mask="0110" :editable="!!selectedNodes[0]">
-            <div v-if="selectedNodes[0] && tempNode" class="icon" :class="[tempNode.type, ...(tempNode.type !== 'folder' ? [tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension] : [])].filter(Boolean).join(' ')"></div>
+            <span v-if="selectedNodes[0] && tempNode" class="icon" :class="[tempNode.type, ...(tempNode.type !== 'folder' ? [tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension] : [])].filter(Boolean).join(' ')"></span>
           </DataText>
         </DataField>
         <DataField label="Type">
@@ -121,6 +125,13 @@ const invalidChars = `\\/:?"<>|\n`;
   display: grid;
   padding: 1rem;
   grid-template-columns: 55fr 45fr;
+  gap: 0.5rem;
+}
+
+.tree-container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   gap: 0.5rem;
 }
 </style>
