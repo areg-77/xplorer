@@ -1,11 +1,12 @@
 <script setup>
-import { ref, reactive, provide, onMounted, onBeforeUnmount } from 'vue';
+import { ref, reactive, provide, onMounted, onBeforeUnmount, watch } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
 import DataField from './components/DataField.vue';
 import DataGroup from './components/DataGroup.vue';
 import DataText from './components/DataText.vue';
+import { TNode } from './components/model/TNode';
 
 const dir = 'D:/_ELECTRON/_XPLORER/Project';
 
@@ -42,6 +43,14 @@ function pathDir(path) {
 function renameNode(path, value) {
   window.explorer.rename(path, pathDir(path) + '/' + value);
 }
+
+const tempNode = ref(null);
+watch(() => selectedNodes.length, len => {
+  if (len > 0)
+    tempNode.value = selectedNodes[0];
+  else
+  tempNode.value = null;
+})
 </script>
 
 <template>
@@ -50,13 +59,18 @@ function renameNode(path, value) {
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
         <DataField label="Name">
-          <div v-if="selectedNodes[0] && tempNode" class="icon" :class="[tempNode.type, tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension].filter(Boolean).join(' ')"></div>
           <DataText :value="selectedNodes[0]?.label"
             @setvalue="val => {
               if (selectedNodes[0])
                 renameNode(selectedNodes[0].path, val);
             }"
-            border-radius-mask="0110" :editable="!!selectedNodes[0]"/>
+            @livevalue="val => {
+              if (selectedNodes[0])
+                tempNode = new TNode(val, selectedNodes[0].type);
+            }"
+            border-radius-mask="0110" :editable="!!selectedNodes[0]">
+            <div v-if="selectedNodes[0] && tempNode" class="icon" :class="[tempNode.type, tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension].filter(Boolean).join(' ')"></div>
+          </DataText>
         </DataField>
         <DataField label="Type">
           <DataText :value="selectedNodes[0]?.type" border-radius-mask="0110"/>

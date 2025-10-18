@@ -36,7 +36,7 @@ watch(() => value, (newVal) => {
 
 function onInput() {
   const text = valueRef.value?.innerText ?? '';
-  
+
   emit('livevalue', text);
   if (setMode === 'live')
     emit('setvalue', text);
@@ -67,43 +67,56 @@ function cancelEdit() {
 
 <template>
   <div class="data-text" :style="borderRadiusStyle">
-    <span ref="valueRef" :contenteditable="editable" spellcheck="false" @input="onInput" @keydown="onKeyDown" @blur="cancelEdit"></span>
+    <div class="value-container">
+      <slot></slot>
+      <div class="text-value" ref="valueRef" :contenteditable="editable" spellcheck="false" @input="onInput" @keydown="onKeyDown" @blur="cancelEdit"></div>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .data-text {
   flex: 1;
-  font-size: 13px;
+  overflow: hidden;
   background-color: var(--region);
   border: 1px solid var(--border-darker);
-  display: flex;
-  overflow: hidden;
-  align-items: center;
   height: 100%;
   border-radius: var(--border-radius);
-  padding: 0 0.3em;
 
   transition: border-color 200ms;
 }
-.data-text:has(> span:focus) {
+.data-text:has(.value-container > .text-value:focus) {
   border-color: var(--border);
 }
 
-.data-text > span {
+.value-container {
+  opacity: 0.7;
+  font-size: 13px;
+  display: flex;
+  gap: 0.3em;
+  align-items: center;
+  height: 100%;
+  padding: 0 0.3em;
+
+  transition: opacity 200ms;
+}
+.value-container:has(> .text-value:focus) {
+  border-color: var(--border);
+  opacity: 1;
+}
+
+.value-container > .text-value {
   flex: 1;
-  color: var(--fg-dark);
+  color: var(--fg);
   overflow: hidden;
   overflow-x: auto;
   scroll-behavior: smooth;
   white-space: nowrap;
-
-  transition: color 200ms;
 }
-.data-text > span::-webkit-scrollbar {
+.value-container > .text-value::-webkit-scrollbar {
   display: none;
 }
-.data-text > span:focus {
-  color: var(--fg);
+.value-container > .text-value:focus {
+  opacity: 1;
 }
 </style>
