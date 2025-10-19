@@ -9,6 +9,9 @@ import DataGroup from './components/DataGroup.vue';
 import DataText from './components/DataText.vue';
 import { TNode } from './components/model/TNode';
 
+const isDev = window?.env?.isDev ?? false;
+provide('isDev', isDev);
+
 const dir = 'D:/_ELECTRON/_XPLORER/Project';
 
 const selectedNodes = reactive([]);
@@ -85,7 +88,7 @@ const invalidChars = `\\/:?"<>|\n`;
         </DataField>
       </DataGroup>
 
-      <DataGroup label="Developer" icon="ui code">
+      <DataGroup v-if="isDev" label="Developer" icon="ui code">
         <DataField label="Id">
           <DataText :value="selectedNodes[0]?.id" border-radius-mask="0110"/>
         </DataField>

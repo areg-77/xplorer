@@ -6,6 +6,8 @@ const path = require('path');
   const isDev = await ipcRenderer.invoke('get-is-dev');
 
   watcher = require(path.join(__dirname, 'native', ...(isDev ? ['build', 'Release'] : []), 'watcher.node'));
+
+  contextBridge.exposeInMainWorld('env', Object.freeze({ isDev }));
 })();
 
 window.addEventListener('DOMContentLoaded', async () => {
