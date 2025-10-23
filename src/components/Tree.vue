@@ -1,57 +1,16 @@
 <script setup>
 import { ref, onMounted, inject } from 'vue';
-import { TNode, nodeById, nodeByPath } from './model/TNode';
+import { nodeById } from './model/TNode';
 import TreeNode from './TreeNode.vue';
 
-const props = defineProps({
-  path: {
-    type: String,
+const { source: tree } = defineProps({
+  source: {
+    type: Object,
     required: true
   }
 });
 
-const tree = ref(null);
 onMounted(async () => {
-  const rawTree = await window.electronAPI.readFolder(props.path);
-  function toTNode(node) {
-    return TNode(node.label, node.type, node.children ? node.children.map(toTNode) : []);
-  }
-  tree.value = toTNode(rawTree);
-  tree.value.path = props.path;
-
-  // dir watcher
-  const eventHandlers = {
-    add: (data) => {
-      console.log(`add: ${data.path}`);
-      const node = new TNode(data.basename, data.isDir ? 'folder' : 'file');
-      const parent = nodeByPath(data.dirname, tree.value);
-      if (node && parent) node.parent = parent;
-    },
-    delete: (data) => {
-      console.log(`delete: ${data.path}`);
-      const node = nodeByPath(data.path, tree.value);
-      if (node) node.parent = null;
-    },
-    rename: (data) => { 
-      console.log(`rename: ${data.oldpath} -> ${data.path}`);
-      const node = nodeByPath(data.oldpath, tree.value);
-      if (node) node.label = data.basename;
-    },
-    move: (data) => {
-      console.log(`move: ${data.oldpath} -> ${data.path}`);
-      const node = nodeByPath(data.oldpath, tree.value);
-      const newParent = nodeByPath(data.dirname, tree.value);
-      if (node && newParent) node.parent = newParent;
-    }
-  };
-
-  window.watcher.start(props.path, (event, data) => {
-    const handler = eventHandlers[event] || ((d) => {
-      console.warn(`unhandled event (${event})`, d);
-    });
-    handler(data);
-  });
-
   // select sibilings when pressing ctrl+a
   window.electronAPI.onSelectAll(() => {
     if (document.activeElement === treeRef.value && selectedNodes.at(-1))
@@ -61,12 +20,6 @@ onMounted(async () => {
 
 const { selectedNodes, lastNode } = inject('selection');
 const [ctrlCmdPressed, shiftPressed] = [inject('ctrlCmdPressed'), inject('shiftPressed')];
-
-// for debug
-window.tree = tree;
-window.TNode = TNode;
-window.nodeById = nodeById;
-window.selectedNodes = selectedNodes;
 
 function addSelect(node) {
   if (!selectedNodes.some(n => n.equals(node)))
@@ -150,7 +103,7 @@ function clickAway(e) {
 }
 
 function handleDragDrop({ currentNodeId, targetNode }) {
-  const currentNode = nodeById(currentNodeId, tree.value);
+  const currentNode = nodeById(currentNodeId, tree);
   
   if (currentNode && targetNode) {
     if (targetNode.type !== 'folder') targetNode = targetNode.parent;
@@ -168,7 +121,7 @@ function handleDragDrop({ currentNodeId, targetNode }) {
 function handleTreeDrop(e) {
   e.preventDefault();
   if (e.target === e.currentTarget)
-    handleDragDrop({ currentNodeId: e.dataTransfer.getData('node-id'), targetNode: tree.value });
+    handleDragDrop({ currentNodeId: e.dataTransfer.getData('node-id'), targetNode: tree });
 }
 </script>
 

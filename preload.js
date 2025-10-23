@@ -19,6 +19,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 contextBridge.exposeInMainWorld("electronAPI", {
+  dirname: __dirname.replace(/\\/g, '/'),
   readFolder: (dir) => ipcRenderer.invoke('read-folder', dir),
   getMimeType: (filename) => ipcRenderer.invoke('get-mime-type', filename),
   onSelectAll: (callback) => ipcRenderer.on('menu-select-all', callback),
@@ -41,7 +42,7 @@ contextBridge.exposeInMainWorld('watcher', {
         basename: path.basename(newpath),
         dirname: path.dirname(newpath),
         isDir
-      }
+      };
       callback(event, data);
     });
   }

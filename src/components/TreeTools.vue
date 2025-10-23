@@ -1,6 +1,7 @@
 <script setup>
 import { ref, inject } from 'vue';
 import DataText from './DataText.vue';
+import ButtonDefault from './ButtonDefault.vue';
 
 const { selectedNodes } = inject('selection');
 
@@ -13,27 +14,45 @@ function deleteSelected() {
   <div class="tree-tools">
     <DataText :value="selectedNodes[0]?.path" font-size="12px" style="color: var(--fg-dark); margin-right: 0.5em;"/>
 
-    <button class="icon">
+    <ButtonDefault class="icon">
       <span class="icon ui file-add"></span>
-    </button>
-    <button class="icon">
+
+      <template #dropdown>
+        <ButtonDefault>New File</ButtonDefault>
+        <ButtonDefault>Import File</ButtonDefault>
+      </template>
+    </ButtonDefault>
+
+    <ButtonDefault class="icon">
       <span class="icon ui folder-add"></span>
-    </button>
-    <button class="icon version">
+    </ButtonDefault>
+
+    <ButtonDefault class="icon version">
       <span class="icon ui version"></span>
-    </button>
+    </ButtonDefault>
 
     <div class="divider"></div>
 
-    <button class="icon danger" @click="deleteSelected">
+    <ButtonDefault class="icon danger" @click="deleteSelected">
       <span class="icon ui delete"></span>
-    </button>
+    </ButtonDefault>
 
     <div class="divider"></div>
 
-    <button class="icon">
+    <ButtonDefault class="icon" dropdown-offset="100%">
       <span class="icon ui dots"></span>
-    </button>
+
+      <template #dropdown>
+        <ButtonDefault @click="selectedNodes[0].parent?.childrens().forEach(c => c.expanded = true)">
+          <span class="icon ui expand-all"></span>
+          Expand All
+        </ButtonDefault>
+        <ButtonDefault @click="selectedNodes[0].parent?.childrens().forEach(c => c.expanded = false)">
+          <span class="icon ui collapse-all"></span>
+          Collapse All
+        </ButtonDefault>
+      </template>
+    </ButtonDefault>
   </div>
 </template>
 

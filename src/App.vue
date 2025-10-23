@@ -7,12 +7,12 @@ import BottomPanel from './components/BottomPanel.vue';
 import DataField from './components/DataField.vue';
 import DataGroup from './components/DataGroup.vue';
 import DataText from './components/DataText.vue';
-import { TNode } from './components/model/TNode';
+import { TNode, nodeByPath } from './components/model/TNode';
 
 const isDev = window?.env?.isDev ?? false;
 provide('isDev', isDev);
 
-const dir = 'D:/_ELECTRON/_XPLORER/Project';
+const dir = 'resources/Project';
 
 const selectedNodes = reactive([]);
 const lastNode = ref(null);
@@ -24,7 +24,48 @@ const shiftPressed = ref(false);
 provide('ctrlCmdPressed', ctrlCmdPressed);
 provide('shiftPressed', shiftPressed);
 
-onMounted(() => {
+const tree = ref(null);
+onMounted(async () => {
+  const rawTree = await window.electronAPI.readFolder(dir);
+  function toTNode(node) {
+    return TNode(node.label, node.type, node.children ? node.children.map(toTNode) : []);
+  }
+  tree.value = toTNode(rawTree);
+  tree.value.path = dir;
+
+  // dir watcher
+  const eventHandlers = {
+    add: (data) => {
+      console.log(`add: ${data.path}`);
+      const node = new TNode(data.basename, data.isDir ? 'folder' : 'file');
+      const parent = nodeByPath(data.dirname, tree.value);
+      if (node && parent) node.parent = parent;
+    },
+    delete: (data) => {
+      console.log(`delete: ${data.path}`);
+      const node = nodeByPath(data.path, tree.value);
+      if (node) node.parent = null;
+    },
+    rename: (data) => { 
+      console.log(`rename: ${data.oldpath} -> ${data.path}`);
+      const node = nodeByPath(data.oldpath, tree.value);
+      if (node) node.label = data.basename;
+    },
+    move: (data) => {
+      console.log(`move: ${data.oldpath} -> ${data.path}`);
+      const node = nodeByPath(data.oldpath, tree.value);
+      const newParent = nodeByPath(data.dirname, tree.value);
+      if (node && newParent) node.parent = newParent;
+    }
+  };
+
+  window.watcher.start(dir, (event, data) => {
+    const handler = eventHandlers[event] || ((d) => {
+      console.warn(`unhandled event (${event})`, d);
+    });
+    handler(data);
+  });
+
   // ctrl/cmd and shift tracking
   const handleKeyHold = (e) => {
     ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
@@ -62,7 +103,7 @@ const invalidChars = `\\/:?"<>|\n`;
   <main class="maingrid">
     <div class="tree-container">
       <TreeTools/>
-      <Tree :path="dir"/>
+      <Tree :source="tree"/>
     </div>
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
@@ -101,8 +142,8 @@ const invalidChars = `\\/:?"<>|\n`;
         <DataField label="Parent">
           <DataText :value="selectedNodes[0]?.parent?.label" border-radius-mask="0110"/>
         </DataField>
-        <!-- <DataField label="Tree" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
-          <Tree :path="dir"/>
+        <!-- <DataField v-if="selectedNodes[0]?.children.length > 0" label="Children" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
+          <Tree :source="selectedNodes[0]"/>
         </DataField> -->
       </DataGroup>
     </TreeData>
