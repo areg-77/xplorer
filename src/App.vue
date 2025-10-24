@@ -90,9 +90,19 @@ function renameNode(path, value) {
 }
 
 const tempNode = ref(null);
-watch(() => selectedNodes.slice(), s => {
-  tempNode.value = s[0] || null;
-  s.forEach(node => node.parents().forEach(p => p.expanded = true));
+watch(() => selectedNodes.slice(), () => {
+  // remove deleted nodes from selected
+  for (let i = selectedNodes.length - 1; i >= 0; i--) {
+    const node = selectedNodes[i];
+    if (!node.parent) {
+      selectedNodes.splice(i, 1);
+    }
+  }
+  if (lastNode.value && !lastNode.value.parent)
+    lastNode.value = null;
+
+  tempNode.value = selectedNodes[0] || null;
+  selectedNodes.forEach(node => node.parents().forEach(p => p.expanded = true));
 },
 { deep: true });
 
