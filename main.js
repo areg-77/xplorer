@@ -212,3 +212,8 @@ ipcMain.handle('explorer-delete', async (_, targetPath) => {
 ipcMain.handle('explorer-rename', (_, oldPath, newPath) => {
   return fs.promises.rename(oldPath, newPath);
 });
+
+ipcMain.handle('explorer-create-folder', async (_, parentPath, folderName) => {
+  const newFolderPath = path.join(parentPath, folderName);
+  return fs.promises.mkdir(newFolderPath);
+});

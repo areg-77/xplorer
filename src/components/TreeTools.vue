@@ -8,6 +8,10 @@ const { selectedNodes } = inject('selection');
 function deleteSelected() {
   Promise.all(selectedNodes.map(s => window.explorer.delete(s.path)));
 }
+
+function createFolder() {
+  window.explorer.createFolder(selectedNodes[0]?.path, 'New Folder');
+}
 </script>
 
 <template>
@@ -18,12 +22,18 @@ function deleteSelected() {
       <span class="icon ui file-add"></span>
 
       <template #dropdown>
-        <ButtonDefault>New File</ButtonDefault>
-        <ButtonDefault>Import File</ButtonDefault>
+        <ButtonDefault class="ghost">
+          <span class="icon ui plus-box"></span>
+          New File
+        </ButtonDefault>
+        <ButtonDefault class="ghost">
+          <span class="icon ui upload"></span>
+          Import File
+        </ButtonDefault>
       </template>
     </ButtonDefault>
 
-    <ButtonDefault class="icon">
+    <ButtonDefault class="icon" @click="createFolder">
       <span class="icon ui folder-add"></span>
     </ButtonDefault>
 
@@ -43,11 +53,11 @@ function deleteSelected() {
       <span class="icon ui dots"></span>
 
       <template #dropdown>
-        <ButtonDefault @click="selectedNodes[0].parent?.childrens().forEach(c => c.expanded = true)">
+        <ButtonDefault class="ghost" @click="selectedNodes[0].parent?.childrens().forEach(c => c.expanded = true)">
           <span class="icon ui expand-all"></span>
           Expand All
         </ButtonDefault>
-        <ButtonDefault @click="selectedNodes[0].parent?.childrens().forEach(c => c.expanded = false)">
+        <ButtonDefault class="ghost" @click="selectedNodes[0].parent?.childrens().forEach(c => c.expanded = false)">
           <span class="icon ui collapse-all"></span>
           Collapse All
         </ButtonDefault>

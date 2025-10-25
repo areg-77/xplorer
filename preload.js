@@ -50,5 +50,6 @@ contextBridge.exposeInMainWorld('watcher', {
 
 contextBridge.exposeInMainWorld("explorer", {
   delete: (targetPath) => ipcRenderer.invoke('explorer-delete', targetPath),
-  rename: (oldPath, newPath) => ipcRenderer.invoke('explorer-rename', oldPath, newPath)
+  rename: (oldPath, newPath) => ipcRenderer.invoke('explorer-rename', oldPath, newPath),
+  createFolder: (parentPath, folderName) => ipcRenderer.invoke('explorer-create-folder', parentPath, folderName)
 });

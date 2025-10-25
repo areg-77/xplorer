@@ -32,6 +32,11 @@ button:not(:disabled):active {
   border-color: var(--border);
 }
 
+button.ghost {
+  background-color: transparent;
+  border-color: transparent;
+}
+
 button.icon {
   border-color: transparent;
   background-color: var(--secondary-dark);
