@@ -3,20 +3,20 @@ import { ref, inject } from 'vue';
 import DataText from './DataText.vue';
 import ButtonDefault from './ButtonDefault.vue';
 
-const { selectedNodes } = inject('selection');
+const selected = inject('selected');
 
 function deleteSelected() {
-  Promise.all(selectedNodes.map(s => window.explorer.delete(s.path)));
+  Promise.all(selected.nodes.map(s => window.explorer.delete(s.path)));
 }
 
 function createFolder() {
-  window.explorer.createFolder(selectedNodes[0]?.path, 'New Folder');
+  window.explorer.createFolder(selected.nodes[0]?.path, 'New Folder');
 }
 </script>
 
 <template>
   <div class="tree-tools">
-    <DataText :value="selectedNodes[0]?.path" font-size="12px" style="color: var(--fg-dark); margin-right: 0.5em;"/>
+    <DataText :value="selected.nodes[0]?.path" font-size="12px" style="color: var(--fg-dark); margin-right: 0.5em;"/>
 
     <ButtonDefault class="icon">
       <span class="icon ui file-add"></span>
@@ -53,11 +53,11 @@ function createFolder() {
       <span class="icon ui dots"></span>
 
       <template #dropdown>
-        <ButtonDefault class="ghost" @click="selectedNodes[0].parent?.childrens().forEach(c => c.expanded = true)">
+        <ButtonDefault class="ghost" @click="selected.nodes[0].parent?.childrens().forEach(c => c.expanded = true)">
           <span class="icon ui expand-all"></span>
           Expand All
         </ButtonDefault>
-        <ButtonDefault class="ghost" @click="selectedNodes[0].parent?.childrens().forEach(c => c.expanded = false)">
+        <ButtonDefault class="ghost" @click="selected.nodes[0].parent?.childrens().forEach(c => c.expanded = false)">
           <span class="icon ui collapse-all"></span>
           Collapse All
         </ButtonDefault>

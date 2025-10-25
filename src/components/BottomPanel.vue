@@ -3,16 +3,16 @@ import { ref, inject } from 'vue';
 
 const isDev = inject('isDev');
 
-const { selectedNodes, lastNode } = inject('selection');
+const selected = inject('selected');
 </script>
 
 <template>
   <div class="bottom-panel">
     dev: {{ isDev }}
     <br/>
-    selectedNodes: {{ selectedNodes.map(s => s.label) }}
+    selected.nodes: {{ selected.nodes.map(s => s.label) }}
     <br/>
-    last: "{{ lastNode?.label }}"
+    selected.last: "{{ selected.last?.label }}"
   </div>
 </template>
 

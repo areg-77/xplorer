@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, provide, onMounted, onBeforeUnmount, watch } from 'vue';
+import { ref, provide, onMounted, onBeforeUnmount } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeTools from './components/TreeTools.vue';
 import TreeData from './components/TreeData.vue';
@@ -8,21 +8,21 @@ import DataField from './components/DataField.vue';
 import DataGroup from './components/DataGroup.vue';
 import DataText from './components/DataText.vue';
 import { TNode, nodeByPath } from './components/model/TNode';
+import { SNode } from './components/model/SNode';
 
 const isDev = window?.env?.isDev ?? false;
 provide('isDev', isDev);
 
 const dir = 'resources/Project';
 
-const selectedNodes = reactive([]);
-const lastNode = ref(null);
-provide('selection', { selectedNodes, lastNode });
-
 const ctrlCmdPressed = ref(false);
 const shiftPressed = ref(false);
 
 provide('ctrlCmdPressed', ctrlCmdPressed);
 provide('shiftPressed', shiftPressed);
+
+const selected = new SNode(ctrlCmdPressed, shiftPressed);
+provide('selected', selected);
 
 const tree = ref(null);
 onMounted(async () => {
@@ -37,7 +37,7 @@ onMounted(async () => {
   const eventHandlers = {
     add: (data) => {
       console.log(`add: ${data.path}`);
-      const node = new TNode(data.basename, data.isDir ? 'folder' : 'file');
+      const node = TNode(data.basename, data.isDir ? 'folder' : 'file');
       const parent = nodeByPath(data.dirname, tree.value);
       if (node && parent) node.parent = parent;
     },
@@ -90,22 +90,6 @@ function renameNode(path, value) {
 }
 
 const tempNode = ref(null);
-watch(() => selectedNodes.slice(), () => {
-  // remove deleted nodes from selected
-  for (let i = selectedNodes.length - 1; i >= 0; i--) {
-    const node = selectedNodes[i];
-    if (!node.parent) {
-      selectedNodes.splice(i, 1);
-    }
-  }
-  if (lastNode.value && !lastNode.value.parent)
-    lastNode.value = null;
-
-  tempNode.value = selectedNodes[0] || null;
-  selectedNodes.forEach(node => node.parents().forEach(p => p.expanded = true));
-},
-{ deep: true });
-
 const invalidChars = `\\/:?"<>|\n`;
 </script>
 
@@ -118,21 +102,21 @@ const invalidChars = `\\/:?"<>|\n`;
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
         <DataField label="Name">
-          <DataText :value="selectedNodes[0]?.label" :invalid-chars="invalidChars"
+          <DataText :value="selected.nodes[0]?.label" :invalid-chars="invalidChars"
             @setvalue="val => {
-              if (selectedNodes[0])
-                renameNode(selectedNodes[0].path, val);
+              if (selected.nodes[0])
+                renameNode(selected.nodes[0].path, val);
             }"
             @livevalue="val => {
-              if (selectedNodes[0])
-                tempNode = new TNode(val, selectedNodes[0].type);
+              if (selected.nodes[0])
+                tempNode = new TNode(val, selected.nodes[0].type);
             }"
-            border-radius-mask="0110" :editable="!!selectedNodes[0]">
-            <span v-if="selectedNodes[0] && tempNode" class="icon" :class="[tempNode.type, ...(tempNode.type !== 'folder' ? [tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension] : [])].filter(Boolean).join(' ')"></span>
+            border-radius-mask="0110" :editable="!!selected.nodes[0]">
+            <span v-if="selected.nodes[0] && tempNode" class="icon" :class="[tempNode.type, ...(tempNode.type !== 'folder' ? [tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension] : [])].filter(Boolean).join(' ')"></span>
           </DataText>
         </DataField>
         <DataField label="Type">
-          <DataText :value="selectedNodes[0]?.type" border-radius-mask="0110"/>
+          <DataText :value="selected.nodes[0]?.type" border-radius-mask="0110"/>
         </DataField>
         <DataField label="Mime">
           <DataText :value="tempNode?.mimeType" border-radius-mask="0110"/>
@@ -141,16 +125,16 @@ const invalidChars = `\\/:?"<>|\n`;
 
       <DataGroup v-if="isDev" label="Developer" icon="ui code">
         <DataField label="Id">
-          <DataText :value="selectedNodes[0]?.id" border-radius-mask="0110"/>
+          <DataText :value="selected.nodes[0]?.id" border-radius-mask="0110"/>
         </DataField>
         <DataField label="Node">
-          <DataText :value="selectedNodes[0] ? `[${selectedNodes[0].node.map(n => n.label).join(', ')}]` : ''" border-radius-mask="0110"/>
+          <DataText :value="selected.nodes[0] ? `[${selected.nodes[0].node.map(n => n.label).join(', ')}]` : ''" border-radius-mask="0110"/>
         </DataField>
         <DataField label="VersionIndex">
-          <DataText :value="selectedNodes[0]?.vIndex" @setvalue="val => selectedNodes[0] && (selectedNodes[0].vIndex = val)" border-radius-mask="0110" :editable="!!selectedNodes[0]"/>
+          <DataText :value="selected.nodes[0]?.vIndex" @setvalue="val => selected.nodes[0] && (selected.nodes[0].vIndex = val)" border-radius-mask="0110" :editable="!!selected.nodes[0]"/>
         </DataField>
         <DataField label="Parent">
-          <DataText :value="selectedNodes[0]?.parent?.label" border-radius-mask="0110"/>
+          <DataText :value="selected.nodes[0]?.parent?.label" border-radius-mask="0110"/>
         </DataField>
         <!-- <DataField v-if="selectedNodes[0]?.children.length > 0" label="Children" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
           <Tree :source="selectedNodes[0]"/>

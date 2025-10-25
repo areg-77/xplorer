@@ -10,21 +10,21 @@ const { node } = defineProps({
 
 const emit = defineEmits(['select', 'deselect', 'dragdrop']);
 
-const { selectedNodes } = inject('selection');
-const selected = computed(() => selectedNodes.some(n => n.equals(node)));
+const selected = inject('selected');
+const isSelected = computed(() => selected.nodes.some(n => n.equals(node)));
 
 const styles = computed(() => {
   const siblings = node.parent?.children || [];
   const index = siblings.findIndex(n => n.equals(node));
-  const prev = selected.value && index > 0 && selectedNodes.some(n => n.equals(siblings[index - 1])) && (!siblings[index - 1].expanded || siblings[index - 1].children.count === 0);
-  const next = selected.value && index < siblings.length - 1 && selectedNodes.some(n => n.equals(siblings[index + 1])) && (!node.expanded || node.children.count === 0);
+  const prev = isSelected.value && index > 0 && selected.nodes.some(n => n.equals(siblings[index - 1])) && (!siblings[index - 1].expanded || siblings[index - 1].children.count === 0);
+  const next = isSelected.value && index < siblings.length - 1 && selected.nodes.some(n => n.equals(siblings[index + 1])) && (!node.expanded || node.children.count === 0);
 
   const nodeStyle = {
     ...(prev && { borderTopLeftRadius: "0", borderTopRightRadius: "0" }),
     ...(next && { borderBottomLeftRadius: "0", borderBottomRightRadius: "0" })
   };
   
-  return selected.value && node.expanded && node.children?.length
+  return isSelected.value && node.expanded && node.children?.length
     ? { node: { ...nodeStyle, borderBottomRightRadius: "0" }, ul: { borderTopRightRadius: "0" } }
     : { node: nodeStyle, ul: {} };
 });
@@ -58,7 +58,7 @@ onUpdated(() => {
 
 <template>
   <li :key="node.vIndex">
-    <div class="tree-node" :class="{ selected: selected }" :style="styles.node" draggable="true" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
+    <div class="tree-node" :class="{ isSelected: isSelected }" :style="styles.node" draggable="true" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="toggleExpand">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
@@ -94,7 +94,7 @@ ul {
 
   transition: background-color 200ms, border-radius 150ms;
 }
-.tree-node.selected + .children-container.opened > ul {
+.tree-node.isSelected + .children-container.opened > ul {
   transition-delay: 100ms 0ms;
   background-color: var(--secondary-dark);
   margin-right: 1px; /* might cause a bug */
@@ -121,11 +121,11 @@ li:hover > .children-container.opened {
   background-color: var(--secondary);
   border-color: var(--border);
 }
-.tree-node.selected {
+.tree-node.isSelected {
   background-color: var(--secondary-light);
   border-color: var(--border-light);
 }
-.tree-node.selected:hover {
+.tree-node.isSelected:hover {
   background-color: var(--secondary-lighter);
 }
 
@@ -182,7 +182,7 @@ li:hover > .children-container.opened {
   transition: opacity 125ms;
 }
 .tree-node:hover .tree-parameter,
-.tree-node.selected .tree-parameter {
+.tree-node.isSelected .tree-parameter {
   transition-delay: 100ms;
   opacity: 1;
 }

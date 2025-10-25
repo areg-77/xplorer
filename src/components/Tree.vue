@@ -10,69 +10,16 @@ const { source: tree } = defineProps({
   }
 });
 
+const [ctrlCmdPressed, shiftPressed] = [inject('ctrlCmdPressed'), inject('shiftPressed')];
+const selected = inject('selected');
+
 onMounted(async () => {
   // select sibilings when pressing ctrl+a
   window.electronAPI.onSelectAll(() => {
-    if (document.activeElement === treeRef.value && selectedNodes.at(-1))
-      selectedNodes.at(-1).parent.children.forEach(c => addSelect(c));
+    if (document.activeElement === treeRef.value && selected.nodes.at(-1))
+      selected.nodes.at(-1).parent.children.forEach(c => selected.add(c));
   });
 });
-
-const { selectedNodes, lastNode } = inject('selection');
-const [ctrlCmdPressed, shiftPressed] = [inject('ctrlCmdPressed'), inject('shiftPressed')];
-
-function addSelect(node) {
-  if (!selectedNodes.some(n => n.equals(node)))
-    selectedNodes.push(node);
-}
-
-function removeSelected(node) {
-  const idx = selectedNodes.findIndex(n => n.equals(node))
-  if (idx !== -1) selectedNodes.splice(idx, 1);
-  
-  if (selectedNodes.length === 0)
-    lastNode.value = null;
-}
-
-function handleSelect(node) {
-  const select = !selectedNodes.some(n => n.equals(node));
-
-  // parents/childrens deselecting
-  if (select) {
-    if (ctrlCmdPressed.value || shiftPressed.value) {
-      node.parents().forEach(p => removeSelected(p));
-      node.childrens().forEach(c => removeSelected(c));
-    }
-  }
-
-  if (ctrlCmdPressed.value) {
-    (select ? addSelect(node) : removeSelected(node));
-    lastNode.value = node;
-  }
-  else if (shiftPressed.value) {
-    const beginIndex = node.parent.children.findIndex(n => n.equals(lastNode.value));
-    const endIndex = node.parent.children.findIndex(n => n.equals(node));
-
-    if (beginIndex !== -1 && endIndex !== -1) {
-      const [start, stop] = beginIndex < endIndex ? [beginIndex, endIndex] : [endIndex, beginIndex];
-      for (let i = start; i <= stop; i++)
-        (select ? addSelect(node.parent.children[i]) : removeSelected(node.parent.children[i]));
-      
-      lastNode.value = node;
-    }
-    else if (endIndex !== -1) {
-      (select ? selectedNodes.splice(0, selectedNodes.length, node) : removeSelected(node));
-      lastNode.value = node;
-    }
-  }
-  else {
-    (select || selectedNodes.length > 1 ? selectedNodes.splice(0, selectedNodes.length, node) : removeSelected(node));
-    lastNode.value = node;
-  }
-
-  if (selectedNodes.length === 0)
-    lastNode.value = null;
-}
 
 const treeRef = ref(null);
 function handleKeyDown(e) {
@@ -95,10 +42,8 @@ function clickAway(e) {
     const distance = Math.sqrt(dx * dx + dy * dy);
 
     // filter accidentally clicking away
-    if (distance < 5) {
-      selectedNodes.splice(0, selectedNodes.length);
-      lastNode.value = null;
-    }
+    if (distance < 5)
+      selected.nodes.splice(0, selected.nodes.length);
   }
 }
 
@@ -108,10 +53,10 @@ function handleDragDrop({ currentNodeId, targetNode }) {
   if (currentNode && targetNode) {
     if (targetNode.type !== 'folder') targetNode = targetNode.parent;
 
-    const moveNodes = selectedNodes.some(n => n.equals(currentNode)) ? selectedNodes : [currentNode];
+    const moveNodes = selected.nodes.some(n => n.equals(currentNode)) ? selected.nodes : [currentNode];
     
-    if (selectedNodes.some(n => n.equals(currentNode)))
-      lastNode.value = null;
+    if (selected.nodes.some(n => n.equals(currentNode)))
+      selected.last = null;
     
     if (moveNodes.every(node => !node.equals(targetNode) && !node.parent.equals(targetNode) && !node.childrens().some(c => c.equals(targetNode))))
       moveNodes.forEach(node => window.explorer.rename(node.path, targetNode.path + '/' + node.label));
@@ -128,7 +73,7 @@ function handleTreeDrop(e) {
 <template>
   <div class="tree-view scroll-buffer" @mousedown="handleMouseDown" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent @keydown="handleKeyDown" ref="treeRef" tabindex="0">
     <transition-group tag="ul" name="list">
-      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="handleSelect" @deselect="removeSelected" @dragdrop="handleDragDrop"/>
+      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="(node) => selected.handle(node)" @deselect="(node) => selected.remove(node)" @dragdrop="handleDragDrop"/>
     </transition-group>
   </div>
 </template>
