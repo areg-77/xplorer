@@ -1,5 +1,6 @@
 <script setup>
 import { computed, inject, onUpdated } from 'vue';
+import { isSNode } from './model/SNode';
 
 const { node } = defineProps({
   node: {
@@ -11,9 +12,13 @@ const { node } = defineProps({
 const emit = defineEmits(['select', 'deselect', 'dragdrop']);
 
 const selected = inject('selected');
-const isSelected = computed(() => selected.nodes.some(n => n.equals(node)));
+const isSelected = computed(() => selected && isSNode(selected) ? selected.nodes.some(n => n.equals(node)) : false);
+
+const draggable = inject('draggable');
 
 const styles = computed(() => {
+  if (!isSNode(selected)) return { node: {}, ul: {} };
+
   const siblings = node.parent?.children || [];
   const index = siblings.findIndex(n => n.equals(node));
   const prev = isSelected.value && index > 0 && selected.nodes.some(n => n.equals(siblings[index - 1])) && (!siblings[index - 1].expanded || siblings[index - 1].children.count === 0);
@@ -29,12 +34,20 @@ const styles = computed(() => {
     : { node: nodeStyle, ul: {} };
 });
 
+function clickSelect() {
+  if (!isSNode(selected)) return;
+  
+  emit('select', node);
+}
+
 function toggleExpand() {
   node.expanded = !node.expanded;
   node.childrens().forEach(c => emit('deselect', c));
 }
 
 function onDragStart(e) {
+  if (!draggable) return;
+
   e.dataTransfer.dropEffect = 'move';
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('node-id', node.id);
@@ -47,6 +60,8 @@ function onDragStart(e) {
 }
 
 function onDrop(e) {
+  if (!draggable) return;
+  
   e.preventDefault();
   emit('dragdrop', { currentNodeId: e.dataTransfer.getData('node-id'), targetNode: node });
 }
@@ -58,11 +73,11 @@ onUpdated(() => {
 
 <template>
   <li :key="node.vIndex">
-    <div class="tree-node" :class="{ isSelected: isSelected }" :style="styles.node" draggable="true" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
+    <div class="tree-node" :class="{ isSelected: isSelected }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="toggleExpand">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
-      <div class="content-container" @click="emit('select', node)">
+      <div class="content-container" @click="clickSelect">
         <span class="tree-icon icon" :class="[node.type, ...(node.type !== 'folder' ? [node.mimeType ? node.mimeType.replace('/', ' ') : null, node.extension] : [])].filter(Boolean).join(' ')"></span>
         <div class="label-container">
           <transition name="label-scroll">

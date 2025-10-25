@@ -1,6 +1,6 @@
 import { ref, reactive, watch } from "vue";
 
-export class SNode {
+export class SNodeBase {
   constructor(ctrlCmdPressed, shiftPressed) {
     this.ctrlCmdPressed = ctrlCmdPressed;
     this.shiftPressed = shiftPressed;
@@ -14,6 +14,8 @@ export class SNode {
 
       if (this.nodes.length === 0)
         this.last = null;
+
+      this.nodes.forEach(node => node.parents().forEach(p => p.expanded = true));
     }, { deep: false });
   }
 
@@ -69,4 +71,12 @@ export class SNode {
     else
       (select || this.nodes.length > 1 ? this.clear(node) : this.remove(node));
   }
+}
+
+export function SNode(ctrlCmdPressed, shiftPressed) {
+  return reactive(new SNodeBase(ctrlCmdPressed, shiftPressed));
+}
+
+export function isSNode(obj) {
+  return obj?.__v_raw instanceof SNodeBase;
 }

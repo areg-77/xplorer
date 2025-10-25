@@ -3,7 +3,12 @@ import { ref, inject } from 'vue';
 import DataText from './DataText.vue';
 import ButtonDefault from './ButtonDefault.vue';
 
-const selected = inject('selected');
+const { selected } = defineProps({
+  selected: {
+    type: Object,
+    required: true
+  }
+});
 
 function deleteSelected() {
   Promise.all(selected.nodes.map(s => window.explorer.delete(s.path)));

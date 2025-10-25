@@ -1,19 +1,27 @@
 <script setup>
-import { ref, onMounted, inject } from 'vue';
+import { ref, onMounted, inject, provide } from 'vue';
 import { nodeById } from './model/TNode';
 import TreeNode from './TreeNode.vue';
+import { isSNode } from './model/SNode';
 
-const { source: tree } = defineProps({
+const { source: tree, selected, draggable } = defineProps({
   source: {
     type: Object,
     required: true
-  }
+  },
+  selected: Object,
+  draggable: Boolean
 });
 
 const [ctrlCmdPressed, shiftPressed] = [inject('ctrlCmdPressed'), inject('shiftPressed')];
-const selected = inject('selected');
 
-onMounted(async () => {
+provide('selected', selected);
+provide('draggable', draggable);
+
+const treeRef = ref(null);
+onMounted(() => {
+  if (!isSNode(selected)) return;
+
   // select sibilings when pressing ctrl+a
   window.electronAPI.onSelectAll(() => {
     if (document.activeElement === treeRef.value && selected.nodes.at(-1))
@@ -21,8 +29,9 @@ onMounted(async () => {
   });
 });
 
-const treeRef = ref(null);
 function handleKeyDown(e) {
+  if (!isSNode(selected)) return;
+
   if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
     e.preventDefault();
     window.electronAPI.sendToMain('menu-select-all');
@@ -31,11 +40,15 @@ function handleKeyDown(e) {
 
 let mousePos = { x: 0, y: 0 };
 function handleMouseDown(e) {
+  if (!draggable) return;
+
   if (!e.target.closest('.tree-node'))
     mousePos = { x: e.clientX, y: e.clientY };
 }
 
 function clickAway(e) {
+  if (!draggable) return;
+
   if (!e.target.closest('.tree-node') && !ctrlCmdPressed.value && !shiftPressed.value) {
     const dx = Math.abs(e.clientX - mousePos.x);
     const dy = Math.abs(e.clientY - mousePos.y);
@@ -48,6 +61,8 @@ function clickAway(e) {
 }
 
 function handleDragDrop({ currentNodeId, targetNode }) {
+  if (!draggable) return;
+
   const currentNode = nodeById(currentNodeId, tree);
   
   if (currentNode && targetNode) {
@@ -64,6 +79,8 @@ function handleDragDrop({ currentNodeId, targetNode }) {
 }
 
 function handleTreeDrop(e) {
+  if (!draggable) return;
+
   e.preventDefault();
   if (e.target === e.currentTarget)
     handleDragDrop({ currentNodeId: e.dataTransfer.getData('node-id'), targetNode: tree });

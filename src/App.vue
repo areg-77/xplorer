@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide, onMounted, onBeforeUnmount } from 'vue';
+import { ref, provide, onMounted, onBeforeUnmount, watch } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeTools from './components/TreeTools.vue';
 import TreeData from './components/TreeData.vue';
@@ -21,8 +21,7 @@ const shiftPressed = ref(false);
 provide('ctrlCmdPressed', ctrlCmdPressed);
 provide('shiftPressed', shiftPressed);
 
-const selected = new SNode(ctrlCmdPressed, shiftPressed);
-provide('selected', selected);
+const selected = SNode(ctrlCmdPressed, shiftPressed);
 
 const tree = ref(null);
 onMounted(async () => {
@@ -90,14 +89,16 @@ function renameNode(path, value) {
 }
 
 const tempNode = ref(null);
+watch(() => selected.nodes.slice(), () => tempNode.value = selected.nodes[0] || null, { deep: false });
+
 const invalidChars = `\\/:?"<>|\n`;
 </script>
 
 <template>
   <main class="maingrid">
     <div class="tree-container">
-      <TreeTools/>
-      <Tree :source="tree"/>
+      <TreeTools :selected="selected"/>
+      <Tree :source="tree" :selected="selected" :draggable="true"/>
     </div>
     <TreeData>
       <DataGroup label="Properties" icon="ui properties">
@@ -136,13 +137,13 @@ const invalidChars = `\\/:?"<>|\n`;
         <DataField label="Parent">
           <DataText :value="selected.nodes[0]?.parent?.label" border-radius-mask="0110"/>
         </DataField>
-        <!-- <DataField v-if="selectedNodes[0]?.children.length > 0" label="Children" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
-          <Tree :source="selectedNodes[0]"/>
-        </DataField> -->
+        <DataField v-if="selected.nodes[0]?.children.length > 0" label="Children" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
+          <Tree :source="selected.nodes[0]"/>
+        </DataField>
       </DataGroup>
     </TreeData>
   </main>
-  <BottomPanel/>
+  <BottomPanel :selected="selected"/>
 </template>
 
 <style>

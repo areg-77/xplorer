@@ -1,0 +1,5 @@
+@import './styles/global.css';
+@import './styles/titlebar.css';
+@import './styles/scrollbar.css';
+@import './styles/buttons.css';
+@import './styles/icons.css';

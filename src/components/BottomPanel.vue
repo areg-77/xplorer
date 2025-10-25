@@ -3,7 +3,12 @@ import { ref, inject } from 'vue';
 
 const isDev = inject('isDev');
 
-const selected = inject('selected');
+const { selected } = defineProps({
+  selected: {
+    type: Object,
+    required: true
+  }
+});
 </script>
 
 <template>
