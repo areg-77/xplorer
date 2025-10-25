@@ -40,6 +40,29 @@
   border: 1px solid var(--border-dark) !important;
   backdrop-filter: blur(0px) !important;
   border-radius: calc(var(--border-radius) + 3px) !important;
+  transform-origin: top left;
+  
+  animation: opacityTransiiton 250ms, transformTransiiton 200ms;
+}
+
+@keyframes opacityTransiiton {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes transformTransiiton {
+  0% {
+    transform: translateY(-0.5rem) scale(0.95);
+    pointer-events: none;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
 }
 
 .cet-action-item.focused > .cet-action-menu-item {
