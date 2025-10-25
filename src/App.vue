@@ -81,7 +81,7 @@ onMounted(async () => {
 <template>
   <main class="maingrid">
     <div class="tree-container">
-      <TreeTools :selected="selected"/>
+      <TreeTools :source="tree" :selected="selected"/>
       <Tree :source="tree" :selected="selected" :draggable="true"/>
     </div>
     <TreeData :selected="selected"/>

@@ -29,7 +29,7 @@ export class TNodeBase {
 
     this.type = ref(type);
     this.mimeType = ref(false);
-    this.expanded = ref(children.length > 0);
+    this.expanded = ref(false);
 
     // dynamic mimeType
     watch([this.type, this.label], ([newType, newLabel]) => {
@@ -48,6 +48,11 @@ export class TNodeBase {
       if (newParent)
         newParent.children.push(this);
     });
+
+    // expanding validation
+    watch(this.expanded, newExpanded => {
+      this.expanded.value = ((this.type.value === 'folder' && this.children.value.length > 0) ? newExpanded : false);
+    }, { immediate: true });
 
     // auto sort
     watch(() => this.children.value.map(child => [child.type, child.label]), () => {

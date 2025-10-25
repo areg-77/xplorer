@@ -2,7 +2,11 @@
 import DataText from './DataText.vue';
 import ButtonDefault from './ButtonDefault.vue';
 
-const { selected } = defineProps({
+const { source: tree, selected } = defineProps({
+  source: {
+    type: Object,
+    required: true
+  },
   selected: {
     type: Object,
     required: true
@@ -57,11 +61,11 @@ function createFolder() {
       <span class="icon ui dots"></span>
 
       <template #dropdown>
-        <ButtonDefault class="ghost" @click="selected.nodes[0].parent?.childrens().forEach(c => c.expanded = true)">
+        <ButtonDefault class="ghost" @click="tree.childrens().forEach(c => c.expanded = true)">
           <span class="icon ui expand-all"></span>
           Expand All
         </ButtonDefault>
-        <ButtonDefault class="ghost" @click="selected.nodes[0].parent?.childrens().forEach(c => c.expanded = false)">
+        <ButtonDefault class="ghost" @click="tree.childrens().forEach(c => c.expanded = false)">
           <span class="icon ui collapse-all"></span>
           Collapse All
         </ButtonDefault>

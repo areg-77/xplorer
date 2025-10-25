@@ -1,19 +1,25 @@
 <script setup>
-import { ref, computed, useSlots } from 'vue';
+import { ref, computed, watch, useSlots, useAttrs } from 'vue';
 
 defineOptions({ inheritAttrs: false })
 
 const { dropdownOffset } = defineProps({
   dropdownOffset: {
     type: String,
-    default: '50%',
+    default: '50%'
   }
 });
+
+const $attrs = useAttrs();
 
 const showDropdown = ref(false);
 function toggleDropdown() {
   showDropdown.value = !showDropdown.value;
 }
+
+watch(() => !!$attrs.disabled, isDisabled => {
+  if (isDisabled) showDropdown.value = false;
+}, { immediate: true });
 
 const slots = useSlots();
 const hasDropdown = computed(() => !!(slots.dropdown && slots.dropdown().length));

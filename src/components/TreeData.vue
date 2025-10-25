@@ -41,7 +41,7 @@ const invalidChars = `\\/:?"<>|\n`;
             if (selected.nodes[0])
               tempNode = new TNode(val, selected.nodes[0].type);
           }"
-          border-radius-mask="0110" :editable="!!selected.nodes[0]">
+          :editable="!!selected.nodes[0]" border-radius-mask="0110">
           <span v-if="selected.nodes[0] && tempNode" class="icon" :class="[tempNode.type, ...(tempNode.type !== 'folder' ? [tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension] : [])].filter(Boolean).join(' ')"></span>
         </DataText>
       </DataField>
@@ -61,7 +61,10 @@ const invalidChars = `\\/:?"<>|\n`;
         <DataText :value="selected.nodes[0] ? `[${selected.nodes[0].node.map(n => n.label).join(', ')}]` : ''" border-radius-mask="0110"/>
       </DataField>
       <DataField label="VersionIndex">
-        <DataText :value="selected.nodes[0]?.vIndex" @setvalue="val => selected.nodes[0] && (selected.nodes[0].vIndex = val)" border-radius-mask="0110" :editable="!!selected.nodes[0]"/>
+        <DataText :value="selected.nodes[0]?.vIndex" @setvalue="val => selected.nodes[0] && (selected.nodes[0].vIndex = JSON.parse(val))" :editable="!!selected.nodes[0]" border-radius-mask="0110"/>
+      </DataField>
+      <DataField label="Expanded">
+        <DataText :value="selected.nodes[0]?.expanded" @setvalue="val => selected.nodes[0] && (selected.nodes[0].expanded = JSON.parse(val))" :editable="!!selected.nodes[0]" border-radius-mask="0110"/>
       </DataField>
       <DataField label="Parent">
         <DataText :value="selected.nodes[0]?.parent?.label" border-radius-mask="0110"/>
