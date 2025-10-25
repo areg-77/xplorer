@@ -18,7 +18,7 @@ const shiftPressed = ref(false);
 provide('ctrlCmdPressed', ctrlCmdPressed);
 provide('shiftPressed', shiftPressed);
 
-const selected = SNode(ctrlCmdPressed, shiftPressed);
+const selected = new SNode(ctrlCmdPressed, shiftPressed);
 
 const tree = ref(null);
 onMounted(async () => {

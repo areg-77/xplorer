@@ -73,7 +73,7 @@ onUpdated(() => {
 
 <template>
   <li :key="node.vIndex">
-    <div class="tree-node" :class="{ isSelected: isSelected }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
+    <div class="tree-node" :class="{ selected: isSelected }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="toggleExpand">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
@@ -136,11 +136,11 @@ li:hover > .children-container.opened {
   background-color: var(--secondary);
   border-color: var(--border);
 }
-.tree-node.isSelected {
+.tree-node.selected {
   background-color: var(--secondary-light);
   border-color: var(--border-light);
 }
-.tree-node.isSelected:hover {
+.tree-node.selected:hover {
   background-color: var(--secondary-lighter);
 }
 

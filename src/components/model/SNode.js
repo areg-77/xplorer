@@ -1,6 +1,6 @@
 import { ref, reactive, watch } from "vue";
 
-export class SNodeBase {
+export class SNode {
   constructor(ctrlCmdPressed, shiftPressed) {
     this.ctrlCmdPressed = ctrlCmdPressed;
     this.shiftPressed = shiftPressed;
@@ -73,10 +73,6 @@ export class SNodeBase {
   }
 }
 
-export function SNode(ctrlCmdPressed, shiftPressed) {
-  return reactive(new SNodeBase(ctrlCmdPressed, shiftPressed));
-}
-
 export function isSNode(obj) {
-  return obj?.__v_raw instanceof SNodeBase;
+  return obj instanceof SNode;
 }
