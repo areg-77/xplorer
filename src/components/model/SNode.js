@@ -16,7 +16,7 @@ export class SNodeBase {
         this.last = null;
 
       this.nodes.forEach(node => node.parents().forEach(p => p.expanded = true));
-    }, { deep: false });
+    }, { deep: true });
   }
 
   add(node) {
