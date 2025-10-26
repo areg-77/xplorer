@@ -92,8 +92,18 @@ void WatchDirectory(const std::wstring& directory, std::function<void(const std:
 
         std::lock_guard<std::mutex> lock(eventsMutex);
 
+        auto alreadyExists = [&](const std::wstring& path, const std::wstring& type) {
+          for (auto& e : recentEvents) {
+            auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - e.timestamp).count();
+            if (ms < 500 && e.path == path && e.type == type)
+              return true;
+          }
+          return false;
+        };
+
         switch (info->Action) {
-          case FILE_ACTION_ADDED: {
+          case FILE_ACTION_ADDED:
+          {
             bool handled = false;
             for (auto it = recentEvents.begin(); it != recentEvents.end(); ++it) {
               auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - it->timestamp).count();
@@ -104,22 +114,22 @@ void WatchDirectory(const std::wstring& directory, std::function<void(const std:
                 break;
               }
             }
-            if (!handled)
+            if (!handled && !alreadyExists(fullPath, L"add"))
               recentEvents.push_back({L"add", fullPath, isDir, now});
             break;
           }
 
-          case FILE_ACTION_REMOVED: {
-            recentEvents.push_back({L"delete", fullPath, isDir, now});
+          case FILE_ACTION_REMOVED:
+            if (!alreadyExists(fullPath, L"delete"))
+              recentEvents.push_back({L"delete", fullPath, isDir, now});
             break;
-          }
 
-          case FILE_ACTION_RENAMED_OLD_NAME: {
+          case FILE_ACTION_RENAMED_OLD_NAME:
             pendingRenames.push_back({ fullPath, isDir, now });
             break;
-          }
 
-          case FILE_ACTION_RENAMED_NEW_NAME: {
+          case FILE_ACTION_RENAMED_NEW_NAME:
+          {
             bool matched = false;
             for (auto it = pendingRenames.begin(); it != pendingRenames.end(); ++it) {
               auto [oldPath, oldIsDir, timestamp] = *it;
