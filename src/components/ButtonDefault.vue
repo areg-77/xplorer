@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, useSlots, useAttrs, inject, provide } from 'vue';
+import { ref, computed, watch, useSlots, useAttrs, inject, provide, onMounted, onBeforeUnmount } from 'vue';
 
 defineOptions({ inheritAttrs: false })
 
@@ -39,10 +39,24 @@ function clickEvent() {
     parentDropdown.value = false;
   emit('click');
 }
+
+const dropdownRef = ref(null);
+function handleClickAway(event) {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target))
+    showDropdown.value = false;
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickAway);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickAway);
+});
 </script>
 
 <template>
-  <div class="dropdown-container">
+  <div class="dropdown-container" ref="dropdownRef">
     <button v-bind="$attrs" @click="hasDropdown ? toggleDropdown() : clickEvent()">
       <slot></slot>
     </button>
@@ -79,7 +93,7 @@ function clickEvent() {
 
 .dropdown-enter-active,
 .dropdown-leave-active {
-  transition: opacity 200ms, margin-top 150ms ease-in-out;
+  transition: opacity 150ms, margin-top 150ms ease-in-out;
   pointer-events: none;
 }
 
