@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, useSlots, useAttrs } from 'vue';
+import { ref, computed, watch, useSlots, useAttrs, inject, provide } from 'vue';
 
 defineOptions({ inheritAttrs: false })
 
@@ -7,7 +7,8 @@ const { dropdownOffset } = defineProps({
   dropdownOffset: {
     type: String,
     default: '50%'
-  }
+  },
+  parentDropdown: Boolean
 });
 
 const $attrs = useAttrs();
@@ -17,6 +18,14 @@ function toggleDropdown() {
   showDropdown.value = !showDropdown.value;
 }
 
+function isValidDropdown(obj) {
+  return obj && typeof obj?.value === 'boolean';
+}
+
+const parentDropdown = inject('showDropdown', null);
+if (!isValidDropdown(parentDropdown))
+  provide('showDropdown', showDropdown);
+
 watch(() => !!$attrs.disabled, isDisabled => {
   if (isDisabled) showDropdown.value = false;
 }, { immediate: true });
@@ -25,11 +34,16 @@ const slots = useSlots();
 const hasDropdown = computed(() => !!(slots.dropdown && slots.dropdown().length));
 
 const emit = defineEmits(['click']);
+function clickEvent() {
+  if (isValidDropdown(parentDropdown))
+    parentDropdown.value = false;
+  emit('click');
+}
 </script>
 
 <template>
   <div class="dropdown-container">
-    <button v-bind="$attrs" @click="hasDropdown ? toggleDropdown() : emit('click')">
+    <button v-bind="$attrs" @click="hasDropdown ? toggleDropdown() : clickEvent()">
       <slot></slot>
     </button>
     
