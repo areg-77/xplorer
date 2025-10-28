@@ -4,6 +4,7 @@ import DataField from './/DataField.vue';
 import DataGroup from './/DataGroup.vue';
 import DataText from './/DataText.vue';
 import Tree from './Tree.vue';
+import { TNode } from './model/TNode';
 
 const isDev = inject('isDev');
 

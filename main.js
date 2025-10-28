@@ -2,7 +2,7 @@ const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const { setupTitlebar, attachTitlebarToWindow } = require('custom-electron-titlebar/main');
 const pkg = require('./package.json');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs').promises;
 const mime = require('mime-types');
 
 const isDev = !app.isPackaged && process.env.NODE_ENV !== 'production';
@@ -10,7 +10,17 @@ const isMac = process.platform === 'darwin';
 
 setupTitlebar();
 
-function createWindow() {
+async function getRegionColor() {
+  const cssPath = 'src/styles/global.css';
+  const cssContent = await fs.readFile(cssPath, 'utf-8');
+
+  const match = cssContent.match(/--region:\s*(.+);/);
+  return match[1].trim();
+}
+
+async function createWindow() {
+  const regionColor = await getRegionColor();
+
   const win = new BrowserWindow({
     show: false,
     width: 1080,
@@ -20,7 +30,7 @@ function createWindow() {
     icon: path.join(__dirname, 'public', 'icons', 'icon.ico'),
     titleBarStyle: 'hidden',
     titleBarOverlay: true,
-    backgroundColor: 'hsl(0, 0%, 8%)',
+    backgroundColor: regionColor,
     webPreferences: {
       sandbox: false,
       nodeIntegration: false,
@@ -93,40 +103,6 @@ function createWindow() {
           }
         },
         { type: 'separator' },
-        {
-          label: 'Screenshot',
-          accelerator: 'F2',
-          click: () => {
-            const screenshotsFolder = path.join(__dirname, 'screenshots');
-
-            if (!fs.existsSync(screenshotsFolder))
-              fs.mkdirSync(screenshotsFolder, { recursive: true });
-
-            // get list of existing screenshots matching "screenshot_N.png"
-            const files = fs.readdirSync(screenshotsFolder);
-            const screenshotNumbers = files
-              .map(file => {
-                const match = file.match(/^screenshot_(\d+)\.png$/);
-                return match ? parseInt(match[1], 10) : null;
-              })
-              .filter(num => num !== null);
-
-            // get next available number
-            const nextNumber = (screenshotNumbers.length ? Math.max(...screenshotNumbers) : 0) + 1;
-            const screenshotPath = path.join(screenshotsFolder, `screenshot_${nextNumber}.png`);
-
-            // save screenshot
-            win.webContents.capturePage().then((image) => {
-              fs.writeFile(screenshotPath, image.toPNG(), (err) => {
-                if (err) {
-                  console.error('failed to save screenshot:', err);
-                } else {
-                  console.log(`screenshot saved: screenshot_${nextNumber}.png`);
-                }
-              });
-            });
-          }
-        }
       ]
     }] : [])
   ]);
@@ -141,7 +117,8 @@ app.on('ready', async () => {
     try {
       await installExtension(VUEJS_DEVTOOLS);
       console.info(`[Vue DevTools] Installed`);
-    } catch (err) {
+    }
+    catch (err) {
       console.warn('[Vue DevTools] Failed to install:', err);
     }
   }
@@ -160,7 +137,7 @@ app.on('window-all-closed', () => {
 });
 
 async function readFolder(dirPath) {
-  const items = await fs.promises.readdir(dirPath, { withFileTypes: true });
+  const items = await fs.readdir(dirPath, { withFileTypes: true });
 
   const children = await Promise.all(items.map(async item => {
     const fullPath = path.join(dirPath, item.name);
@@ -192,28 +169,28 @@ ipcMain.handle('read-folder', async (_, dirPath) => {
   };
 });
 
-ipcMain.on('menu-select-all', (event) => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (win) win.webContents.send('menu-select-all');
-});
-
 ipcMain.handle('get-mime-type', (_, filename) => {
   return mime.lookup(filename);
 });
 
-ipcMain.handle('explorer-delete', async (_, targetPath) => {
-  const stats = await fs.promises.stat(targetPath);
-
-  return stats.isDirectory() ? 
-    await fs.promises.rm(targetPath, { recursive: true, force: true }) :
-    await fs.promises.unlink(targetPath)
+ipcMain.on('menu-select-all', () => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (win) win.webContents.send('menu-select-all');
 });
 
-ipcMain.handle('explorer-rename', (_, oldPath, newPath) => {
-  return fs.promises.rename(oldPath, newPath);
+ipcMain.handle('explorer-delete', async (_, targetPath) => {
+  const stats = await fs.stat(targetPath);
+
+  return stats.isDirectory() ? 
+    await fs.rm(targetPath, { recursive: true, force: true }) :
+    await fs.unlink(targetPath)
+});
+
+ipcMain.handle('explorer-rename', async (_, oldPath, newPath) => {
+  return fs.rename(oldPath, newPath);
 });
 
 ipcMain.handle('explorer-create-folder', async (_, parentPath, folderName) => {
   const newFolderPath = path.join(parentPath, folderName);
-  return fs.promises.mkdir(newFolderPath);
+  return fs.mkdir(newFolderPath);
 });

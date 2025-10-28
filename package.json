@@ -1,6 +1,6 @@
 {
   "name": "xplorer",
-  "version": "14.4.0",
+  "version": "15.0.0",
   "description": "Files Managing tool",
   "author": {
     "name": "areg-77",
@@ -78,6 +78,7 @@
     ]
   },
   "dependencies": {
+    "color": "^5.0.2",
     "custom-electron-titlebar": "^4.2.8",
     "mime-types": "^3.0.1",
     "node-addon-api": "^8.5.0",
@@ -87,7 +88,7 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
-    "electron": "^38.4.0",
+    "electron": "^39.0.0",
     "electron-builder": "^26.0.12",
     "electron-devtools-installer": "^4.0.0",
     "rimraf": "^6.0.1",

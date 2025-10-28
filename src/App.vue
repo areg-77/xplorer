@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide, onMounted, onBeforeUnmount, watch } from 'vue';
+import { ref, provide, onMounted, onBeforeUnmount } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeTools from './components/TreeTools.vue';
 import TreeData from './components/TreeData.vue';
@@ -22,7 +22,7 @@ const selected = new SNode(ctrlCmdPressed, shiftPressed);
 
 const tree = ref(null);
 onMounted(async () => {
-  const rawTree = await window.electronAPI.readFolder(dir);
+  const rawTree = await window.explorer.readFolder(dir);
   function toTNode(node) {
     return TNode(node.label, node.type, node.children ? node.children.map(toTNode) : []);
   }
@@ -61,28 +61,31 @@ onMounted(async () => {
     });
     handler(data);
   });
+});
 
-  // ctrl/cmd and shift tracking
-  const handleKeyHold = (e) => {
-    ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
-    shiftPressed.value = e.shiftKey;
-  }
-  
+// ctrl/cmd and shift tracking
+function handleKeyHold(e) {
+  ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
+  shiftPressed.value = e.shiftKey;
+}
+
+onMounted(() => {
   window.addEventListener('keydown', handleKeyHold);
   window.addEventListener('keyup', handleKeyHold);
+});
 
-  onBeforeUnmount(() => {
-    window.removeEventListener('keydown', handleKeyHold);
-    window.removeEventListener('keyup', handleKeyHold);
-  });
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeyHold);
+  window.removeEventListener('keyup', handleKeyHold);
 });
 </script>
 
 <template>
   <main class="maingrid">
     <div class="tree-container">
-      <TreeTools :source="tree" :selected="selected"/>
-      <Tree :source="tree" :selected="selected" :draggable="true"/>
+      <!-- todo: instead of v-if add a skeleton loading -->
+      <TreeTools v-if="tree" :source="tree" :selected="selected"/>
+      <Tree v-if="tree" :source="tree" :selected="selected" :draggable="true"/>
     </div>
     <TreeData :selected="selected"/>
   </main>

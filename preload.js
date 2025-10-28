@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const { Titlebar, TitlebarColor } = require('custom-electron-titlebar');
+const Color = require('color').default;
 const path = require('path');
 
 (async () => {
@@ -11,16 +12,17 @@ const path = require('path');
 })();
 
 window.addEventListener('DOMContentLoaded', async () => {
+  const regionHSL = getComputedStyle(document.documentElement).getPropertyValue('--region-light').trim();
+
   new Titlebar({
     icon: 'icons/icon.ico',
     iconSize: 20,
-    backgroundColor: TitlebarColor.fromHex('#1c1c1c'),
+    backgroundColor: TitlebarColor.fromHex(Color(regionHSL).hex()),
   });
 });
 
 contextBridge.exposeInMainWorld("electronAPI", {
   dirname: __dirname.replace(/\\/g, '/'),
-  readFolder: (dir) => ipcRenderer.invoke('read-folder', dir),
   getMimeType: (filename) => ipcRenderer.invoke('get-mime-type', filename),
   onSelectAll: (callback) => ipcRenderer.on('menu-select-all', callback),
   sendToMain: (channel, data) => ipcRenderer.send(channel, data)
@@ -49,6 +51,7 @@ contextBridge.exposeInMainWorld('watcher', {
 });
 
 contextBridge.exposeInMainWorld("explorer", {
+  readFolder: (dir) => ipcRenderer.invoke('read-folder', dir),
   delete: (targetPath) => ipcRenderer.invoke('explorer-delete', targetPath),
   rename: (oldPath, newPath) => ipcRenderer.invoke('explorer-rename', oldPath, newPath),
   createFolder: (parentPath, folderName) => ipcRenderer.invoke('explorer-create-folder', parentPath, folderName)
