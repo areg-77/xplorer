@@ -1,5 +1,6 @@
 .cet-container {
   color: var(--fg);
+  background-color: var(--region);
   border: 1px solid var(--border-dark);
   overflow: hidden !important;
 }

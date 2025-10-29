@@ -11,10 +11,21 @@ const isMac = process.platform === 'darwin';
 setupTitlebar();
 
 async function getRegionColor() {
-  const cssPath = 'src/styles/global.css';
-  const cssContent = await fs.readFile(cssPath, 'utf-8');
+  let cssPath;
+  if (isDev)
+    cssPath = path.join(__dirname, 'src', 'styles', 'global.css');
+  else {
+    const assetsPath = path.join(__dirname, 'dist', 'assets');
+    const files = await fs.readdir(assetsPath);
 
-  const match = cssContent.match(/--region:\s*(.+);/);
+    const cssFile = files.find(f => f.endsWith('.css'));
+
+    cssPath = path.join(assetsPath, cssFile);
+  }
+
+  const cssContent = await fs.readFile(cssPath, 'utf-8');
+  const match = cssContent.match(/--region:\s*([^;]+);/);
+
   return match[1].trim();
 }
 
