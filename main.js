@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
 const { setupTitlebar, attachTitlebarToWindow } = require('custom-electron-titlebar/main');
 const pkg = require('./package.json');
 const path = require('path');
@@ -29,10 +29,11 @@ async function getRegionColor() {
   return match[1].trim();
 }
 
+let win;
 async function createWindow() {
   const regionColor = await getRegionColor();
 
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     show: false,
     width: 1080,
     height: 650,
@@ -63,7 +64,18 @@ async function createWindow() {
 
   const menu = Menu.buildFromTemplate([
     ...(isMac ? [{ role: 'appMenu' }] : []),
-    { role: 'fileMenu' },
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Open Folder',
+          accelerator: 'CmdOrCtrl+O',
+          click: () => win.webContents.send('open-folder')
+        },
+        { type: 'separator' },
+        (isMac ? { role: 'close' } : { role: 'quit' }),
+      ]
+    },
     {
       label: 'Edit',
       submenu: [
@@ -171,6 +183,19 @@ async function readFolder(dirPath) {
 }
 
 ipcMain.handle('get-is-dev', () => isDev);
+
+async function openFolder() {
+  const result = await dialog.showOpenDialog(win, {
+    properties: ['openDirectory'],
+  });
+
+  if (result.canceled) return null;
+  return result.filePaths[0].replace(/\\/g, '/');
+}
+
+ipcMain.handle('open-folder', async () => {
+  return openFolder();
+});
 
 ipcMain.handle('read-folder', async (_, dirPath) => {
   return {

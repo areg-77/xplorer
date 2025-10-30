@@ -3,10 +3,7 @@ import DataText from './DataText.vue';
 import ButtonDefault from './ButtonDefault.vue';
 
 const { source: tree, selected } = defineProps({
-  source: {
-    type: Object,
-    required: true
-  },
+  source: Object,
   selected: {
     type: Object,
     required: true
@@ -26,7 +23,7 @@ function createFolder() {
   <div class="tree-tools">
     <DataText :value="selected.nodes[0]?.path" font-size="12px" style="color: var(--fg-dark); margin-right: 0.5em;"/>
 
-    <ButtonDefault class="icon" :disabled="!selected.nodes[0]">
+    <ButtonDefault class="icon" :disabled="!source || !selected.nodes[0]">
       <span class="icon ui file-add"></span>
 
       <template #dropdown>
@@ -41,23 +38,23 @@ function createFolder() {
       </template>
     </ButtonDefault>
 
-    <ButtonDefault class="icon" @click="createFolder" :disabled="!selected.nodes[0]">
+    <ButtonDefault class="icon" @click="createFolder" :disabled="!source || !selected.nodes[0]">
       <span class="icon ui folder-add"></span>
     </ButtonDefault>
 
-    <ButtonDefault class="icon version" :disabled="!selected.nodes[0]">
+    <ButtonDefault class="icon version" :disabled="!source || !selected.nodes[0]">
       <span class="icon ui version"></span>
     </ButtonDefault>
 
     <div class="divider"></div>
 
-    <ButtonDefault class="icon danger" @click="deleteSelected" :disabled="!selected.nodes[0]">
+    <ButtonDefault class="icon danger" @click="deleteSelected" :disabled="!source || !selected.nodes[0]">
       <span class="icon ui delete"></span>
     </ButtonDefault>
 
     <div class="divider"></div>
 
-    <ButtonDefault class="icon" dropdown-offset="100%">
+    <ButtonDefault class="icon" dropdown-offset="100%" :disabled="!source">
       <span class="icon ui dots"></span>
 
       <template #dropdown>

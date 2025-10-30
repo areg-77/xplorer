@@ -1,6 +1,6 @@
 {
   "name": "xplorer",
-  "version": "15.0.1",
+  "version": "16.0.0",
   "description": "Files Managing tool",
   "author": {
     "name": "areg-77",
@@ -43,13 +43,6 @@
       {
         "from": "LICENSE",
         "to": "../LICENSE.${name}.txt"
-      },
-      {
-        "from": "resources/Project/",
-        "to": "Project",
-        "filter": [
-          "**/*"
-        ]
       }
     ],
     "directories": {

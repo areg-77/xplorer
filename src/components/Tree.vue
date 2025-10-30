@@ -5,10 +5,7 @@ import TreeNode from './TreeNode.vue';
 import { isSNode } from './model/SNode';
 
 const { source: tree, selected, draggable } = defineProps({
-  source: {
-    type: Object,
-    required: true
-  },
+  source: Object,
   selected: Object,
   draggable: Boolean
 });
@@ -23,7 +20,7 @@ onMounted(() => {
   if (!isSNode(selected)) return;
 
   // select sibilings when pressing ctrl+a
-  window.electronAPI.onSelectAll(() => {
+  window.electronAPI.on('menu-select-all', () => {
     if (document.activeElement === treeRef.value && selected.nodes.at(-1))
       selected.nodes.at(-1).parent.children.forEach(c => selected.add(c));
   });
@@ -89,9 +86,11 @@ function handleTreeDrop(e) {
 
 <template>
   <div class="tree-view scroll-buffer" @mousedown="handleMouseDown" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent @keydown="handleKeyDown" ref="treeRef" tabindex="0">
-    <transition-group tag="ul" name="list">
-      <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="(node) => selected.handle(node)" @deselect="(node) => selected.remove(node)" @dragdrop="handleDragDrop"/>
-    </transition-group>
+    <slot>
+      <transition-group v-if="source" tag="ul" name="list">
+        <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="(node) => selected.handle(node)" @deselect="(node) => selected.remove(node)" @dragdrop="handleDragDrop"/>
+      </transition-group>
+    </slot>
   </div>
 </template>
 
