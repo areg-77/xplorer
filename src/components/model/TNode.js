@@ -57,7 +57,7 @@ export class TNodeBase {
     // auto sort
     watch(() => this.children.value.map(child => [child.type, child.label]), () => {
       if (this.children.value.length <= 1) return;
-      console.log(`%csorted "${this.label.value}"`, 'color: yellow;');
+      // console.log(`%csorted "${this.label.value}"`, 'color: yellow;');
 
       this.children.value.sort((a, b) => (b.type === 'folder') - (a.type === 'folder') || a.label.localeCompare(b.label));
     }, { deep: true });

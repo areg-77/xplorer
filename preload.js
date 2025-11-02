@@ -3,13 +3,23 @@ const { Titlebar, TitlebarColor } = require('custom-electron-titlebar');
 const Color = require('color').default;
 const path = require('path');
 
-(async () => {
-  const isDev = await ipcRenderer.invoke('get-is-dev');
+ipcRenderer.invoke('get-is-dev').then(isDev => {
+  let watcherPath;
+  if (isDev)
+    watcherPath = path.join(__dirname, 'native', 'build', 'Release', 'watcher.node');
+  else
+    watcherPath = path.join(process.resourcesPath, 'native', 'watcher.node');
 
-  watcher = require(path.join(__dirname, 'native', ...(isDev ? ['build', 'Release'] : []), 'watcher.node'));
+  const { Watcher } = require(watcherPath);
+  const watcher = new Watcher();
 
   contextBridge.exposeInMainWorld('env', Object.freeze({ isDev }));
-})();
+  contextBridge.exposeInMainWorld('watcher', {
+    start: (dir) => watcher.start(dir),
+    stop: () => watcher.stop(),
+    on: (event, cb) => watcher.on(event, cb)
+  });
+});
 
 window.addEventListener('DOMContentLoaded', async () => {
   const regionHSL = getComputedStyle(document.documentElement).getPropertyValue('--region-light').trim();
@@ -30,29 +40,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
   sendToMain: (channel, data) => ipcRenderer.send(channel, data)
 });
 
-contextBridge.exposeInMainWorld('watcher', {
-  start: (dir, callback) => {
-    if (!watcher) return;
-    
-    watcher.start(dir, (event, _path, isDir) => {
-      _path = _path.replace(/\\/g, '/');
-      const [p1, p2] = _path.split('|');
-      const oldpath = p2 ? p1 : null;
-      const newpath = p2 || p1;
-
-      const data = {
-        oldpath,
-        path: newpath,
-        basename: path.basename(newpath),
-        dirname: path.dirname(newpath),
-        isDir
-      };
-      callback(event, data);
-    });
-  }
-});
-
 contextBridge.exposeInMainWorld("explorer", {
+  basename: (filePath) => path.basename(filePath),
+  dirname: (filePath) => path.dirname(filePath),
+  extname: (filePath) => path.extname(filePath),
   openFolder: () => ipcRenderer.invoke('open-folder'),
   readFolder: (dir) => ipcRenderer.invoke('read-folder', dir),
   delete: (targetPath) => ipcRenderer.invoke('explorer-delete', targetPath),

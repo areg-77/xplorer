@@ -25,46 +25,6 @@ async function loadTree(directory) {
   tree.value.path = directory;
 }
 
-const eventHandlers = {
-  add: (data) => {
-    console.log(`add: ${data.path}`);
-    const node = TNode(data.basename, data.isDir ? 'folder' : 'file');
-    const parent = nodeByPath(data.dirname, tree.value);
-    if (node && parent) node.parent = parent;
-  },
-  delete: (data) => {
-    console.log(`delete: ${data.path}`);
-    const node = nodeByPath(data.path, tree.value);
-    if (node) node.parent = null;
-  },
-  rename: (data) => { 
-    console.log(`rename: ${data.oldpath} -> ${data.path}`);
-    const node = nodeByPath(data.oldpath, tree.value);
-    if (node) node.label = data.basename;
-  },
-  move: (data) => {
-    console.log(`move: ${data.oldpath} -> ${data.path}`);
-    const node = nodeByPath(data.oldpath, tree.value);
-    const newParent = nodeByPath(data.dirname, tree.value);
-    if (node && newParent) node.parent = newParent;
-  }
-};
-
-watch(dir, async (newDir) => {
-  if (!newDir) return;
-  await loadTree(newDir);
-  
-  selected.clear();
-
-  // window.watcher.stop();
-  window.watcher.start(newDir, (event, data) => {
-    const handler = eventHandlers[event] || ((d) => {
-      console.warn(`unhandled event (${event})`, d);
-    });
-    handler(data);
-  });
-}, { immediate: true });
-
 const ctrlCmdPressed = ref(false);
 const shiftPressed = ref(false);
 
@@ -81,6 +41,37 @@ function handleKeyHold(e) {
 
 onMounted(() => {
   window.electronAPI.on('open-folder', async () => openFolder());
+
+  window.watcher?.on('add', (path, type) => {
+    console.log(`add: ${path} [${type}]`);
+    const node = TNode(window.explorer.basename(path), type);
+    const parent = nodeByPath(window.explorer.dirname(path), tree.value);
+    if (node && parent) node.parent = parent;
+  });
+  window.watcher?.on('delete', (path) => {
+    console.log(`delete: ${path}`);
+    const node = nodeByPath(path, tree.value);
+    if (node) node.parent = null;
+  });
+  window.watcher?.on('rename', (oldPath, newPath) => {
+    console.log(`rename: ${oldPath} -> ${newPath}`);
+    const node = nodeByPath(oldPath, tree.value);
+    if (node) node.label = window.explorer.basename(newPath);
+  });
+  window.watcher?.on('move', (oldPath, newPath) => {
+    console.log(`move: ${oldPath} -> ${newPath}`);
+    const node = nodeByPath(oldPath, tree.value);
+    const newParent = nodeByPath(window.explorer.dirname(newPath), tree.value);
+    if (node && newParent) node.parent = newParent;
+  });
+
+  watch(dir, async (newDir) => {
+    if (!newDir) return;
+    await loadTree(newDir);
+
+    window.watcher.stop();
+    window.watcher.start(newDir);
+  }, { immediate: true });
   
   window.addEventListener('keydown', handleKeyHold);
   window.addEventListener('keyup', handleKeyHold);

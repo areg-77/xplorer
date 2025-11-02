@@ -66,9 +66,9 @@ function onDrop(e) {
   emit('dragdrop', { currentNodeId: e.dataTransfer.getData('node-id'), targetNode: node });
 }
 
-onUpdated(() => {
-  console.log(`%c"${node.label}" updated`, 'color: greenyellow;');
-});
+// onUpdated(() => {
+//   console.log(`%c"${node.label}" updated`, 'color: greenyellow;');
+// });
 </script>
 
 <template>

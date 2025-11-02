@@ -9,6 +9,7 @@ lerna-debug.log*
 
 bin/
 build/
+native/efsw/
 node_modules/
 screenshots/
 dist/
