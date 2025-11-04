@@ -1,57 +1,30 @@
-import { ref, reactive, computed, watch } from 'vue';
+import { ref, reactive, watch, computed } from 'vue';
 
 let idCounter = 1;
-
-export class VNode {
-  constructor(label) {
-    this.label = ref(label);
-    this.children = reactive([]);
-  }
-}
 
 export class TNodeBase {
   constructor(label, type, children = []) {
     this.id = idCounter++;
     this.parent = ref(null);
-    this.vIndex = ref(0);
 
-    this.node = reactive([new VNode(label)]);
-
-    this.versionNode = computed(() => {
-      return this.siblings()?.find(node => node.label === '.version' && node.type === 'folder') || null;
-    });
-
-    // sync nodes from .version to nodes array
-    watch(() => this.versionNode?.value?.children.map(c => c.node), (newVersions) => {
-      const currentNode = this.node[this.vIndex.value];
-      this.node.splice(0, this.node.length, currentNode);
-      this.vIndex.value = 0;
-
-      newVersions?.forEach(node => {
-        this.node.push(node[0]);
-      });
-    });
-
-    this.label = computed({
-      get: () => this.node[this.vIndex.value].label,
-      set: (value) => this.node[this.vIndex.value].label = value
-    });
-
-    this.children = computed({
-      get: () => this.node[this.vIndex.value].children,
-      set: (value) => this.node[this.vIndex.value].children.splice(0, arr.length, ...value)
-    });
+    this.label = ref(label);
+    this.children = reactive([]);
 
     this.type = ref(type);
     this.mimeType = ref(false);
     this.expanded = ref(false);
 
+    this.extension = computed(() =>{
+      if (this.type.value === 'folder') return null;
+      return window.explorer.extname(this.label.value).replace('.', '');
+    });
+
     // dynamic mimeType
-    watch([this.type, this.label], ([newType, newLabel]) => {
+    watch([this.type, this.extension], ([newType, newExtension]) => {
       if (newType === 'folder')
         this.mimeType.value = false;
       else
-        window.electronAPI.getMimeType(newLabel).then(mime => this.mimeType.value = mime);
+        window.electronAPI.getMimeType(newExtension).then(mime => this.mimeType.value = mime);
     }, { immediate: true });
 
     // dynamic parent
@@ -66,31 +39,19 @@ export class TNodeBase {
 
     // expanding validation
     watch(this.expanded, newExpanded => {
-      this.expanded.value = ((this.type.value === 'folder' && this.children.value.length > 0) ? newExpanded : false);
+      this.expanded.value = ((this.type.value === 'folder' && this.children.length > 0) ? newExpanded : false);
     }, { immediate: true });
 
     // auto sort
-    watch(() => this.children.value.map(child => [child.type, child.label]), () => {
-      if (this.children.value.length <= 1) return;
+    watch(() => this.children.map(child => [child.type, child.label]), () => {
+      if (this.children.length <= 1) return;
       // console.log(`%csorted "${this.label.value}"`, 'color: yellow;');
 
-      this.children.value.sort((a, b) => (b.type === 'folder') - (a.type === 'folder') || a.label.localeCompare(b.label));
-    });
-
-    // auto sort (node)
-    watch(() => this.node.map(n => n.label), () => {
-      if (this.node.length <= 1) return;
-
-      const currentLabel = this.label.value;
-      this.node.sort((a, b) => a.label.localeCompare(b.label));
-
-      const newIndex = this.node.findIndex(n => n.label === currentLabel);
-      if (newIndex !== -1 && newIndex !== this.vIndex)
-        this.vIndex.value = newIndex;
+      this.children.sort((a, b) => (b.type === 'folder') - (a.type === 'folder') || a.label.localeCompare(b.label));
     });
 
     // auto expand/collapse
-    watch(() => this.children.value.length, len => {
+    watch(() => this.children.length, len => {
       this.expanded.value = !(len === 0);
     });
 
@@ -121,11 +82,6 @@ export class TNodeBase {
 
   siblings() {
     return this.parent.value?.children.filter(c => !c.equals(this));
-  }
-
-  get extension() {
-    if (this.type.value === 'folder') return null;
-    return this.label.includes('.') ? this.label.split('.').pop() : null;
   }
 
   get path() {

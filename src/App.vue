@@ -4,7 +4,7 @@ import Tree from './components/Tree.vue';
 import TreeTools from './components/TreeTools.vue';
 import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
-import { TNode, VNode, nodeByPath } from './components/model/TNode';
+import { TNode, nodeByPath } from './components/model/TNode';
 import { SNode } from './components/model/SNode';
 import ButtonDefault from './components/ButtonDefault.vue';
 
@@ -47,12 +47,9 @@ function handleKeyHold(e) {
   shiftPressed.value = e.shiftKey;
 }
 
-let versionSwitch = false;
-
 onMounted(() => {
   window.nodeByPath = nodeByPath;
   window.selected = selected;
-  window.VNode = VNode;
 
   window.electronAPI.on('open-folder', async () => openFolder());
 
@@ -74,8 +71,6 @@ onMounted(() => {
   });
   window.watcher?.on('move', (oldPath, newPath) => {
     console.log(`move: ${oldPath} -> ${newPath}`);
-    if (versionSwitch) return;
-
     const node = nodeByPath(oldPath, tree.value);
     const newParent = nodeByPath(window.explorer.dirname(newPath), tree.value);
     if (node && newParent) node.parent = newParent;
@@ -103,31 +98,6 @@ async function openFolder() {
   if (folderPath)
     dir.value = folderPath;
 }
-
-// version swapper
-watch(() => selected.nodes[0]?.vIndex, async (newIndex, oldIndex) => {
-  if (!Number.isInteger(oldIndex)) return;
-
-  versionSwitch = true;
-
-  const dirName = window.explorer.dirname(selected.nodes[0].path);
-  const oldFile = selected.nodes[0].node[oldIndex]?.label;
-  const newFile = selected.nodes[0].node[newIndex]?.label;
-
-  const oldPath1 = `${dirName}/${oldFile}`;
-  const newPath1 = `${dirName}/.version/${oldFile}`;
-  const oldPath2 = `${dirName}/.version/${newFile}`;
-  const newPath2 = `${dirName}/${newFile}`;
-
-  try {
-    await window.explorer.rename(oldPath1, newPath1);
-    await window.explorer.rename(oldPath2, newPath2);
-
-    await new Promise(resolve => setTimeout(resolve, 300));
-  } finally {
-    versionSwitch = false;
-  }
-});
 </script>
 
 <template>
