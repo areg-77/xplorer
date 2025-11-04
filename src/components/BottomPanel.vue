@@ -1,5 +1,6 @@
 <script setup>
 import { inject } from 'vue';
+import pkg from '../../package.json';
 
 const isDev = inject('isDev');
 
@@ -15,9 +16,13 @@ const { selected } = defineProps({
   <div class="bottom-panel">
     dev: {{ isDev }}
     <br/>
-    selected.nodes: {{ selected.nodes.map(s => s.label) }}
-    <br/>
-    selected.last: "{{ selected.last?.label }}"
+    version: {{ pkg.version }}
+    
+    <div v-if="isDev">
+      selected.nodes: {{ selected.nodes.map(s => s.label) }}
+      <br/>
+      selected.last: "{{ selected.last?.label }}"
+    </div>
   </div>
 </template>
 

@@ -2,7 +2,7 @@ import { ref, reactive, computed, watch } from 'vue';
 
 let idCounter = 1;
 
-class VNode {
+export class VNode {
   constructor(label) {
     this.label = ref(label);
     this.children = reactive([]);
@@ -15,7 +15,22 @@ export class TNodeBase {
     this.parent = ref(null);
     this.vIndex = ref(0);
 
-    this.node = reactive([new VNode(label), new VNode('_versiontest')]);
+    this.node = reactive([new VNode(label)]);
+
+    this.versionNode = computed(() => {
+      return this.siblings()?.find(node => node.label === '.version' && node.type === 'folder') || null;
+    });
+
+    // sync nodes from .version to nodes array
+    watch(() => this.versionNode?.value?.children.map(c => c.node), (newVersions) => {
+      const currentNode = this.node[this.vIndex.value];
+      this.node.splice(0, this.node.length, currentNode);
+      this.vIndex.value = 0;
+
+      newVersions?.forEach(node => {
+        this.node.push(node[0]);
+      });
+    });
 
     this.label = computed({
       get: () => this.node[this.vIndex.value].label,
@@ -60,7 +75,19 @@ export class TNodeBase {
       // console.log(`%csorted "${this.label.value}"`, 'color: yellow;');
 
       this.children.value.sort((a, b) => (b.type === 'folder') - (a.type === 'folder') || a.label.localeCompare(b.label));
-    }, { deep: true });
+    });
+
+    // auto sort (node)
+    watch(() => this.node.map(n => n.label), () => {
+      if (this.node.length <= 1) return;
+
+      const currentLabel = this.label.value;
+      this.node.sort((a, b) => a.label.localeCompare(b.label));
+
+      const newIndex = this.node.findIndex(n => n.label === currentLabel);
+      if (newIndex !== -1 && newIndex !== this.vIndex)
+        this.vIndex.value = newIndex;
+    });
 
     // auto expand/collapse
     watch(() => this.children.value.length, len => {
@@ -90,6 +117,10 @@ export class TNodeBase {
     };
     collect(this);
     return allChildren;
+  }
+
+  siblings() {
+    return this.parent.value?.children.filter(c => !c.equals(this));
   }
 
   get extension() {

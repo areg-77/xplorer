@@ -18,7 +18,6 @@
   --secondary: hsl(0, 0%, 17%);
   --secondary-dark: hsl(0, 0%, 14%);
 
-  --border-lighter: hsl(0, 0%, 57%);
   --border-light: hsl(0, 0%, 29%);
   --border: hsl(0, 0%, 23%);
   --border-dark: hsl(0, 0%, 18%);
@@ -29,14 +28,14 @@
   --scrollbar-hover: hsl(0, 0%, 43%);
 
   --danger-fg: hsl(352, 65%, 52%);
+  --danger-region-light: hsl(352, 40%, 32%);
   --danger-region: hsl(352, 40%, 23%);
   --danger-region-dark: hsl(352, 13%, 15%);
-  --danger-region-light: hsl(352, 40%, 32%);
 
   --version-fg: hsl(157, 65%, 52%);
+  --version-region-light: hsl(157, 40%, 32%);
   --version-region: hsl(157, 40%, 23%);
   --version-region-dark: hsl(157, 13%, 15%);
-  --version-region-light: hsl(157, 40%, 32%);
 
   --control-padding-1: 2px 5px;
   --control-padding-2: 3px 5px;

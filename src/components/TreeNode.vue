@@ -13,6 +13,7 @@ const emit = defineEmits(['select', 'deselect', 'dragdrop']);
 
 const selected = inject('selected');
 const isSelected = computed(() => selected && isSNode(selected) ? selected.nodes.some(n => n.equals(node)) : false);
+const isVersioned = computed(() => node.versionNode);
 
 const draggable = inject('draggable');
 
@@ -73,7 +74,7 @@ function onDrop(e) {
 
 <template>
   <li :key="node.vIndex">
-    <div class="tree-node" :class="{ selected: isSelected }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
+    <div class="tree-node" :class="{ selected: isSelected, versioned: isVersioned }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="toggleExpand">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
@@ -109,7 +110,7 @@ ul {
 
   transition: background-color 200ms, border-radius 150ms;
 }
-.tree-node.isSelected + .children-container.opened > ul {
+.tree-node.selected + .children-container.opened > ul {
   transition-delay: 100ms 0ms;
   background-color: var(--secondary-dark);
   margin-right: 1px; /* might cause a bug */
@@ -143,6 +144,20 @@ li:hover > .children-container.opened {
 .tree-node.selected:hover {
   background-color: var(--secondary-lighter);
 }
+.tree-node.versioned {
+  color: var(--version-fg);
+}
+.tree-node.versioned:hover {
+  background-color: var(--version-region-dark);
+  border-color: var(--version-region);
+}
+/* .tree-node.versioned.selected {
+  background-color: var(--version-region);
+  border-color: var(--version-region-light);
+}
+.tree-node.versioned.selected:hover {
+  background-color: var(--version-region-light);
+} */
 
 .expander-container {
   display: flex;
@@ -158,8 +173,8 @@ li:hover > .children-container.opened {
 }
 
 .expander {
-  border-right: 1px solid var(--border-lighter);
-  border-bottom: 1px solid var(--border-lighter);
+  border-right: 1px solid var(--fg-darker);
+  border-bottom: 1px solid var(--fg-darker);
   height: 0.5em;
   aspect-ratio: 1;
   transform: rotate(-45deg);
@@ -197,7 +212,7 @@ li:hover > .children-container.opened {
   transition: opacity 125ms;
 }
 .tree-node:hover .tree-parameter,
-.tree-node.isSelected .tree-parameter {
+.tree-node.selected .tree-parameter {
   transition-delay: 100ms;
   opacity: 1;
 }

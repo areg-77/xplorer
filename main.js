@@ -159,6 +159,21 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
+ipcMain.handle('get-is-dev', () => isDev);
+
+async function openFolder() {
+  const result = await dialog.showOpenDialog(win, {
+    properties: ['openDirectory'],
+  });
+
+  if (result.canceled) return null;
+  return result.filePaths[0].replace(/\\/g, '/');
+}
+
+ipcMain.handle('open-folder', async () => {
+  return openFolder();
+});
+
 async function readFolder(dirPath) {
   const items = await fs.readdir(dirPath, { withFileTypes: true });
 
@@ -181,21 +196,6 @@ async function readFolder(dirPath) {
 
   return children;
 }
-
-ipcMain.handle('get-is-dev', () => isDev);
-
-async function openFolder() {
-  const result = await dialog.showOpenDialog(win, {
-    properties: ['openDirectory'],
-  });
-
-  if (result.canceled) return null;
-  return result.filePaths[0].replace(/\\/g, '/');
-}
-
-ipcMain.handle('open-folder', async () => {
-  return openFolder();
-});
 
 ipcMain.handle('read-folder', async (_, dirPath) => {
   return {

@@ -70,6 +70,9 @@ const invalidChars = `\\/:?"<>|\n`;
       <DataField label="Parent">
         <DataText :value="selected.nodes[0]?.parent?.label" border-radius-mask="0110"/>
       </DataField>
+      <DataField label="Version Node">
+        <DataText :value="selected.nodes[0]?.versionNode?.label" border-radius-mask="0110"/>
+      </DataField>
       <!-- <DataField v-if="selected.nodes[0]?.children.length > 0" label="Children" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
         <Tree :source="selected.nodes[0]"/>
       </DataField> -->
