@@ -51,6 +51,21 @@ const invalidChars = `\\/:?"<>|\n`;
       </DataField>
     </DataGroup>
 
+    <DataGroup label="Version Control" icon="ui version">
+      <DataField label="Type">
+        <DataText :value="selected.nodes[0]?.version.type" border-radius-mask="0110"/>
+      </DataField>
+      <DataField label="Node">
+        <DataText :value="selected.nodes[0]?.version.node?.label" border-radius-mask="0110"/>
+      </DataField>
+      <DataField label="Children">
+        <DataText :value="selected.nodes[0]?.version.children?.map(c => c.label)" border-radius-mask="0110"/>
+      </DataField>
+      <DataField label="Index">
+        <DataText :value="selected.nodes[0]?.version.index" @setvalue="val => selected.nodes[0] && (selected.nodes[0].version.index = JSON.parse(val))" :editable="!!selected.nodes[0] && selected.nodes[0]?.version.index !== -1" border-radius-mask="0110"/>
+      </DataField>
+    </DataGroup>
+
     <DataGroup v-if="isDev" label="Developer" icon="ui code">
       <DataField label="Id">
         <DataText :value="selected.nodes[0]?.id" border-radius-mask="0110"/>

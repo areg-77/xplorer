@@ -1,4 +1,7 @@
 import { ref, reactive, watch, computed } from 'vue';
+import mitt from 'mitt';
+
+export const nodeEmitter = mitt();
 
 let idCounter = 1;
 
@@ -54,6 +57,34 @@ export class TNodeBase {
     watch(() => this.children.length, len => {
       this.expanded.value = !(len === 0);
     });
+
+    this.version = {
+      ...(this.label.value === '.version' && this.type.value === 'folder' ? {
+        type: 'container',
+        node: computed(() => this.siblings()?.[0] || null),
+        children: computed(() => {
+          const vChildren = [...this.children];
+          if (this.version.node.value) vChildren.push(this.version.node.value);
+
+          vChildren.sort((a, b) => a.label.localeCompare(b.label));
+          return vChildren;
+        })
+      } : {
+        type: 'node',
+        node: computed(() => this.siblings()?.find(node => node.label === '.version' && node.type === 'folder') || null), //doesnt automatically appear when creating a new .version folder
+        index: computed({
+          get: () => this.version.node.value?.version.children?.findIndex(c => c.equals(this)) ?? -1,
+          set: newIndex => {
+            const oldIndex = this.version.index.value;
+            nodeEmitter.emit('version-index-changed', {
+              node: this,
+              oldIndex,
+              newIndex,
+            });
+          }
+        })
+      }),
+    };
 
     children.forEach(child => child.parent = this);
   }

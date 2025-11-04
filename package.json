@@ -1,6 +1,6 @@
 {
   "name": "xplorer",
-  "version": "19.0.0",
+  "version": "20.0.0",
   "description": "Files Managing tool",
   "author": {
     "name": "areg-77",
@@ -40,7 +40,10 @@
       {
         "from": "native/build/Release/",
         "to": "native",
-        "filter": ["watcher.node", "efsw.dll"]
+        "filter": [
+          "watcher.node",
+          "efsw.dll"
+        ]
       }
     ],
     "directories": {
@@ -72,6 +75,7 @@
     "color": "^5.0.2",
     "custom-electron-titlebar": "^4.2.8",
     "mime-types": "^3.0.1",
+    "mitt": "^3.0.1",
     "node-addon-api": "^8.5.0",
     "vue": "^3.5.22"
   },

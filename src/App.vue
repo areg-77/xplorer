@@ -4,7 +4,7 @@ import Tree from './components/Tree.vue';
 import TreeTools from './components/TreeTools.vue';
 import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
-import { TNode, nodeByPath } from './components/model/TNode';
+import { TNode, nodeByPath, nodeEmitter } from './components/model/TNode';
 import { SNode } from './components/model/SNode';
 import ButtonDefault from './components/ButtonDefault.vue';
 
@@ -54,23 +54,23 @@ onMounted(() => {
   window.electronAPI.on('open-folder', async () => openFolder());
 
   window.watcher?.on('add', (path, type) => {
-    console.log(`add: ${path} [${type}]`);
+    // console.log(`add: ${path} [${type}]`);
     const node = TNode(window.explorer.basename(path), type);
     const parent = nodeByPath(window.explorer.dirname(path), tree.value);
     if (node && parent) node.parent = parent;
   });
   window.watcher?.on('delete', (path) => {
-    console.log(`delete: ${path}`);
+    // console.log(`delete: ${path}`);
     const node = nodeByPath(path, tree.value);
     if (node) node.parent = null;
   });
   window.watcher?.on('rename', (oldPath, newPath) => {
-    console.log(`rename: ${oldPath} -> ${newPath}`);
+    // console.log(`rename: ${oldPath} -> ${newPath}`);
     const node = nodeByPath(oldPath, tree.value);
     if (node) node.label = window.explorer.basename(newPath);
   });
   window.watcher?.on('move', (oldPath, newPath) => {
-    console.log(`move: ${oldPath} -> ${newPath}`);
+    // console.log(`move: ${oldPath} -> ${newPath}`);
     const node = nodeByPath(oldPath, tree.value);
     const newParent = nodeByPath(window.explorer.dirname(newPath), tree.value);
     if (node && newParent) node.parent = newParent;
@@ -83,6 +83,24 @@ onMounted(() => {
     window.watcher.stop();
     window.watcher.start(newDir);
   }, { immediate: true });
+
+  // version index switch
+  nodeEmitter.on('version-index-changed', ({ node, oldIndex, newIndex }) => {
+    const containerNode = node.version.node.value;
+
+    const oldNode = containerNode.version.children[oldIndex];
+    const newNode = containerNode.version.children[newIndex];
+
+    // temp area
+    selected.remove(oldNode);
+    selected.add(newNode);
+
+    const oldDir = window.explorer.dirname(oldNode.path);
+    const newDir = window.explorer.dirname(newNode.path);
+
+    window.explorer.rename(oldNode.path, newDir + '/' + oldNode.label);
+    window.explorer.rename(newNode.path, oldDir + '/' + newNode.label);
+  });
   
   window.addEventListener('keydown', handleKeyHold);
   window.addEventListener('keyup', handleKeyHold);
