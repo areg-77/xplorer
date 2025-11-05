@@ -13,6 +13,7 @@ const emit = defineEmits(['select', 'deselect', 'dragdrop']);
 
 const selected = inject('selected');
 const isSelected = computed(() => selected && isSNode(selected) ? selected.nodes.some(n => n.equals(node)) : false);
+const isVersioned = computed(() => node.version.index !== -1);
 
 const draggable = inject('draggable');
 
@@ -73,7 +74,7 @@ function onDrop(e) {
 
 <template>
   <li v-if="!(node.label === '.version' && node.type === 'folder')">
-    <div class="tree-node" :class="{ selected: isSelected }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
+    <div class="tree-node" :class="{ selected: isSelected, version: isVersioned }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="toggleExpand">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
@@ -142,6 +143,10 @@ li:hover > .children-container.opened {
 }
 .tree-node.selected:hover {
   background-color: var(--secondary-lighter);
+}
+
+.tree-node.version {
+  color: var(--version-fg);
 }
 
 .expander-container {

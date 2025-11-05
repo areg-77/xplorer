@@ -64,7 +64,7 @@ const { label, direction } = defineProps({
   flex: 1;
   display: flex;
   overflow: hidden;
-  align-items: center;
+  /* align-items: center; */
   background-color: var(--region-light);
   border: 1px solid var(--border-dark);
   border-radius: calc(var(--border-radius) + var(--border-radius-offset));

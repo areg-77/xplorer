@@ -51,6 +51,7 @@ li {
   border-color: var(--border);
 }
 .tree-node.selected {
+  color: var(--version-fg);
   background-color: var(--secondary-light);
   border-color: var(--border-light);
 }

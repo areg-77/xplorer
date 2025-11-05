@@ -17,12 +17,12 @@ const { selected } = defineProps({
     dev: {{ isDev }}
     <br/>
     version: {{ pkg.version }}
-    
-    <div v-if="isDev">
+    <br/>
+    <template v-if="isDev">
       selected.nodes: {{ selected.nodes.map(s => s.label) }}
       <br/>
       selected.last: "{{ selected.last?.label }}"
-    </div>
+    </template>
   </div>
 </template>
 
