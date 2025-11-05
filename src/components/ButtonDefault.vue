@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
   border: 1px solid var(--border-dark);
   border-radius: calc(var(--border-radius) + 2px);
   margin-top: 0.3rem;
-  z-index: 100;
+  z-index: 1;
   min-width: 12px;
   padding: 2px;
   gap: 2px;

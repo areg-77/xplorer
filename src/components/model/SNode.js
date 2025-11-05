@@ -48,15 +48,15 @@ export class SNode {
 
     // parents/childrens deselecting
     if (select) {
-      if (this.ctrlCmdPressed.value || this.shiftPressed.value) {
+      if (this.ctrlCmdPressed?.value || this.shiftPressed?.value) {
         node.parents().forEach(p => this.remove(p));
         node.childrens().forEach(c => this.remove(c));
       }
     }
 
-    if (this.ctrlCmdPressed.value)
+    if (this.ctrlCmdPressed?.value)
       (select ? this.add(node) : this.remove(node));
-    else if (this.shiftPressed.value) {
+    else if (this.shiftPressed?.value) {
       const beginIndex = node.parent.children.findIndex(n => n.equals(this.last));
       const endIndex = node.parent.children.findIndex(n => n.equals(node));
 

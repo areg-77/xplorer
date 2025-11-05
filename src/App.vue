@@ -76,11 +76,13 @@ onMounted(() => {
     if (node && newParent) node.parent = newParent;
   });
 
-  watch(dir, async (newDir) => {
+  watch(dir, async (newDir, oldDir) => {
     if (!newDir) return;
     await loadTree(newDir);
 
-    window.watcher.stop();
+    // stop bug found
+    if (oldDir)
+      window.watcher.stop();
     window.watcher.start(newDir);
   }, { immediate: true });
 
