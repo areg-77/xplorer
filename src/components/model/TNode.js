@@ -5,6 +5,50 @@ export const nodeEmitter = mitt();
 
 let idCounter = 1;
 
+class VNode {
+  constructor(n) {
+    this.n = n;
+
+    this.type = computed(() => {
+      if (n.label.value === '.version' && n.type.value === 'folder') return 'container';
+      if (n.parent.value?.version.type === 'container') return 'version';
+      return 'node';
+    });
+
+    this.node = computed(() => {
+      if (this.type.value === 'container') return n.siblings()[0] ?? null;
+      if (this.type.value === 'version') return n.parent.value;
+      return n.siblings()?.find(s => s.label === '.version' && s.type === 'folder') ?? null;
+    });
+
+    this.children = computed(() => {
+      if (this.type.value === 'container') {
+        const vChildren = [...n.children, this.node.value].filter(Boolean);
+        vChildren.sort((a, b) => a.label.localeCompare(b.label));
+        return vChildren;
+      }
+      return [];
+    });
+
+    this.index = computed({
+      get: () => {
+        if (this.type.value !== 'container') return this.node.value?.version.children.findIndex(c => c.equals(n)) ?? -1;
+        return -1;
+      },
+      set: (newIndex) => {
+        if (this.type.value === 'container') return;
+
+        const oldIndex = this.index.value;
+        nodeEmitter.emit('version-index-changed', {
+          node: n,
+          oldIndex,
+          newIndex,
+        });
+      }
+    });
+  }
+}
+
 export class TNodeBase {
   constructor(label, type, children = []) {
     this.id = idCounter++;
@@ -16,6 +60,8 @@ export class TNodeBase {
     this.type = ref(type);
     this.mimeType = ref(false);
     this.expanded = ref(false);
+
+    this.version = new VNode(this);
 
     this.extension = computed(() =>{
       if (this.type.value === 'folder') return null;
@@ -57,34 +103,6 @@ export class TNodeBase {
     watch(() => this.children.length, len => {
       this.expanded.value = !(len === 0);
     });
-
-    this.version = {
-      ...(this.label.value === '.version' && this.type.value === 'folder' ? {
-        type: 'container',
-        node: computed(() => this.siblings()?.[0] || null),
-        children: computed(() => {
-          const vChildren = [...this.children];
-          if (this.version.node.value) vChildren.push(this.version.node.value);
-
-          vChildren.sort((a, b) => a.label.localeCompare(b.label));
-          return vChildren;
-        })
-      } : {
-        type: 'node',
-        node: computed(() => this.siblings()?.find(node => node.label === '.version' && node.type === 'folder') || null), //doesnt automatically appear when creating a new .version folder
-        index: computed({
-          get: () => this.version.node.value?.version.children?.findIndex(c => c.equals(this)) ?? -1,
-          set: newIndex => {
-            const oldIndex = this.version.index.value;
-            nodeEmitter.emit('version-index-changed', {
-              node: this,
-              oldIndex,
-              newIndex,
-            });
-          }
-        })
-      }),
-    };
 
     children.forEach(child => child.parent = this);
   }

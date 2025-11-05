@@ -3,8 +3,8 @@ import { ref, watch, inject } from 'vue';
 import DataField from './/DataField.vue';
 import DataGroup from './/DataGroup.vue';
 import DataText from './/DataText.vue';
-import Tree from './Tree.vue';
 import { TNode } from './model/TNode';
+import VTree from './VTree.vue';
 
 const isDev = inject('isDev');
 
@@ -51,19 +51,21 @@ const invalidChars = `\\/:?"<>|\n`;
       </DataField>
     </DataGroup>
 
-    <DataGroup label="Version Control" icon="ui version">
-      <DataField label="Type">
+    <DataGroup v-if="selected.nodes[0]?.version.node?.version.children.length > 0" label="Version Control" icon="ui version" style="max-height: 50%;">
+      <!-- <DataField label="Type">
         <DataText :value="selected.nodes[0]?.version.type" border-radius-mask="0110"/>
       </DataField>
       <DataField label="Node">
         <DataText :value="selected.nodes[0]?.version.node?.label" border-radius-mask="0110"/>
       </DataField>
-      <DataField label="Children">
-        <DataText :value="selected.nodes[0]?.version.children?.map(c => c.label)" border-radius-mask="0110"/>
-      </DataField>
       <DataField label="Index">
         <DataText :value="selected.nodes[0]?.version.index" @setvalue="val => selected.nodes[0] && (selected.nodes[0].version.index = JSON.parse(val))" :editable="!!selected.nodes[0] && selected.nodes[0]?.version.index !== -1" border-radius-mask="0110"/>
-      </DataField>
+      </DataField> -->
+
+      <!-- <DataField v-if="selected.nodes[0]?.version.node?.version.children.length > 0" label="Versions" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
+         
+      </DataField> -->
+      <VTree :source="selected.nodes[0].version.node" :index="selected.nodes[0].version.index" @set-index="newIndex => selected.nodes[0].version.index = newIndex"/>
     </DataGroup>
 
     <DataGroup v-if="isDev" label="Developer" icon="ui code">
@@ -82,9 +84,6 @@ const invalidChars = `\\/:?"<>|\n`;
       <DataField label="Parent">
         <DataText :value="selected.nodes[0]?.parent?.label" border-radius-mask="0110"/>
       </DataField>
-      <!-- <DataField v-if="selected.nodes[0]?.children.length > 0" label="Children" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
-        <Tree :source="selected.nodes[0]"/>
-      </DataField> -->
     </DataGroup>
   </div>
 </template>
