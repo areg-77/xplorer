@@ -1,9 +1,11 @@
+import { useKeyModifier } from "@vueuse/core";
 import { ref, reactive, watch } from "vue";
 
 export class SNode {
-  constructor(ctrlCmdPressed, shiftPressed) {
-    this.ctrlCmdPressed = ctrlCmdPressed;
-    this.shiftPressed = shiftPressed;
+  constructor(multiSelect = false) {
+    this.multiSelect = multiSelect;
+    this.ctrlPressed = useKeyModifier('Control');
+    this.shiftPressed = useKeyModifier('Shift');
 
     this.nodes = reactive([]);
     this.last = ref(null);
@@ -48,15 +50,15 @@ export class SNode {
 
     // parents/childrens deselecting
     if (select) {
-      if (this.ctrlCmdPressed?.value || this.shiftPressed?.value) {
+      if ((this.ctrlPressed.value || this.shiftPressed.value) && this.multiSelect) {
         node.parents().forEach(p => this.remove(p));
         node.childrens().forEach(c => this.remove(c));
       }
     }
 
-    if (this.ctrlCmdPressed?.value)
+    if (this.ctrlPressed.value && this.multiSelect)
       (select ? this.add(node) : this.remove(node));
-    else if (this.shiftPressed?.value) {
+    else if (this.shiftPressed.value && this.multiSelect) {
       const beginIndex = node.parent.children.findIndex(n => n.equals(this.last));
       const endIndex = node.parent.children.findIndex(n => n.equals(node));
 

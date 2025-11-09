@@ -31,6 +31,9 @@ const emit = defineEmits(['set-index']);
   position: relative;
   box-sizing: border-box;
 }
+.tree-view:focus {
+  border-color: var(--border);
+}
 </style>
 
 <style>

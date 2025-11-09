@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, provide, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch, provide, onMounted } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeTools from './components/TreeTools.vue';
 import TreeData from './components/TreeData.vue';
@@ -7,6 +7,7 @@ import BottomPanel from './components/BottomPanel.vue';
 import { TNode, nodeByPath, nodeEmitter } from './components/model/TNode';
 import { SNode } from './components/model/SNode';
 import ButtonDefault from './components/ButtonDefault.vue';
+import { useActiveElement, useMagicKeys, whenever } from '@vueuse/core';
 
 const isDev = window?.env?.isDev ?? false;
 provide('isDev', isDev);
@@ -33,24 +34,18 @@ async function loadTree(directory) {
   tree.value.path = directory;
 }
 
-const ctrlCmdPressed = ref(false);
-const shiftPressed = ref(false);
-
-provide('ctrlCmdPressed', ctrlCmdPressed);
-provide('shiftPressed', shiftPressed);
-
-const selected = new SNode(ctrlCmdPressed, shiftPressed);
-
-// ctrl/cmd and shift tracking
-function handleKeyHold(e) {
-  ctrlCmdPressed.value = e.ctrlKey || e.metaKey;
-  shiftPressed.value = e.shiftKey;
+async function openFolder() {
+  const folderPath = await window.explorer.openFolder();
+  if (folderPath)
+    dir.value = folderPath;
 }
 
-onMounted(() => {
-  window.nodeByPath = nodeByPath;
-  window.selected = selected;
+const treeRef = ref(null)
+const activeElement = useActiveElement()
 
+const selected = new SNode(true);
+
+onMounted(() => {
   window.electronAPI.on('open-folder', async () => openFolder());
 
   window.watcher?.on('add', (path, type) => {
@@ -103,28 +98,31 @@ onMounted(() => {
     window.explorer.rename(oldNode.path, newDir + '/' + oldNode.label);
     window.explorer.rename(newNode.path, oldDir + '/' + newNode.label);
   });
-  
-  window.addEventListener('keydown', handleKeyHold);
-  window.addEventListener('keyup', handleKeyHold);
+
+  // select all hotkey
+  window.electronAPI.on('menu-select-all', () => {
+    const treeEl = treeRef.value?.$el;
+    if (!treeEl?.contains(activeElement.value)) return;
+
+    const lastNode = selected.nodes.at(-1);
+    if (lastNode)
+      lastNode.parent.children.forEach(c => selected.add(c)); // siblings select
+    else
+      tree.value.children.forEach(c => selected.add(c)); // top level select
+  })
 });
 
-onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleKeyHold);
-  window.removeEventListener('keyup', handleKeyHold);
+const keys = useMagicKeys();
+whenever(keys.ctrl_a, () => {
+  window.electronAPI.sendToMain('menu-select-all');
 });
-
-async function openFolder() {
-  const folderPath = await window.explorer.openFolder();
-  if (folderPath)
-    dir.value = folderPath;
-}
 </script>
 
 <template>
   <main class="maingrid">
     <div class="tree-container">
       <TreeTools :source="tree" :selected="selected"/>
-      <Tree v-if="tree" :source="tree" :selected="selected" :draggable="true"/>
+      <Tree v-if="tree" ref="treeRef" :source="tree" :selected="selected" :draggable="true" tabindex="0"/>
       <Tree v-else>
         <div v-if="!dir" class="tree-control-box">
           You haven't opened a folder yet.

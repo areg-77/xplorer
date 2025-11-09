@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted, inject, provide } from 'vue';
+import { provide } from 'vue';
 import { nodeById } from './model/TNode';
 import TreeNode from './TreeNode.vue';
-import { isSNode } from './model/SNode';
+import { useKeyModifier } from '@vueuse/core';
 
 const { source: tree, selected, draggable } = defineProps({
   source: Object,
@@ -10,30 +10,11 @@ const { source: tree, selected, draggable } = defineProps({
   draggable: Boolean
 });
 
-const [ctrlCmdPressed, shiftPressed] = [inject('ctrlCmdPressed'), inject('shiftPressed')];
+const ctrlPressed = useKeyModifier('Control');
+const shiftPressed = useKeyModifier('shift');
 
 provide('selected', selected);
 provide('draggable', draggable);
-
-const treeRef = ref(null);
-onMounted(() => {
-  if (!isSNode(selected)) return;
-
-  // select sibilings when pressing ctrl+a
-  window.electronAPI.on('menu-select-all', () => {
-    if (document.activeElement === treeRef.value && selected.nodes.at(-1))
-      selected.nodes.at(-1).parent.children.forEach(c => selected.add(c));
-  });
-});
-
-function handleKeyDown(e) {
-  if (!isSNode(selected)) return;
-
-  if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
-    e.preventDefault();
-    window.electronAPI.sendToMain('menu-select-all');
-  }
-}
 
 let mousePos = { x: 0, y: 0 };
 function handleMouseDown(e) {
@@ -46,7 +27,7 @@ function handleMouseDown(e) {
 function clickAway(e) {
   if (!draggable) return;
 
-  if (!e.target.closest('.tree-node') && !ctrlCmdPressed.value && !shiftPressed.value) {
+  if (!e.target.closest('.tree-node') && !ctrlPressed.value && !shiftPressed.value) {
     const dx = Math.abs(e.clientX - mousePos.x);
     const dy = Math.abs(e.clientY - mousePos.y);
     const distance = Math.sqrt(dx * dx + dy * dy);
@@ -85,7 +66,7 @@ function handleTreeDrop(e) {
 </script>
 
 <template>
-  <div class="tree-view scroll-buffer" @mousedown="handleMouseDown" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent @keydown="handleKeyDown" ref="treeRef" tabindex="0">
+  <div class="tree-view scroll-buffer" @mousedown="handleMouseDown" @click="clickAway" @drop="handleTreeDrop" @dragenter.prevent @dragover.prevent>
     <slot>
       <transition-group v-if="source" tag="ul" name="list">
         <TreeNode v-for="node in tree?.children" :key="node.id" :node="node" @select="(node) => selected.handle(node)" @deselect="(node) => selected.remove(node)" @dragdrop="handleDragDrop"/>
@@ -107,6 +88,9 @@ function handleTreeDrop(e) {
   overflow: auto;
   position: relative;
   box-sizing: border-box;
+}
+.tree-view:focus {
+  border-color: var(--border);
 }
 .tree-view.scroll-buffer::after {
   content: "";

@@ -5,6 +5,7 @@ import DataGroup from './/DataGroup.vue';
 import DataText from './/DataText.vue';
 import { TNode } from './model/TNode';
 import VTree from './VTree.vue';
+import { onStartTyping } from '@vueuse/core';
 
 const isDev = inject('isDev');
 
@@ -31,13 +32,19 @@ const vTree = ref(null);
 onMounted(() => {
   vTree.value.$el.style.height = '7rem';
 });
+
+const labelRef = ref(null);
+onStartTyping(() => {
+  if (!labelRef.value.active)
+    labelRef.value.focus();
+});
 </script>
 
 <template>
   <div class="tree-data">
     <DataGroup label="Properties" icon="ui properties">
       <DataField label="Name">
-        <DataText :value="selected.nodes[0]?.label" :invalid-chars="invalidChars"
+        <DataText ref="labelRef" :value="selected.nodes[0]?.label" :invalid-chars="invalidChars"
           @setvalue="val => {
             if (selected.nodes[0])
               renameNode(selected.nodes[0].path, val);

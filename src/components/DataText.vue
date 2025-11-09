@@ -42,6 +42,18 @@ const dataTextStyle = computed(() => {
 
 const emit = defineEmits(['setvalue', 'livevalue']);
 const valueRef = ref(null);
+function focus() {
+  if (!valueRef.value) return;
+
+  valueRef.value.focus();
+
+  const selection = window.getSelection();
+  const range = document.createRange();
+  range.selectNodeContents(valueRef.value);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+defineExpose({ focus });
 
 // if value was changed outside
 watch(() => value, (newVal) => {
@@ -111,7 +123,7 @@ function cancelEdit() {
   <div class="data-text" :style="dataTextStyle">
     <div class="value-container">
       <slot></slot>
-      <div class="value" ref="valueRef" :contenteditable="editable" spellcheck="false" @input="onInput" @keydown="onKeyDown" @blur="cancelEdit"></div>
+      <div class="value" ref="valueRef" :contenteditable="editable" spellcheck="false" @input="onInput" @keydown="onKeyDown" @blur="cancelEdit" @focus="focus"></div>
     </div>
   </div>
 </template>
