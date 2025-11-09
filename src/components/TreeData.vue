@@ -5,7 +5,7 @@ import DataGroup from './/DataGroup.vue';
 import DataText from './/DataText.vue';
 import { TNode } from './model/TNode';
 import VTree from './VTree.vue';
-import { onStartTyping } from '@vueuse/core';
+import { onStartTyping, useMagicKeys, whenever } from '@vueuse/core';
 
 const isDev = inject('isDev');
 
@@ -34,17 +34,23 @@ onMounted(() => {
 });
 
 const labelRef = ref(null);
-onStartTyping(() => {
-  if (!labelRef.value.active)
+
+const { f2 } = useMagicKeys();
+
+function focusLabel() {
+  if (labelRef.value && !labelRef.value.active)
     labelRef.value.focus();
-});
+}
+
+whenever(f2, focusLabel);
+onStartTyping(focusLabel);
 </script>
 
 <template>
   <div class="tree-data">
     <DataGroup label="Properties" icon="ui properties">
       <DataField label="Name">
-        <DataText ref="labelRef" :value="selected.nodes[0]?.label" :invalid-chars="invalidChars"
+        <DataText ref="labelRef" :value="selected.nodes[0]?.label" :invalid-chars="invalidChars" focus-mode="select-name"
           @setvalue="val => {
             if (selected.nodes[0])
               renameNode(selected.nodes[0].path, val);
@@ -65,7 +71,7 @@ onStartTyping(() => {
     <DataGroup v-show="selected.nodes[0] && selected.nodes[0]?.version.index !== -1" label="Version Control" icon="ui version">
       <template v-if="isDev">
         <DataField label="Index">
-          <DataText :value="selected.nodes[0]?.version.index" @setvalue="val => selected.nodes[0] && (selected.nodes[0].version.index = JSON.parse(val))" :editable="!!selected.nodes[0] && selected.nodes[0]?.version.index !== -1" border-radius-mask="0110"/>
+          <DataText :value="selected.nodes[0]?.version.index" @setvalue="val => selected.nodes[0] && (selected.nodes[0].version.index = JSON.parse(val))" :editable="!!selected.nodes[0] && selected.nodes[0]?.version.index !== -1" focus-mode="select" border-radius-mask="0110"/>
         </DataField>
       </template>
 

@@ -89,9 +89,9 @@ function handleTreeDrop(e) {
   position: relative;
   box-sizing: border-box;
 }
-.tree-view:focus {
+/* .tree-view:focus {
   border-color: var(--border);
-}
+} */
 .tree-view.scroll-buffer::after {
   content: "";
   display: block;

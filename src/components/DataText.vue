@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 
-const { value, setMode, invalidChars, borderRadiusMask, fontSize, editable } = defineProps({
+const { value, setMode, invalidChars, borderRadiusMask, fontSize, focusMode, editable } = defineProps({
   value: {
     required: true
   },
@@ -21,6 +21,11 @@ const { value, setMode, invalidChars, borderRadiusMask, fontSize, editable } = d
   fontSize: {
     type: String,
     default: '13px'
+  },
+  focusMode: {
+    type: String,
+    default: 'none',
+    validator: v => ['none', 'select', 'select-name'].includes(v)
   },
   editable: Boolean
 });
@@ -44,14 +49,28 @@ const emit = defineEmits(['setvalue', 'livevalue']);
 const valueRef = ref(null);
 function focus() {
   if (!valueRef.value) return;
-
   valueRef.value.focus();
 
-  const selection = window.getSelection();
+  if (focusMode === 'none') return;
+
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+
+  const textNode = valueRef.value.firstChild;
+  if (!textNode) return;
+
   const range = document.createRange();
-  range.selectNodeContents(valueRef.value);
-  selection.removeAllRanges();
-  selection.addRange(range);
+  if (focusMode === 'select')
+    range.selectNodeContents(valueRef.value);
+  else if (focusMode === 'select-name') {
+    const text = textNode.textContent || '';
+    const lastDot = text.lastIndexOf('.');
+    const endPos = lastDot > 0 ? lastDot : text.length;
+    range.setStart(textNode, 0);
+    range.setEnd(textNode, endPos);
+  }
+
+  sel.addRange(range);
 }
 defineExpose({ focus });
 
@@ -114,8 +133,8 @@ function cancelEdit() {
     emit('livevalue', value);
   }
   committed = false;
-  const selection = window.getSelection();
-  if (selection) selection.removeAllRanges();
+  const sel = window.getSelection();
+  if (sel) sel.removeAllRanges();
 }
 </script>
 
