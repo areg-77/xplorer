@@ -25,7 +25,7 @@ function renameNode(path, value) {
 }
 
 const tempNode = ref(null);
-watch(() => selected.nodes.slice(), () => tempNode.value = selected.nodes[0] || null, { deep: true });
+watch(() => selected.nodes.slice(), () => tempNode.value = selected.nodes.at(-1) || null, { deep: true });
 const invalidChars = `\\/:?"<>|\n`;
 
 const vTree = ref(null);
@@ -50,39 +50,39 @@ onStartTyping(focusLabel);
   <div class="tree-data">
     <DataGroup label="Properties" icon="ui properties">
       <DataField label="Name">
-        <DataText ref="labelRef" :value="selected.nodes[0]?.label" :invalid-chars="invalidChars" focus-mode="select-name"
+        <DataText ref="labelRef" :value="selected.nodes.at(-1)?.label" :invalid-chars="invalidChars" focus-mode="select-name"
           @setvalue="val => {
-            if (selected.nodes[0])
-              renameNode(selected.nodes[0].path, val);
+            if (selected.nodes.at(-1))
+              renameNode(selected.nodes.at(-1).path, val);
           }"
           @livevalue="val => {
-            if (selected.nodes[0])
-              tempNode = new TNode(val, selected.nodes[0].type);
+            if (selected.nodes.at(-1))
+              tempNode = new TNode(val, selected.nodes.at(-1).type);
           }"
-          :editable="!!selected.nodes[0]" border-radius-mask="0110">
-          <span v-if="selected.nodes[0] && tempNode" :title="tempNode?.mimeType || undefined" class="icon" :class="[tempNode.type, ...(tempNode.type !== 'folder' ? [tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension] : [])].filter(Boolean).join(' ')"></span>
+          :editable="!!selected.nodes.at(-1)" border-radius-mask="0110">
+          <span v-if="selected.nodes.at(-1) && tempNode" :title="tempNode?.mimeType || undefined" class="icon" :class="[tempNode.type, ...(tempNode.type !== 'folder' ? [tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension] : [])].filter(Boolean).join(' ')"></span>
         </DataText>
       </DataField>
       <DataField label="Type">
-        <DataText :value="selected.nodes[0]?.type" border-radius-mask="0110"/>
+        <DataText :value="selected.nodes.at(-1)?.type" border-radius-mask="0110"/>
       </DataField>
     </DataGroup>
 
-    <DataGroup v-show="selected.nodes[0] && selected.nodes[0]?.version.index !== -1" label="Version Control" icon="ui version">
+    <DataGroup v-show="selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1" label="Version Control" icon="ui version">
       <template v-if="isDev">
         <DataField label="Index">
-          <DataText :value="selected.nodes[0]?.version.index" @setvalue="val => selected.nodes[0] && (selected.nodes[0].version.index = JSON.parse(val))" :editable="!!selected.nodes[0] && selected.nodes[0]?.version.index !== -1" focus-mode="select" border-radius-mask="0110"/>
+          <DataText :value="selected.nodes.at(-1)?.version.index" @setvalue="val => selected.nodes.at(-1) && (selected.nodes.at(-1).version.index = JSON.parse(val))" :editable="!!selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1" focus-mode="select" border-radius-mask="0110"/>
         </DataField>
       </template>
 
-      <DataField v-show="selected.nodes[0]?.version.index !== -1" label="Versions" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
-        <VTree ref="vTree" :source="selected.nodes[0]?.version.node" :index="selected.nodes[0]?.version.index" @set-index="newIndex => selected.nodes[0].version.index = newIndex" style="resize: vertical; min-height: 5.3rem;"/>
+      <DataField v-show="selected.nodes.at(-1)?.version.index !== -1" label="Versions" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
+        <VTree ref="vTree" :source="selected.nodes.at(-1)?.version.node" :index="selected.nodes.at(-1)?.version.index" @set-index="newIndex => selected.nodes.at(-1).version.index = newIndex" style="resize: vertical; min-height: 5.3rem;"/>
       </DataField>
     </DataGroup>
 
     <DataGroup v-if="isDev" label="Developer" icon="ui code">
       <DataField label="Id">
-        <DataText :value="selected.nodes[0]?.id" border-radius-mask="0110"/>
+        <DataText :value="selected.nodes.at(-1)?.id" border-radius-mask="0110"/>
       </DataField>
       <DataField label="Extension">
         <DataText :value="tempNode?.extension" border-radius-mask="0110"/>
@@ -91,10 +91,10 @@ onStartTyping(focusLabel);
         <DataText :value="tempNode?.mimeType" border-radius-mask="0110"/>
       </DataField>
       <DataField label="Expanded">
-        <DataText :value="selected.nodes[0]?.expanded" @setvalue="val => selected.nodes[0] && (selected.nodes[0].expanded = JSON.parse(val))" :editable="!!selected.nodes[0]" border-radius-mask="0110"/>
+        <DataText :value="selected.nodes.at(-1)?.expanded" @setvalue="val => selected.nodes.at(-1) && (selected.nodes.at(-1).expanded = JSON.parse(val))" :editable="!!selected.nodes.at(-1)" border-radius-mask="0110"/>
       </DataField>
       <DataField label="Parent">
-        <DataText :value="selected.nodes[0]?.parent?.label" border-radius-mask="0110"/>
+        <DataText :value="selected.nodes.at(-1)?.parent?.label" border-radius-mask="0110"/>
       </DataField>
     </DataGroup>
   </div>

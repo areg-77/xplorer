@@ -15,15 +15,15 @@ function deleteSelected() {
 }
 
 function createFolder() {
-  window.explorer.createFolder(selected.nodes[0]?.path, 'New Folder');
+  window.explorer.createFolder(selected.nodes.at(-1)?.path, 'New Folder');
 }
 </script>
 
 <template>
   <div class="tree-tools">
-    <DataText :value="selected.nodes[0]?.path" font-size="12px" style="color: var(--fg-dark); margin-right: 0.5em;"/>
+    <DataText :value="selected.nodes.at(-1)?.path" font-size="12px" style="color: var(--fg-dark); margin-right: 0.5em;"/>
 
-    <ButtonDefault class="icon" :disabled="!source || !selected.nodes[0]">
+    <ButtonDefault class="icon" :disabled="!source || !selected.nodes.at(-1)">
       <span class="icon ui file-add"></span>
 
       <template #dropdown>
@@ -38,17 +38,17 @@ function createFolder() {
       </template>
     </ButtonDefault>
 
-    <ButtonDefault class="icon" @click="createFolder" :disabled="!source || !selected.nodes[0]">
+    <ButtonDefault class="icon" @click="createFolder" :disabled="!source || !selected.nodes.at(-1)">
       <span class="icon ui folder-add"></span>
     </ButtonDefault>
 
-    <!-- <ButtonDefault class="icon version" :disabled="!source || !selected.nodes[0]">
+    <!-- <ButtonDefault class="icon version" :disabled="!source || !selected.nodes.at(-1)">
       <span class="icon ui version"></span>
     </ButtonDefault> -->
 
     <div class="divider"></div>
 
-    <ButtonDefault class="icon danger" @click="deleteSelected" :disabled="!source || !selected.nodes[0]">
+    <ButtonDefault class="icon danger" @click="deleteSelected" :disabled="!source || !selected.nodes.at(-1)">
       <span class="icon ui delete"></span>
     </ButtonDefault>
 
