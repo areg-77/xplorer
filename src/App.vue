@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, provide, onMounted } from 'vue';
+import { ref, watch, provide, onMounted, computed } from 'vue';
 import Tree from './components/Tree.vue';
 import TreeTools from './components/TreeTools.vue';
 import TreeData from './components/TreeData.vue';
@@ -40,8 +40,13 @@ async function openFolder() {
     dir.value = folderPath;
 }
 
-const treeRef = ref(null)
-const activeElement = useActiveElement()
+const treeRef = ref(null);
+const activeElement = useActiveElement();
+
+const treeActive = computed(() => {
+  const treeEl = treeRef.value?.$el;
+  return treeEl ? treeEl.contains(activeElement.value) : false;
+});
 
 const selected = new SNode(true);
 
@@ -101,8 +106,7 @@ onMounted(() => {
 
   // select all hotkey
   window.electronAPI.on('menu-select-all', () => {
-    const treeEl = treeRef.value?.$el;
-    if (!treeEl?.contains(activeElement.value)) return;
+    if (!treeActive.value) return;
 
     const lastNode = selected.nodes.at(-1);
     if (lastNode)
@@ -136,6 +140,15 @@ whenever(keys.ctrl_a, () => {
           Loading...
         </div>
       </Tree>
+
+      <div class="tree-overlay">
+        <transition name="kbd">
+          <kbd v-if="treeActive && keys.ctrl.value">ctrl</kbd>
+        </transition>
+        <transition name="kbd">
+          <kbd v-if="treeActive && keys.shift.value">shift</kbd>
+        </transition>
+      </div>
     </div>
     <TreeData :selected="selected"/>
   </main>
@@ -164,6 +177,7 @@ whenever(keys.ctrl_a, () => {
 }
 
 .tree-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -188,5 +202,40 @@ whenever(keys.ctrl_a, () => {
   border-radius: calc(var(--border-radius) + 0.5rem);
   padding: 0.5rem 2rem;
   gap: 0.5rem;
+}
+
+.tree-overlay {
+  position: absolute;
+  bottom: 0.7rem;
+  right: 0.7rem;
+
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  pointer-events: none;
+  opacity: 0.8;
+}
+.tree-overlay kbd {
+  box-shadow: var(--box-shadow);
+}
+
+.kbd-enter-from {
+  opacity: 0;
+  transform: translateY(-0.6em);
+}
+
+.kbd-leave-from,
+.kbd-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.kbd-leave-to {
+  opacity: 0;
+  transform: translateY(1em);
+}
+
+.kbd-enter-active, .kbd-leave-active {
+  transition: opacity 150ms, transform 150ms;
 }
 </style>

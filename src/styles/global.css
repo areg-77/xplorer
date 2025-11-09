@@ -40,6 +40,8 @@
   --control-padding-1: 2px 5px;
   --control-padding-2: 3px 5px;
 
+  --box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.3);
+
   font-family: 'Funnel Sans', sans-serif;
   font-weight: normal;
   font-size: 14px;
@@ -69,4 +71,16 @@ body {
 
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+kbd {
+  display: inline-block;
+  vertical-align: middle; 
+  font-family: monospace;
+  font-size: 0.8em;
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: var(--border-radius);
+  padding: 1px 3px;
 }
