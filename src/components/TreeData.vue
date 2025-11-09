@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, inject } from 'vue';
+import { ref, watch, inject, onMounted } from 'vue';
 import DataField from './/DataField.vue';
 import DataGroup from './/DataGroup.vue';
 import DataText from './/DataText.vue';
@@ -25,8 +25,12 @@ function renameNode(path, value) {
 
 const tempNode = ref(null);
 watch(() => selected.nodes.slice(), () => tempNode.value = selected.nodes[0] || null, { deep: true });
-
 const invalidChars = `\\/:?"<>|\n`;
+
+const vTree = ref(null);
+onMounted(() => {
+  vTree.value.$el.style.height = '7rem';
+});
 </script>
 
 <template>
@@ -51,21 +55,15 @@ const invalidChars = `\\/:?"<>|\n`;
       </DataField>
     </DataGroup>
 
-    <DataGroup v-if="selected.nodes[0] && (selected.nodes[0]?.version.index !== -1 || isDev)" label="Version Control" icon="ui version">
+    <DataGroup v-show="selected.nodes[0] && selected.nodes[0]?.version.index !== -1" label="Version Control" icon="ui version">
       <template v-if="isDev">
-        <DataField label="Type">
-          <DataText :value="selected.nodes[0]?.version.type" border-radius-mask="0110"/>
-        </DataField>
-        <DataField label="Node">
-          <DataText :value="selected.nodes[0]?.version.node?.label" border-radius-mask="0110"/>
-        </DataField>
         <DataField label="Index">
           <DataText :value="selected.nodes[0]?.version.index" @setvalue="val => selected.nodes[0] && (selected.nodes[0].version.index = JSON.parse(val))" :editable="!!selected.nodes[0] && selected.nodes[0]?.version.index !== -1" border-radius-mask="0110"/>
         </DataField>
       </template>
 
-      <DataField v-if="selected.nodes[0]?.version.index !== -1" label="Versions" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="" style="max-height: 30vh;">
-        <VTree :source="selected.nodes[0].version.node" :index="selected.nodes[0].version.index" @set-index="newIndex => selected.nodes[0].version.index = newIndex"/>
+      <DataField v-show="selected.nodes[0]?.version.index !== -1" label="Versions" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
+        <VTree ref="vTree" :source="selected.nodes[0]?.version.node" :index="selected.nodes[0]?.version.index" @set-index="newIndex => selected.nodes[0].version.index = newIndex" style="resize: vertical; min-height: 5.3rem;"/>
       </DataField>
     </DataGroup>
 
@@ -89,7 +87,7 @@ const invalidChars = `\\/:?"<>|\n`;
   </div>
 </template>
 
-<style>
+<style scoped>
 .tree-data {
   display: flex;
   overflow-y: auto;

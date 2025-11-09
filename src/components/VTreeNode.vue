@@ -11,7 +11,7 @@ const emit = defineEmits(['select']);
 </script>
 
 <template>
-  <li>
+  <li v-if="node.version.type !== 'container'">
     <div class="tree-node" :class="{ selected: isSelected }">
       <div class="content-container" @click="emit('select')">
         <span class="tree-icon icon" :class="[node.type, ...(node.type !== 'folder' ? [node.mimeType ? node.mimeType.replace('/', ' ') : null, node.extension] : [])].filter(Boolean).join(' ')"></span>
@@ -51,7 +51,6 @@ li {
   border-color: var(--border);
 }
 .tree-node.selected {
-  color: var(--version-fg);
   background-color: var(--secondary-light);
   border-color: var(--border-light);
 }
@@ -60,6 +59,7 @@ li {
 }
 
 .content-container {
+  color: var(--fg);
   flex: 1;
   display: flex;
   align-items: center;

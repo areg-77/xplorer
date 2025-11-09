@@ -73,9 +73,9 @@ function onDrop(e) {
 </script>
 
 <template>
-  <li v-if="!(node.label === '.version' && node.type === 'folder')">
+  <li v-if="node.version.type !== 'container'">
     <div class="tree-node" :class="{ selected: isSelected, version: isVersioned }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
-      <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.length }" @click="toggleExpand">
+      <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.filter(c => c.version.type !== 'container').length }" @click="toggleExpand">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
       <div class="content-container" @click="clickSelect">
@@ -113,7 +113,7 @@ ul {
 .tree-node.selected + .children-container.opened > ul {
   transition-delay: 100ms 0ms;
   background-color: var(--secondary-dark);
-  margin-right: 1px; /* might cause a bug */
+  margin-right: 1px;
 }
 
 li {
@@ -145,10 +145,6 @@ li:hover > .children-container.opened {
   background-color: var(--secondary-lighter);
 }
 
-.tree-node.version {
-  color: var(--version-fg);
-}
-
 .expander-container {
   display: flex;
   align-items: center;
@@ -176,12 +172,18 @@ li:hover > .children-container.opened {
 }
 
 .content-container {
+  color: var(--fg);
   flex: 1;
   display: flex;
   align-items: center;
   white-space: nowrap; 
   padding: 2px 0.9em 2px 0px;
   gap: 0.3em;
+
+  transition: color 200ms;
+}
+.tree-node.version .content-container {
+  color: var(--version-fg);
 }
 
 .tree-icon {
