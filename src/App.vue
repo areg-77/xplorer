@@ -113,7 +113,7 @@ onMounted(() => {
       lastNode.parent.children.forEach(c => selected.add(c)); // siblings select
     else
       tree.value.children.forEach(c => selected.add(c)); // top level select
-  })
+  });
 });
 
 const keys = useMagicKeys();
