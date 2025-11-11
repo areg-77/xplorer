@@ -73,9 +73,9 @@ function onDrop(e) {
 </script>
 
 <template>
-  <li v-if="node.version.type !== 'container'">
+  <li v-if="!node.hidden">
     <div class="tree-node" :class="{ selected: isSelected, version: isVersioned }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
-      <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.filter(c => c.version.type !== 'container').length }" @click="toggleExpand">
+      <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.filter(c => !c.hidden).length }" @click="toggleExpand">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
       <div class="content-container" @click="clickSelect">

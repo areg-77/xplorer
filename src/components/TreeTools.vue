@@ -85,7 +85,7 @@ function createFolder() {
 
 .divider {
   width: 1px;
-  height: 1.5em;
+  height: 90%;
   margin-inline: 2px;
   background-color: var(--border-darker);
 }

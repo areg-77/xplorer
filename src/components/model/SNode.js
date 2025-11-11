@@ -12,7 +12,11 @@ export class SNode {
 
     watch(() => this.nodes.slice(), (newNodes) => {
       for (const node of newNodes)
-        if (!node.parent) this.remove(node);
+        if (!node.parent || node.hidden) {
+          this.remove(node, false);
+          if (this.last.equals(node))
+            this.last = null;
+        }
 
       if (this.nodes.length === 0)
         this.last = null;
@@ -28,11 +32,12 @@ export class SNode {
     }
   }
 
-  remove(node) {
+  remove(node, saveLast = true) {
     const idx = this.nodes.findIndex(n => n.equals(node))
     if (idx !== -1) {
       this.nodes.splice(idx, 1);
-      this.last = node;
+      if (saveLast)
+        this.last = node;
     }
   }
 

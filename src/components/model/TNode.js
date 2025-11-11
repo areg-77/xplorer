@@ -60,6 +60,7 @@ export class TNodeBase {
     this.type = ref(type);
     this.mimeType = ref(false);
     this.expanded = ref(false);
+    this.hidden = ref(false);
 
     this.version = new VNode(this);
 
