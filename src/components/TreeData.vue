@@ -59,7 +59,7 @@ onStartTyping(focusLabel);
             if (selected.nodes.at(-1))
               tempNode = new TNode(val, selected.nodes.at(-1).type);
           }"
-          :editable="!!selected.nodes.at(-1)" border-radius-mask="0110">
+          :type="!!selected.nodes.at(-1) ? 'edit' : 'none'" border-radius-mask="0110">
           <span v-if="selected.nodes.at(-1) && tempNode" :title="tempNode?.mimeType || undefined" class="icon" :class="[tempNode.type, ...(tempNode.type !== 'folder' ? [tempNode.mimeType ? tempNode.mimeType.replace('/', ' ') : null, tempNode.extension] : [])].filter(Boolean).join(' ')"></span>
         </DataText>
       </DataField>
@@ -71,7 +71,7 @@ onStartTyping(focusLabel);
     <DataGroup v-show="selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1" label="Version Control" icon="ui version">
       <template v-if="isDev">
         <DataField label="Index">
-          <DataText :value="selected.nodes.at(-1)?.version.index" @setvalue="val => selected.nodes.at(-1) && (selected.nodes.at(-1).version.index = JSON.parse(val))" :editable="!!selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1" focus-mode="select" border-radius-mask="0110"/>
+          <DataText :value="selected.nodes.at(-1)?.version.index" @setvalue="val => selected.nodes.at(-1) && (selected.nodes.at(-1).version.index = JSON.parse(val))" :type="!!selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1 ? 'edit' : 'none'" focus-mode="select" border-radius-mask="0110"/>
         </DataField>
       </template>
 
@@ -91,7 +91,7 @@ onStartTyping(focusLabel);
         <DataText :value="tempNode?.mimeType" border-radius-mask="0110"/>
       </DataField>
       <DataField label="Expanded">
-        <DataText :value="selected.nodes.at(-1)?.expanded" @setvalue="val => selected.nodes.at(-1) && (selected.nodes.at(-1).expanded = JSON.parse(val))" :editable="!!selected.nodes.at(-1)" border-radius-mask="0110"/>
+        <DataText :value="selected.nodes.at(-1)?.expanded" @setvalue="val => selected.nodes.at(-1) && (selected.nodes.at(-1).expanded = JSON.parse(val))" :type="!!selected.nodes.at(-1) ? 'edit' : 'none'" border-radius-mask="0110"/>
       </DataField>
       <DataField label="Parent">
         <DataText :value="selected.nodes.at(-1)?.parent?.label" border-radius-mask="0110"/>

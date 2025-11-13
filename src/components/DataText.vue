@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 
-const { value, invalidChars, borderRadiusMask, fontSize, focusMode, editable } = defineProps({
+const { value, invalidChars, borderRadiusMask, fontSize, focusMode, type } = defineProps({
   value: {
     required: true
   },
@@ -22,7 +22,11 @@ const { value, invalidChars, borderRadiusMask, fontSize, focusMode, editable } =
     default: 'none',
     validator: v => ['none', 'select', 'select-name'].includes(v)
   },
-  editable: Boolean
+  type: {
+    type: String,
+    default: 'none',
+    validator: v => ['none', 'edit', 'select'].includes(v)
+  },
 });
 
 const dataTextStyle = computed(() => {
@@ -102,7 +106,13 @@ function onInput() {
 let committed = false;
 
 function onKeyDown(e) {
-  if (invalidChars && invalidChars.includes(e.key)) {
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    cancelEdit();
+    valueRef.value?.blur();
+  }
+
+  if ((invalidChars && invalidChars.includes(e.key)) || type !== 'edit') {
     e.preventDefault();
     return;
   }
@@ -111,11 +121,6 @@ function onKeyDown(e) {
     e.preventDefault();
     committed = true;
     emit('setvalue', valueRef.value?.innerText ?? '');
-    valueRef.value?.blur();
-  }
-  else if (e.key === 'Escape') {
-    e.preventDefault();
-    cancelEdit();
     valueRef.value?.blur();
   }
 }
@@ -135,7 +140,7 @@ function cancelEdit() {
   <div class="data-text" :style="dataTextStyle">
     <div class="value-container">
       <slot></slot>
-      <div class="value" ref="valueRef" :contenteditable="editable" spellcheck="false" @input="onInput" @keydown="onKeyDown" @blur="cancelEdit" @focus="focus"></div>
+      <div class="value" ref="valueRef" :contenteditable="type !== 'none'" spellcheck="false" @input="type === 'edit' && onInput()" @keydown="onKeyDown" @blur="cancelEdit" @focus="focus"></div>
     </div>
   </div>
 </template>
