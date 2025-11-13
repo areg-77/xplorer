@@ -4,8 +4,7 @@ import { ref, reactive, watch } from "vue";
 export class SNode {
   constructor(multiSelect = false) {
     this.multiSelect = multiSelect;
-    this.ctrlPressed = useKeyModifier('Control');
-    this.shiftPressed = useKeyModifier('Shift');
+    [this.ctrlPressed, this.shiftPressed] = ['Control', 'Shift'].map(k => useKeyModifier(k));
 
     this.nodes = reactive([]);
     this.last = ref(null);
@@ -14,7 +13,7 @@ export class SNode {
       for (const node of newNodes)
         if (!node.parent || node.hidden) {
           this.remove(node, false);
-          if (this.last.equals(node))
+          if (this.last?.equals(node))
             this.last = null;
         }
 
@@ -71,6 +70,7 @@ export class SNode {
         const [start, stop] = beginIndex < endIndex ? [beginIndex, endIndex] : [endIndex, beginIndex];
         for (let i = start; i <= stop; i++)
           (select ? this.add(node.parent.children[i]) : this.remove(node.parent.children[i]));
+        this.last = node;
       }
       else if (endIndex !== -1)
         (select ? this.clear(node) : this.remove(node));

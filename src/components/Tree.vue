@@ -10,8 +10,7 @@ const { source: tree, selected, draggable } = defineProps({
   draggable: Boolean
 });
 
-const ctrlPressed = useKeyModifier('Control');
-const shiftPressed = useKeyModifier('shift');
+const [ctrlPressed, shiftPressed] = ['Control', 'Shift'].map(k => useKeyModifier(k));
 
 provide('selected', selected);
 provide('draggable', draggable);

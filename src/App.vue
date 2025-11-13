@@ -7,7 +7,7 @@ import BottomPanel from './components/BottomPanel.vue';
 import { TNode, nodeByPath, nodeEmitter } from './components/model/TNode';
 import { SNode } from './components/model/SNode';
 import ButtonDefault from './components/ButtonDefault.vue';
-import { useActiveElement, useMagicKeys, whenever } from '@vueuse/core';
+import { useActiveElement, useKeyModifier, useMagicKeys, whenever } from '@vueuse/core';
 
 const isDev = window?.env?.isDev ?? false;
 provide('isDev', isDev);
@@ -113,11 +113,14 @@ onMounted(() => {
       lastNode.parent.children.forEach(c => selected.add(c)); // siblings select
     else
       tree.value.children.forEach(c => selected.add(c)); // top level select
+    selected.last = null;
   });
 });
 
-const keys = useMagicKeys();
-whenever(keys.ctrl_a, () => {
+const [ctrlPressed, shiftPressed] = ['Control', 'Shift'].map(k => useKeyModifier(k));
+const { ctrl_a } = useMagicKeys();
+
+whenever(ctrl_a, () => {
   window.electronAPI.sendToMain('menu-select-all');
 });
 </script>
@@ -143,10 +146,10 @@ whenever(keys.ctrl_a, () => {
 
       <div class="tree-overlay">
         <transition name="kbd">
-          <kbd v-if="treeActive && keys.ctrl.value">ctrl</kbd>
+          <kbd v-if="treeActive && ctrlPressed">ctrl</kbd>
         </transition>
         <transition name="kbd">
-          <kbd v-if="treeActive && keys.shift.value">shift</kbd>
+          <kbd v-if="treeActive && shiftPressed">shift</kbd>
         </transition>
       </div>
     </div>
