@@ -1,6 +1,7 @@
 <script setup>
 import DataText from './DataText.vue';
 import ButtonDefault from './ButtonDefault.vue';
+import { ref, watchEffect } from 'vue';
 
 const { source: tree, selected } = defineProps({
   source: Object,
@@ -10,6 +11,8 @@ const { source: tree, selected } = defineProps({
   }
 });
 
+const invalidChars = `\\/:?"<>|\n`;
+
 function deleteSelected() {
   Promise.all(selected.nodes.map(s => window.explorer.delete(s.path)));
 }
@@ -17,11 +20,30 @@ function deleteSelected() {
 function createFolder() {
   window.explorer.createFolder(selected.nodes.at(-1)?.path, 'New Folder');
 }
+
+const mask = ref('');
+watchEffect(() => {
+  if (!tree) return;
+
+  for (const node of tree.childrens()) {
+    if (node.label.includes(mask.value) && !(node.label === '.version' && node.type === 'folder')) {
+      node.hidden = false;
+
+      node.parents().forEach(p => {
+        if (!(p.label === '.version' && p.type === 'folder'))
+          p.hidden = false;
+      });
+    }
+    else
+      node.hidden = true;
+  }
+});
 </script>
 
 <template>
   <div class="tree-tools">
-    <DataText :value="selected.nodes.at(-1)?.path" font-size="12px" style="color: var(--fg-dark); margin-right: 0.5em;"/>
+    <DataText v-show="!!selected.nodes.at(-1)" :value="selected.nodes.at(-1)?.path" type="select" focus-mode="select" font-size="12px" style="color: var(--fg-dark); margin-right: 0.5em;"/>
+    <DataText v-show="!selected.nodes.at(-1)" :value="mask" :type="tree ? 'edit' : 'none'" @livevalue="val => mask = val" :invalid-chars="invalidChars" focus-mode="select" font-size="12px" style="color: var(--fg-dark); margin-right: 0.5em;"/>
 
     <ButtonDefault class="icon" :disabled="!source || !selected.nodes.at(-1)">
       <span class="icon ui file-add"></span>
