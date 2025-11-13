@@ -1,14 +1,9 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 
-const { value, setMode, invalidChars, borderRadiusMask, fontSize, focusMode, editable } = defineProps({
+const { value, invalidChars, borderRadiusMask, fontSize, focusMode, editable } = defineProps({
   value: {
     required: true
-  },
-  setMode: {
-    type: String,
-    default: 'enter',
-    validator: v => ['live', 'enter'].includes(v)
   },
   invalidChars: {
     type: String,
@@ -102,8 +97,6 @@ function onInput() {
     text = sanitized;
   }
   emit('livevalue', text);
-  if (setMode === 'live')
-    emit('setvalue', text);
 }
 
 let committed = false;
@@ -114,7 +107,7 @@ function onKeyDown(e) {
     return;
   }
 
-  if (setMode === 'enter' && e.key === 'Enter') {
+  if (e.key === 'Enter') {
     e.preventDefault();
     committed = true;
     emit('setvalue', valueRef.value?.innerText ?? '');
@@ -128,7 +121,7 @@ function onKeyDown(e) {
 }
 
 function cancelEdit() {
-  if (!committed && setMode === 'enter' && valueRef.value && value && valueRef.value.innerText !== value) {
+  if (!committed && valueRef.value && value && valueRef.value.innerText !== value) {
     valueRef.value.innerText = value;
     emit('livevalue', value);
   }
