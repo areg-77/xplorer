@@ -106,13 +106,10 @@ function onInput() {
 let committed = false;
 
 function onKeyDown(e) {
-  if (e.key === 'Escape') {
-    e.preventDefault();
-    cancelEdit();
-    valueRef.value?.blur();
-  }
+  const isModifier = e.ctrlKey || e.metaKey || e.altKey;
+  const navigationKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Shift'];
 
-  if ((invalidChars && invalidChars.includes(e.key)) || type !== 'edit') {
+  if (!isModifier && !navigationKeys.includes(e.key) && ((invalidChars && invalidChars.includes(e.key)) || type !== 'edit')) {
     e.preventDefault();
     return;
   }
@@ -121,6 +118,12 @@ function onKeyDown(e) {
     e.preventDefault();
     committed = true;
     emit('setvalue', valueRef.value?.innerText ?? '');
+    valueRef.value?.blur();
+  }
+
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    cancelEdit();
     valueRef.value?.blur();
   }
 }
