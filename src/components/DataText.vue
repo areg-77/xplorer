@@ -137,13 +137,20 @@ function cancelEdit() {
   const sel = window.getSelection();
   if (sel) sel.removeAllRanges();
 }
+
+function onPaste(e) {
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+  const sanitized = sanitizeText(text);
+  document.execCommand('insertText', false, sanitized);
+}
 </script>
 
 <template>
   <div class="data-text" :style="dataTextStyle">
     <div class="value-container">
       <slot></slot>
-      <div class="value" ref="valueRef" :contenteditable="type !== 'none'" spellcheck="false" @input="type === 'edit' && onInput()" @keydown="onKeyDown" @blur="cancelEdit" @focus="focus"></div>
+      <div class="value" ref="valueRef" :contenteditable="type !== 'none'" spellcheck="false" @input="type === 'edit' && onInput()" @keydown="onKeyDown" @blur="cancelEdit" @focus="focus" @paste="onPaste"></div>
     </div>
   </div>
 </template>
