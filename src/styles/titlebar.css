@@ -13,6 +13,9 @@
   /* background-color: var(--region-light) !important;
   color: var(--foreground-light) !important; */
 }
+.cet-titlebar.cet-shadow { 
+  box-shadow: var(--box-shadow) !important;
+}
 
 .cet-control-icon {
   transition: background-color 200ms !important;
@@ -45,6 +48,7 @@
   flex-direction: column;
   gap: 3px !important;
   padding: 3px;
+  box-shadow: var(--box-shadow) !important;
   
   animation: opacityTransiiton 250ms, transformTransiiton 200ms;
 }
