@@ -85,10 +85,37 @@ async function createWindow() {
         { role: 'cut' },
         { role: 'copy' },
         { role: 'paste' },
-        { role: 'delete' },
+        {
+          label: 'Delete',
+          role: 'delete',
+          accelerator: (isMac ? 'Cmd+Backspace' : 'Delete'),
+          click: () => win.webContents.send('menu-delete')
+        },
         { type: 'separator' },
         {
+          label: 'New',
+          submenu: [
+            {
+              label: 'File',
+              submenu: [
+                {
+                  label: 'Empty',
+                },
+                {
+                  label: 'Import',
+                }
+              ]
+            },
+            {
+              label: 'Folder',
+              accelerator: 'CmdOrCtrl+Shift+N',
+              click: () => win.webContents.send('menu-new-folder')
+            }
+          ]
+        },
+        {
           label: 'Select All',
+          role: 'selectAll',
           accelerator: 'CmdOrCtrl+A',
           click: () => win.webContents.send('menu-select-all')
         }
@@ -209,10 +236,10 @@ ipcMain.handle('get-mime-type', (_, filename) => {
   return mime.lookup(filename);
 });
 
-ipcMain.on('menu-select-all', () => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (win) win.webContents.send('menu-select-all');
-});
+// hotkeys
+ipcMain.on('menu-select-all', () => win.webContents.send('menu-select-all'));
+ipcMain.on('menu-delete', () => win.webContents.send('menu-delete'));
+ipcMain.on('menu-new-folder', () => win.webContents.send('menu-new-folder'));
 
 ipcMain.handle('explorer-delete', async (_, targetPath) => {
   const stats = await fs.stat(targetPath);

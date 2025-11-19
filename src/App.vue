@@ -104,7 +104,7 @@ onMounted(() => {
     window.explorer.rename(newNode.path, oldDir + '/' + newNode.label);
   });
 
-  // select all hotkey
+  // hotkeys
   window.electronAPI.on('menu-select-all', () => {
     if (!treeActive.value) return;
 
@@ -115,14 +115,23 @@ onMounted(() => {
       tree.value.children.forEach(c => selected.add(c)); // top level select
     selected.last = null;
   });
+  window.electronAPI.on('menu-delete', () => {
+    if (!treeActive.value) return;
+
+    Promise.all(selected.nodes.map(s => window.explorer.delete(s.path)));
+  });
+  window.electronAPI.on('menu-new-folder', () => {
+    if (!treeActive.value) return;
+
+    window.explorer.createFolder(selected.nodes.at(-1)?.path, 'New Folder');
+  });
 });
 
 const [ctrlPressed, shiftPressed] = ['Control', 'Shift'].map(k => useKeyModifier(k));
-const { ctrl_a } = useMagicKeys();
+const { ctrl_a, Delete } = useMagicKeys();
 
-whenever(ctrl_a, () => {
-  window.electronAPI.sendToMain('menu-select-all');
-});
+whenever(ctrl_a, () => window.electronAPI.sendToMain('menu-select-all'));
+whenever(Delete, () => window.electronAPI.sendToMain('menu-delete'));
 </script>
 
 <template>
