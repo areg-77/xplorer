@@ -96,16 +96,14 @@ async function createWindow() {
           label: 'New',
           submenu: [
             {
-              label: 'File',
-              submenu: [
-                {
-                  label: 'Empty',
-                },
-                {
-                  label: 'Import',
-                }
-              ]
+              label: 'New File',
+              accelerator: 'CmdOrCtrl+Alt+N'
             },
+            {
+              label: 'Import File',
+              accelerator: 'CmdOrCtrl+Alt+I'
+            },
+            { type: 'separator' },
             {
               label: 'Folder',
               accelerator: 'CmdOrCtrl+Shift+N',

@@ -106,7 +106,7 @@ onMounted(() => {
 
   // hotkeys
   window.electronAPI.on('menu-select-all', () => {
-    if (!treeActive.value) return;
+    if (!(tree.value && treeActive.value)) return;
 
     const lastNode = selected.nodes.at(-1);
     if (lastNode)
@@ -116,12 +116,12 @@ onMounted(() => {
     selected.last = null;
   });
   window.electronAPI.on('menu-delete', () => {
-    if (!treeActive.value) return;
+    if (!(tree.value && treeActive.value)) return;
 
     Promise.all(selected.nodes.map(s => window.explorer.delete(s.path)));
   });
   window.electronAPI.on('menu-new-folder', () => {
-    if (!treeActive.value) return;
+    if (!(tree.value && treeActive.value && selected.nodes.at(-1))) return;
 
     window.explorer.createFolder(selected.nodes.at(-1)?.path, 'New Folder');
   });

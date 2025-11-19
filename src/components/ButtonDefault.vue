@@ -84,6 +84,7 @@ onBeforeUnmount(() => {
   background-color: var(--region-light);
   border: 1px solid var(--border-dark);
   border-radius: calc(var(--border-radius) + 2px);
+  box-shadow: var(--box-shadow);
   margin-top: 0.3rem;
   z-index: 1;
   min-width: 12px;
