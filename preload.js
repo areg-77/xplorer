@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   new Titlebar({
     icon: 'icons/icon.ico',
     iconSize: 20,
-    backgroundColor: TitlebarColor.fromHex(Color(regionHSL).hex()),
+    backgroundColor: TitlebarColor.fromHex(Color(regionHSL).hex())
   });
 });
 

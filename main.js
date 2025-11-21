@@ -47,7 +47,7 @@ async function createWindow() {
       sandbox: false,
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
     }
   });
   attachTitlebarToWindow(win);

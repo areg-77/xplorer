@@ -4,7 +4,7 @@ import VTreeNode from './VTreeNode.vue';
 
 const { source: tree, index } = defineProps({
   source: Object,
-  index: Number,
+  index: Number
 });
 
 const emit = defineEmits(['set-index']);

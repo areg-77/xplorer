@@ -26,7 +26,7 @@ const { value, invalidChars, borderRadiusMask, fontSize, focusMode, type } = def
     type: String,
     default: 'none',
     validator: v => ['none', 'edit', 'select'].includes(v)
-  },
+  }
 });
 
 const dataTextStyle = computed(() => {
@@ -123,13 +123,12 @@ function onKeyDown(e) {
 
   if (e.key === 'Escape') {
     e.preventDefault();
-    cancelEdit();
     valueRef.value?.blur();
   }
 }
 
 function cancelEdit() {
-  if (!committed && valueRef.value && value && valueRef.value.innerText !== value) {
+  if (!committed && valueRef.value) {
     valueRef.value.innerText = value;
     emit('livevalue', value);
   }
