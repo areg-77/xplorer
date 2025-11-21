@@ -91,7 +91,7 @@ onStartTyping(focusLabel);
         <DataText :value="tempNode?.mimeType" border-radius-mask="0110"/>
       </DataField>
       <DataField label="Expanded">
-        <DataText :value="selected.nodes.at(-1)?.expanded" @setvalue="val => selected.nodes.at(-1) && (selected.nodes.at(-1).expanded = JSON.parse(val))" :type="!!selected.nodes.at(-1) ? 'edit' : 'none'" border-radius-mask="0110"/>
+        <DataText :value="selected.nodes.at(-1)?.expanded" focus-mode="select" @setvalue="val => selected.nodes.at(-1) && (selected.nodes.at(-1).expanded = JSON.parse(val))" :type="!!selected.nodes.at(-1) ? 'edit' : 'none'" border-radius-mask="0110"/>
       </DataField>
       <DataField label="Parent">
         <DataText :value="selected.nodes.at(-1)?.parent?.label" border-radius-mask="0110"/>

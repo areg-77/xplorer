@@ -228,7 +228,7 @@ whenever(Delete, () => window.electronAPI.sendToMain('menu-delete'));
   opacity: 0.8;
 }
 .tree-overlay kbd {
-  box-shadow: var(--box-shadow);
+  box-shadow: var(--box-shadow-small);
 }
 
 .kbd-enter-from {
