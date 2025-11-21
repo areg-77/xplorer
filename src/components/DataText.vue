@@ -188,6 +188,7 @@ function onPaste(e) {
 }
 
 .value {
+  letter-spacing: 0.5px;
   flex: 1;
   overflow: hidden;
   overflow-x: auto;

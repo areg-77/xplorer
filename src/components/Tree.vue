@@ -128,5 +128,6 @@ function handleTreeDrop(e) {
 
 .list-leave-active {
   position: absolute;
+  width: 90%;
 }
 </style>

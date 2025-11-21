@@ -1,6 +1,6 @@
 {
   "name": "xplorer",
-  "version": "20.11.0",
+  "version": "20.11.1",
   "description": "Files Managing tool",
   "author": {
     "name": "areg-77",
@@ -75,7 +75,7 @@
     "@vueuse/core": "^14.0.0",
     "color": "^5.0.3",
     "custom-electron-titlebar": "^4.2.8",
-    "mime-types": "^3.0.1",
+    "mime-types": "^3.0.2",
     "mitt": "^3.0.1",
     "node-addon-api": "^8.5.0",
     "vue": "^3.5.24"
@@ -84,11 +84,11 @@
     "@vitejs/plugin-vue": "^6.0.2",
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
-    "electron": "^39.2.2",
+    "electron": "^39.2.3",
     "electron-builder": "^26.0.12",
     "electron-devtools-installer": "^4.0.0",
     "rimraf": "^6.1.2",
-    "vite": "^7.2.2",
+    "vite": "^7.2.4",
     "wait-on": "^9.0.3"
   }
 }
