@@ -151,23 +151,3 @@ export class TNodeBase {
 export function TNode(label, type, children = []) {
   return reactive(new TNodeBase(label, type, children));
 }
-
-export function nodeById(id, tree) {
-  id = Number(id);
-  if (tree.id === id) return tree;
-  for (const child of tree.children) {
-    const found = nodeById(id, child);
-    if (found) return found;
-  }
-  return null;
-}
-
-export function nodeByPath(path, tree) {
-  path = path.replace(/\\/g, '/');
-  if (tree.path === path) return tree;
-  for (const child of tree.children) {
-    const found = nodeByPath(path, child);
-    if (found) return found;
-  }
-  return null;
-}

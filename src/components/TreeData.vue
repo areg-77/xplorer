@@ -6,6 +6,7 @@ import DataText from './/DataText.vue';
 import { TNode } from './model/TNode';
 import VTree from './VTree.vue';
 import { onStartTyping, useMagicKeys, whenever } from '@vueuse/core';
+import { renameNode } from './model/nodeFunctions';
 
 const isDev = inject('isDev');
 
@@ -16,14 +17,6 @@ const { selected } = defineProps({
   }
 });
 
-function pathDir(path) {
-  return path.substring(0, Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\')));
-}
-
-function renameNode(path, value) {
-  window.explorer.rename(path, pathDir(path) + '/' + value);
-}
-
 const tempNode = ref(null);
 watch(() => selected.nodes.slice(), () => tempNode.value = selected.nodes.at(-1) || null, { deep: true });
 const invalidChars = `\\/:?"<>|\n`;
@@ -33,10 +26,9 @@ onMounted(() => {
   vTree.value.$el.style.height = '7rem';
 });
 
-const labelRef = ref(null);
-
 const { f2 } = useMagicKeys();
 
+const labelRef = ref(null);
 function focusLabel() {
   if (labelRef.value && !labelRef.value.active)
     labelRef.value.focus();

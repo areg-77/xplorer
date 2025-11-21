@@ -2,6 +2,7 @@
 import DataText from './DataText.vue';
 import ButtonDefault from './ButtonDefault.vue';
 import { ref, watchEffect } from 'vue';
+import { addNode, deleteNodes } from './model/nodeFunctions';
 
 const { source: tree, selected } = defineProps({
   source: Object,
@@ -12,14 +13,6 @@ const { source: tree, selected } = defineProps({
 });
 
 const invalidChars = `\\/:?"<>|\n`;
-
-function deleteSelected() {
-  Promise.all(selected.nodes.map(s => window.explorer.delete(s.path)));
-}
-
-function createFolder() {
-  window.explorer.createFolder(selected.nodes.at(-1)?.path, 'New Folder');
-}
 
 const mask = ref('');
 watchEffect(() => {
@@ -60,7 +53,7 @@ watchEffect(() => {
       </template>
     </ButtonDefault>
 
-    <ButtonDefault class="icon" @click="createFolder" :disabled="!source || !selected.nodes.at(-1)">
+    <ButtonDefault class="icon" @click="addNode(selected.nodes.at(-1), 'New Folder', 'folder')" :disabled="!source || !selected.nodes.at(-1)">
       <span class="icon ui folder-add"></span>
     </ButtonDefault>
 
@@ -70,7 +63,7 @@ watchEffect(() => {
 
     <div class="divider"></div>
 
-    <ButtonDefault class="icon danger" @click="deleteSelected" :disabled="!source || !selected.nodes.at(-1)">
+    <ButtonDefault class="icon danger" @click="deleteNodes(selected.nodes)" :disabled="!source || !selected.nodes.at(-1)">
       <span class="icon ui delete"></span>
     </ButtonDefault>
 

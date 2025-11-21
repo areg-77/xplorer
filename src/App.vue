@@ -4,7 +4,8 @@ import Tree from './components/Tree.vue';
 import TreeTools from './components/TreeTools.vue';
 import TreeData from './components/TreeData.vue';
 import BottomPanel from './components/BottomPanel.vue';
-import { TNode, nodeByPath, nodeEmitter } from './components/model/TNode';
+import { TNode, nodeEmitter } from './components/model/TNode';
+import { addNode, deleteNodes, nodeByPath } from './components/model/nodeFunctions';
 import { SNode } from './components/model/SNode';
 import ButtonDefault from './components/ButtonDefault.vue';
 import { useActiveElement, useKeyModifier, useMagicKeys, whenever } from '@vueuse/core';
@@ -117,13 +118,11 @@ onMounted(() => {
   });
   window.electronAPI.on('menu-delete', () => {
     if (!(tree.value && treeActive.value)) return;
-
-    Promise.all(selected.nodes.map(s => window.explorer.delete(s.path)));
+    deleteNodes(selected.nodes);
   });
   window.electronAPI.on('menu-new-folder', () => {
     if (!(tree.value && treeActive.value && selected.nodes.at(-1))) return;
-
-    window.explorer.createFolder(selected.nodes.at(-1)?.path, 'New Folder');
+    addNode(selected.nodes.at(-1), 'New Folder', 'folder');
   });
 });
 

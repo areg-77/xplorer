@@ -1,6 +1,6 @@
 <script setup>
 import { provide } from 'vue';
-import { nodeById } from './model/TNode';
+import { nodeById } from './model/nodeFunctions';
 import TreeNode from './TreeNode.vue';
 import { useKeyModifier } from '@vueuse/core';
 
