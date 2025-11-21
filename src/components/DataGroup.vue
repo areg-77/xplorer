@@ -42,6 +42,7 @@ const expanded = ref(true);
 }
 
 .group-label {
+  color: var(--fg);
   cursor: pointer;
   display: flex;
   gap: 0.3em;
@@ -65,6 +66,9 @@ const expanded = ref(true);
 .group-label:active {
   background-color: var(--secondary);
   border-color: var(--border-light);
+}
+.data-group.version .group-label {
+  color: var(--version-fg);
 }
 
 .children-container {

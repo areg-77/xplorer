@@ -51,11 +51,13 @@ li {
   border-color: var(--border);
 }
 .tree-node.selected {
-  background-color: var(--secondary-light);
-  border-color: var(--border-light);
+  color: var(--version-fg);
+  background-color: var(--version-secondary);
+  border-color: var(--version-region);
 }
 .tree-node.selected:hover {
-  background-color: var(--secondary-lighter);
+  background-color: var(--version-region);
+  border-color: var(--version-region-light);
 }
 
 .content-container {
@@ -66,6 +68,9 @@ li {
   white-space: nowrap; 
   padding: 2px 0.9em 2px 0.5em;
   gap: 0.3em;
+}
+.tree-node.selected .content-container {
+  color: var(--version-fg);
 }
 
 .tree-icon {

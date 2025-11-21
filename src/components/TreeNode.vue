@@ -145,6 +145,18 @@ li:hover > .children-container.opened {
   background-color: var(--secondary-lighter);
 }
 
+.tree-node.version:not(.selected):hover {
+  background-color: var(--version-region-dark);
+  border-color: var(--version-region);
+}
+/* .tree-node.version.selected {
+  background-color: var(--version-secondary);
+  border-color: var(--version-region-light);
+}
+.tree-node.version.selected:hover {
+  background-color: var(--version-region);
+} */
+
 .expander-container {
   display: flex;
   align-items: center;

@@ -60,7 +60,7 @@ onStartTyping(focusLabel);
       </DataField>
     </DataGroup>
 
-    <DataGroup v-show="selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1" label="Version Control" icon="ui version">
+    <DataGroup v-show="selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1" label="Version Control" icon="ui version" class="version">
       <template v-if="isDev">
         <DataField label="Index">
           <DataText :value="selected.nodes.at(-1)?.version.index" @setvalue="val => selected.nodes.at(-1) && (selected.nodes.at(-1).version.index = JSON.parse(val))" :type="!!selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1 ? 'edit' : 'none'" focus-mode="select" border-radius-mask="0110"/>
