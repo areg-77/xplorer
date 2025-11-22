@@ -34,6 +34,11 @@ const emit = defineEmits(['select']);
 <style scoped>
 li {
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  border-radius: var(--border-radius);
 }
 
 .tree-node {
@@ -43,6 +48,7 @@ li {
   margin: 1px;
   border: 1px solid transparent;
   border-radius: var(--border-radius);
+  box-sizing: border-box;
 
   transition: background-color 150ms, border-radius 150ms;
 }

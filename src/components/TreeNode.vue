@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, onUpdated } from 'vue';
+import { ref, computed, inject } from 'vue';
 import { isSNode } from './model/SNode';
 
 const { node } = defineProps({
@@ -60,21 +60,32 @@ function onDragStart(e) {
   e.dataTransfer.setDragImage(img, 0, 0);
 }
 
+const dragCounter = ref(0);
+const isDragOver = computed(() => dragCounter.value > 0);
+
+function onDragEnter() {
+  if (!draggable) return;
+  dragCounter.value++;
+}
+
+function onDragLeave() {
+  if (!draggable) return;
+  dragCounter.value--;
+  if (dragCounter.value < 0) dragCounter.value = 0;
+}
+
 function onDrop(e) {
   if (!draggable) return;
   
   e.preventDefault();
+  dragCounter.value = 0;
   emit('dragdrop', { currentNodeId: e.dataTransfer.getData('node-id'), targetNode: node });
 }
-
-// onUpdated(() => {
-//   console.log(`%c"${node.label}" updated`, 'color: greenyellow;');
-// });
 </script>
 
 <template>
-  <li v-if="!node.hidden">
-    <div class="tree-node" :class="{ selected: isSelected, version: isVersioned }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent @dragover.prevent>
+  <li v-if="!node.hidden" :class="{ 'drag-over': isDragOver }">
+    <div class="tree-node" :class="{ selected: isSelected, version: isVersioned }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent="onDragEnter" @dragleave="onDragLeave">
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.filter(c => !c.hidden).length }" @click="toggleExpand">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
@@ -118,9 +129,20 @@ ul {
 
 li {
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  border-radius: var(--border-radius);
+  transition: background-color 150ms;
 }
 li:hover > .children-container.opened {
   border-color: var(--border-light);
+}
+li.drag-over {
+  background-color: var(--secondary);
+  outline: 1px solid var(--border);
+  outline-offset: -1px;
 }
 
 .tree-node {
@@ -130,6 +152,7 @@ li:hover > .children-container.opened {
   margin: 1px;
   border: 1px solid transparent;
   border-radius: var(--border-radius);
+  box-sizing: border-box;
 
   transition: background-color 150ms, border-radius 150ms;
 }

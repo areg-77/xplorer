@@ -116,7 +116,7 @@ function handleTreeDrop(e) {
 .list-enter-active,
 .list-leave-active {
   transform-origin: left;
-  transition: transform 250ms, opacity 150ms;
+  transition: transform 250ms, opacity 150ms !important;
 }
 
 .list-enter-from,
