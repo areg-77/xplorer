@@ -186,7 +186,9 @@ whenever(Delete, () => window.electronAPI.sendToMain('menu-delete'));
   grid-template-columns: 55fr 45fr;
   gap: 0.5rem;
 }
+</style>
 
+<style scoped>
 .tree-container {
   position: relative;
   display: flex;

@@ -57,9 +57,9 @@ watchEffect(() => {
       <span class="icon ui folder-add"></span>
     </ButtonDefault>
 
-    <ButtonDefault class="icon version" :disabled="!source || !selected.nodes.at(-1)">
+    <!-- <ButtonDefault class="icon version" :disabled="!source || !selected.nodes.at(-1)">
       <span class="icon ui version"></span>
-    </ButtonDefault>
+    </ButtonDefault> -->
 
     <div class="divider"></div>
 

@@ -149,13 +149,9 @@ li:hover > .children-container.opened {
   background-color: var(--version-region-dark);
   border-color: var(--version-region);
 }
-/* .tree-node.version.selected {
-  background-color: var(--version-secondary);
+.tree-node.version.selected {
   border-color: var(--version-region-light);
 }
-.tree-node.version.selected:hover {
-  background-color: var(--version-region);
-} */
 
 .expander-container {
   display: flex;
@@ -204,7 +200,7 @@ li:hover > .children-container.opened {
 }
 
 .tree-label {
-  flex: 1 1 auto;
+  /* flex: 1 1 auto; */
   white-space: nowrap;
 }
 
@@ -239,6 +235,7 @@ li:hover > .children-container.opened {
   position: relative;
   overflow: hidden;
   flex: 1 1 auto;
+  gap: 0.3em;
   display: inline-flex;
   align-items: center;
 }

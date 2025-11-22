@@ -27,9 +27,11 @@ watch(() => index, () => scrollToSelected('smooth'));
 
 <template>
   <div ref="treeRef" class="tree-view">
-    <ul>
-      <VTreeNode v-for="(node, i) in tree?.version.children" :key="node.id" :node="node" :is-selected="i === index" @select="emit('set-index', i)"/>
-    </ul>
+    <slot>
+      <ul>
+        <VTreeNode v-for="(node, i) in tree?.version.children" :key="node.id" :node="node" :is-selected="i === index" @select="emit('set-index', i)"/>
+      </ul>
+    </slot>
   </div>
 </template>
 
