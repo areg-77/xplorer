@@ -111,7 +111,7 @@ onMounted(() => {
 
     const lastNode = selected.nodes.at(-1);
     if (lastNode)
-      lastNode.parent.children.forEach(c => selected.add(c)); // siblings select
+      lastNode.siblings().forEach(c => selected.add(c)); // siblings select
     else
       tree.value.children.forEach(c => selected.add(c)); // top level select
     selected.last = null;

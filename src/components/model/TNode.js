@@ -131,7 +131,7 @@ export class TNodeBase {
   }
 
   siblings() {
-    return this.parent.value?.children.filter(c => !c.equals(this));
+    return this.parent.value?.children?.filter(c => !c.equals(this)) || this.parent?.children?.filter(c => !c.equals(this));
   }
 
   get path() {
