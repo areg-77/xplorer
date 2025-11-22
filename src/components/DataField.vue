@@ -12,6 +12,10 @@ const { label, direction } = defineProps({
   slotBorderRadiusOffset: {
     type: String,
     default: '-1px'
+  },
+  slotPadding: {
+    type: String,
+    default: '1px'
   }
 });
 </script>
@@ -21,7 +25,10 @@ const { label, direction } = defineProps({
     <div class="data-label">
       {{ label }}
     </div>
-    <div class="data-value" :class="{ 'slot-br': slotBorderRadiusOffset }" :style="`--slot-border-radius-offset: ${slotBorderRadiusOffset || '0px'};`">
+    <div class="data-value" :class="{ 'slot-br': slotBorderRadiusOffset }" :style="`
+      --slot-border-radius-offset: ${slotBorderRadiusOffset || '0px'};
+      --slot-padding: ${slotPadding || '0px'};
+    `">
       <slot></slot>
     </div>
   </div>
@@ -63,12 +70,13 @@ const { label, direction } = defineProps({
 .data-value {
   flex: 1;
   display: flex;
+  flex-direction: column;
+  gap: 0.5em;
   overflow: hidden;
-  /* align-items: center; */
   background-color: var(--region-light);
   border: 1px solid var(--border-dark);
   border-radius: calc(var(--border-radius) + var(--border-radius-offset));
-  padding: 1px;
+  padding: var(--slot-padding);
 }
 .data-field.horizontal .data-value {
   border-top-left-radius: 0;

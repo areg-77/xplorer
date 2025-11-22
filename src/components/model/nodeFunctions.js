@@ -30,3 +30,11 @@ export function deleteNodes(nodes) {
 export function renameNode(path, value) {
   window.explorer.rename(path, window.explorer.dirname(path) + '/' + value);
 }
+
+export function createVersion(parent) {
+  addNode(parent, '.version', 'folder');
+}
+
+export function deleteVersion(node) {
+  deleteNodes([node.version.node]);
+}

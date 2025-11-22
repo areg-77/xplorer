@@ -140,8 +140,8 @@ li:hover > .children-container.opened {
   border-color: var(--border-light);
 }
 li.drag-over {
-  background-color: var(--secondary);
-  outline: 1px solid var(--border);
+  background-color: var(--secondary-dark);
+  outline: 1px solid var(--border-dark);
   outline-offset: -1px;
 }
 

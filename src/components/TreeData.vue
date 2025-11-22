@@ -6,7 +6,9 @@ import DataText from './/DataText.vue';
 import { TNode } from './model/TNode';
 import VTree from './VTree.vue';
 import { onStartTyping, useMagicKeys, whenever } from '@vueuse/core';
-import { renameNode } from './model/nodeFunctions';
+import { renameNode, deleteVersion } from './model/nodeFunctions';
+import NoVersionBox from './NoVersionBox.vue';
+import ButtonDefault from './ButtonDefault.vue';
 
 const isDev = inject('isDev');
 
@@ -60,17 +62,23 @@ onStartTyping(focusLabel);
       </DataField>
     </DataGroup>
 
-    <DataGroup label="Version Control" icon="ui version" class="version">
+    <DataGroup v-show="selected.nodes.at(-1) && (selected.nodes.at(-1)?.version.index !== -1 || selected.nodes.at(-1)?.parent.children[0].equals(selected.nodes.at(-1)))" label="Version Control" icon="ui version" class="version">
       <template v-if="isDev">
         <DataField label="Index">
           <DataText :value="selected.nodes.at(-1)?.version.index" @setvalue="val => selected.nodes.at(-1) && (selected.nodes.at(-1).version.index = JSON.parse(val))" :type="!!selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1 ? 'edit' : 'none'" focus-mode="select" border-radius-mask="0110"/>
         </DataField>
       </template>
 
-      <DataField label="Versions" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="">
-        <VTree v-show="selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1" ref="vTree" :source="selected.nodes.at(-1)?.version.node" :index="selected.nodes.at(-1)?.version.index" @set-index="newIndex => selected.nodes.at(-1).version.index = newIndex" style="resize: vertical; min-height: 5.3rem;"/>
-        <VTree v-if="!(selected.nodes.at(-1) && selected.nodes.at(-1)?.version.index !== -1)">
+      <DataField label="Versions" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="" slot-padding="0.5em">
+        <VTree v-show="selected.nodes.at(-1)?.version.index !== -1" ref="vTree" :source="selected.nodes.at(-1)?.version.node" :index="selected.nodes.at(-1)?.version.index" @set-index="newIndex => selected.nodes.at(-1).version.index = newIndex" style="resize: vertical; min-height: 5.3rem;"/>
+          
+        <VTree v-if="selected.nodes.at(-1)?.version.index === -1">
+          <NoVersionBox :selected="selected"/>
         </VTree>
+        <ButtonDefault v-else class="danger" @click="deleteVersion(selected.nodes.at(-1))">
+          <span class="icon ui delete"></span>
+          Delete Version
+        </ButtonDefault>
       </DataField>
     </DataGroup>
 
