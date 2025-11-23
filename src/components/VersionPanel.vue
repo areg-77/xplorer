@@ -5,7 +5,8 @@ import ButtonDefault from './ButtonDefault.vue';
 import DataText from './DataText.vue';
 import { createVersion, deleteVersion } from './model/nodeFunctions';
 
-const { selected, borderRadiusMask } = defineProps({
+const { source: tree, selected, borderRadiusMask } = defineProps({
+  source: Object,
   selected: {
     type: Object,
     required: true
@@ -41,8 +42,8 @@ const versionPanelStyle = computed(() => {
       </ButtonDefault>
     </div>
 
-    <VTree v-show="selected.nodes.at(-1)?.version.index !== -1" ref="vTree" :source="selected.nodes.at(-1)?.version.node" :index="selected.nodes.at(-1)?.version.index" @set-index="newIndex => selected.nodes.at(-1).version.index = newIndex" style="height: 100px;"/>      
-    <VTree v-if="selected.nodes.at(-1)?.version.index === -1">
+    <VTree v-show="selected.nodes.at(-1)?.version.index !== -1" ref="vTree" :source="selected.nodes.at(-1)?.version.node" :index="selected.nodes.at(-1)?.version.index" :tree-source="tree" @set-index="newIndex => selected.nodes.at(-1).version.index = newIndex" style="height: 100px;"/>      
+    <VTree v-if="selected.nodes.at(-1)?.version.index === -1" :tree-source="tree">
       <div class="no-version-box">
         No version available.
         <ButtonDefault class="version" @click="createVersion(selected.nodes.at(-1).parent)">

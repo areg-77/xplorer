@@ -161,7 +161,7 @@ whenever(Delete, () => window.electronAPI.sendToMain('menu-delete'));
         </transition>
       </div>
     </div>
-    <TreeData :selected="selected"/>
+    <TreeData :source="tree" :selected="selected"/>
   </main>
   <BottomPanel :selected="selected"/>
 </template>

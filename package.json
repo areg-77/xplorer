@@ -1,6 +1,6 @@
 {
   "name": "xplorer",
-  "version": "20.17.0",
+  "version": "20.18.0",
   "description": "Files Managing tool",
   "author": {
     "name": "areg-77",
@@ -20,7 +20,7 @@
     "launch": "vite build && cross-env NODE_ENV=production electron .",
     "build": "cross-env NODE_ENV=production rimraf bin && vite build && electron-builder",
     "build:native": "cd native && rimraf build node_modules && npx node-gyp configure build && cd ..",
-    "publish": "electron-builder --publish always"
+    "publish": "npm run build -- --publish always"
   },
   "build": {
     "appId": "com.areg77.xplorer",

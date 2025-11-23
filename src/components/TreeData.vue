@@ -10,7 +10,8 @@ import VersionPanel from './VersionPanel.vue';
 
 const isDev = inject('isDev');
 
-const { selected } = defineProps({
+const { source: tree, selected } = defineProps({
+  source: Object,
   selected: {
     type: Object,
     required: true
@@ -63,7 +64,7 @@ onStartTyping(focusLabel);
       </template>
 
       <DataField label="Versions" direction="vertical">
-        <VersionPanel :selected="selected" border-radius-mask="0011"/>
+        <VersionPanel :source="tree" :selected="selected" border-radius-mask="0011"/>
       </DataField>
     </DataGroup>
 

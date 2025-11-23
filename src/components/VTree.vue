@@ -1,10 +1,12 @@
 <script setup>
 import { ref, nextTick, watch } from 'vue';
 import VTreeNode from './VTreeNode.vue';
+import { nodeById } from './model/nodeFunctions';
 
-const { source: tree, index } = defineProps({
+const { source: tree, index, treeSource } = defineProps({
   source: Object,
-  index: Number
+  index: Number,
+  treeSource: Object
 });
 
 const emit = defineEmits(['set-index']);
@@ -23,10 +25,17 @@ async function scrollToSelected(behavior) {
 
 watch(() => tree, () => scrollToSelected('auto'));
 watch(() => index, () => scrollToSelected('smooth'));
+
+function onDrop(e) {
+  const currentNodeId = e.dataTransfer.getData('node-id');
+  const currentNode = nodeById(currentNodeId, treeSource);
+
+  window.explorer.rename(currentNode.path, tree.path + '/' + currentNode.label)
+}
 </script>
 
 <template>
-  <div ref="treeRef" class="tree-view">
+  <div ref="treeRef" class="tree-view" @drop.prevent="onDrop" @dragover.prevent>
     <slot>
       <ul>
         <VTreeNode v-for="(node, i) in tree?.version.children" :key="node.id" :node="node" :is-selected="i === index" @select="emit('set-index', i)"/>
