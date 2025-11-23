@@ -51,7 +51,6 @@ function onDragStart(e) {
   e.dataTransfer.dropEffect = 'move';
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('node-id', node.id);
-
   e.dataTransfer.setData('text/plain', node.path);
 
   const img = document.createElement('img');
@@ -59,24 +58,35 @@ function onDragStart(e) {
   e.dataTransfer.setDragImage(img, 0, 0);
 }
 
-const dragCounter = ref(0);
-const isDragOver = computed(() => dragCounter.value > 0);
+function selfOrParent() {
+  return node.type === 'folder' ? node : node.parent;
+}
 
 function onDragEnter() {
   if (!draggable) return;
-  dragCounter.value++;
+
+  const self = selfOrParent();
+  if (!self.dragCounter) self.dragCounter = 0;
+  self.dragCounter++;
 }
 
 function onDragLeave() {
   if (!draggable) return;
-  dragCounter.value--;
-  if (dragCounter.value < 0) dragCounter.value = 0;
+
+  const self = selfOrParent();
+  if (!self.dragCounter) self.dragCounter = 0;
+  self.dragCounter--;
+  if (self.dragCounter < 0) self.dragCounter = 0;
 }
+
+const isDragOver = computed(() => node.dragCounter > 0);
 
 function onDrop(e) {
   if (!draggable) return;
-  
-  dragCounter.value = 0;
+
+  const self = selfOrParent();
+  self.dragCounter = 0;
+
   emit('dragdrop', { currentNodeId: e.dataTransfer.getData('node-id'), targetNode: node });
 }
 </script>
