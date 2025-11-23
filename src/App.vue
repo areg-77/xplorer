@@ -210,6 +210,7 @@ whenever(Delete, () => window.electronAPI.sendToMain('menu-delete'));
   justify-content: center;
   text-align: center;
 
+  color: var(--fg-dark);
   background-color: var(--secondary-dark);
   border: 1px solid var(--border-dark);
   border-radius: calc(var(--border-radius) + 0.5rem);

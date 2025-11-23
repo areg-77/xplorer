@@ -1,14 +1,12 @@
 <script setup>
 import { ref, watch, inject, onMounted } from 'vue';
-import DataField from './/DataField.vue';
-import DataGroup from './/DataGroup.vue';
-import DataText from './/DataText.vue';
+import DataField from './DataField.vue';
+import DataGroup from './DataGroup.vue';
+import DataText from './DataText.vue';
 import { TNode } from './model/TNode';
-import VTree from './VTree.vue';
 import { onStartTyping, useMagicKeys, whenever } from '@vueuse/core';
-import { renameNode, deleteVersion } from './model/nodeFunctions';
-import NoVersionBox from './NoVersionBox.vue';
-import ButtonDefault from './ButtonDefault.vue';
+import { renameNode } from './model/nodeFunctions';
+import VersionPanel from './VersionPanel.vue';
 
 const isDev = inject('isDev');
 
@@ -22,11 +20,6 @@ const { selected } = defineProps({
 const tempNode = ref(null);
 watch(() => selected.nodes.slice(), () => tempNode.value = selected.nodes.at(-1) || null, { deep: true });
 const invalidChars = `\\/:?"<>|\n`;
-
-const vTree = ref(null);
-onMounted(() => {
-  vTree.value.$el.style.height = '7rem';
-});
 
 const { f2 } = useMagicKeys();
 
@@ -69,16 +62,8 @@ onStartTyping(focusLabel);
         </DataField>
       </template>
 
-      <DataField label="Versions" direction="vertical" border-radius-offset="4px" slot-border-radius-offset="" slot-padding="0.5em">
-        <VTree v-show="selected.nodes.at(-1)?.version.index !== -1" ref="vTree" :source="selected.nodes.at(-1)?.version.node" :index="selected.nodes.at(-1)?.version.index" @set-index="newIndex => selected.nodes.at(-1).version.index = newIndex" style="resize: vertical; min-height: 5.3rem;"/>
-          
-        <VTree v-if="selected.nodes.at(-1)?.version.index === -1">
-          <NoVersionBox :selected="selected"/>
-        </VTree>
-        <ButtonDefault v-else class="danger" @click="deleteVersion(selected.nodes.at(-1))">
-          <span class="icon ui delete"></span>
-          Delete Version
-        </ButtonDefault>
+      <DataField label="Versions" direction="vertical">
+        <VersionPanel :selected="selected" border-radius-mask="0011"/>
       </DataField>
     </DataGroup>
 

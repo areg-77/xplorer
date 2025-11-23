@@ -67,7 +67,7 @@ li {
 }
 
 .content-container {
-  color: var(--fg);
+  color: var(--fg-darker);
   flex: 1;
   display: flex;
   align-items: center;

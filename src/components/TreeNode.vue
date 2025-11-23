@@ -37,7 +37,6 @@ const styles = computed(() => {
 
 function clickSelect() {
   if (!isSNode(selected)) return;
-  
   emit('select', node);
 }
 
@@ -77,7 +76,6 @@ function onDragLeave() {
 function onDrop(e) {
   if (!draggable) return;
   
-  e.preventDefault();
   dragCounter.value = 0;
   emit('dragdrop', { currentNodeId: e.dataTransfer.getData('node-id'), targetNode: node });
 }
@@ -85,7 +83,7 @@ function onDrop(e) {
 
 <template>
   <li v-if="!node.hidden" :class="{ 'drag-over': isDragOver }">
-    <div class="tree-node" :class="{ selected: isSelected, version: isVersioned }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop="onDrop" @dragenter.prevent="onDragEnter" @dragleave="onDragLeave">
+    <div class="tree-node" :class="{ selected: isSelected, version: isVersioned }" :style="styles.node" :draggable="draggable" @dragstart="onDragStart" @drop.prevent="onDrop" @dragenter.prevent="onDragEnter" @dragleave="onDragLeave">
       <div class="expander-container" :class="{ hidden: node.type !== 'folder' || !node.children?.filter(c => !c.hidden).length }" @click="toggleExpand">
         <span class="expander" :class="{ opened: node.expanded }"></span>
       </div>
